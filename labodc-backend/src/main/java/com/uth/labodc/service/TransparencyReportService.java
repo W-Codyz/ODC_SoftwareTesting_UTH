@@ -520,13 +520,12 @@ public class TransparencyReportService {
         long totalEnterprises = periodEnterprises.size(); // Count ONLY in this period
         long newEnterprises = periodEnterprises.size(); // Same as total
         long activeEnterprises = periodEnterprises.stream().filter(e -> EnterpriseStatus.APPROVED.equals(e.getStatus())).count();
-        long verifiedEnterprises = activeEnterprises;
-        
+
         TransparencyReportDTO.EnterpriseStats enterpriseStats = TransparencyReportDTO.EnterpriseStats.builder()
                 .total(totalEnterprises)
                 .newEnterprises(newEnterprises)
                 .active(activeEnterprises)
-                .verified(verifiedEnterprises)
+                .verified(activeEnterprises)
                 .build();
         
         // Talent statistics - ONLY talents created within this period
