@@ -70,15 +70,7 @@ public class MentorAdminService {
         
         Mentor mentor = new Mentor();
         mentor.setUserId(userId);
-        mentor.setFullName(dto.getFullName());
-        mentor.setTitle(dto.getTitle());
-        mentor.setCurrentPosition(dto.getCurrentPosition());
-        mentor.setCurrentCompany(dto.getCurrentCompany());
-        mentor.setYearsOfExperience(dto.getYearsOfExperience());
-        mentor.setBio(dto.getBio());
-        mentor.setLinkedinUrl(dto.getLinkedinUrl());
-        mentor.setHourlyRate(dto.getHourlyRate() != null ? dto.getHourlyRate().longValue() : null);
-        mentor.setMaxConcurrentProjects(dto.getMaxConcurrentProjects());
+        applyDtoToMentor(mentor, dto);
         mentor.setAvailable(dto.getAvailable() != null ? dto.getAvailable() : true);
         mentor.setCreatedAt(LocalDateTime.now());
         mentor.setUpdatedAt(LocalDateTime.now());
@@ -109,16 +101,7 @@ public class MentorAdminService {
         Mentor mentor = mentorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Mentor not found with id: " + id));
         
-        // Update basic fields
-        mentor.setFullName(dto.getFullName());
-        mentor.setTitle(dto.getTitle());
-        mentor.setCurrentPosition(dto.getCurrentPosition());
-        mentor.setCurrentCompany(dto.getCurrentCompany());
-        mentor.setYearsOfExperience(dto.getYearsOfExperience());
-        mentor.setBio(dto.getBio());
-        mentor.setLinkedinUrl(dto.getLinkedinUrl());
-        mentor.setHourlyRate(dto.getHourlyRate() != null ? dto.getHourlyRate().longValue() : null);
-        mentor.setMaxConcurrentProjects(dto.getMaxConcurrentProjects());
+        applyDtoToMentor(mentor, dto);
         mentor.setAvailable(dto.getAvailable());
         mentor.setUpdatedAt(LocalDateTime.now());
         
@@ -172,6 +155,18 @@ public class MentorAdminService {
         log.info("Mentor {} deleted successfully", id);
     }
     
+    private void applyDtoToMentor(Mentor mentor, MentorDTO dto) {
+        mentor.setFullName(dto.getFullName());
+        mentor.setTitle(dto.getTitle());
+        mentor.setCurrentPosition(dto.getCurrentPosition());
+        mentor.setCurrentCompany(dto.getCurrentCompany());
+        mentor.setYearsOfExperience(dto.getYearsOfExperience());
+        mentor.setBio(dto.getBio());
+        mentor.setLinkedinUrl(dto.getLinkedinUrl());
+        mentor.setHourlyRate(dto.getHourlyRate() != null ? dto.getHourlyRate().longValue() : null);
+        mentor.setMaxConcurrentProjects(dto.getMaxConcurrentProjects());
+    }
+
     private MentorDTO convertToDTO(Mentor mentor) {
         // Get user info
         User user = userRepository.findById(mentor.getUserId())
