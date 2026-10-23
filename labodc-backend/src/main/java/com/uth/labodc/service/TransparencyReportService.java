@@ -244,14 +244,7 @@ public class TransparencyReportService {
         
         // Financial stats
         if (stats.getFinancials() != null) {
-            Map<String, Object> financialStats = new HashMap<>();
-            financialStats.put("totalRevenue", stats.getFinancials().getTotalRevenue());
-            financialStats.put("teamDisbursed", stats.getFinancials().getTeamDisbursed());
-            financialStats.put("mentorDisbursed", stats.getFinancials().getMentorDisbursed());
-            financialStats.put("labRevenue", stats.getFinancials().getLabRevenue());
-            financialStats.put("hybridFundAdvanced", stats.getFinancials().getHybridFundAdvanced());
-            financialStats.put("hybridFundRepaid", stats.getFinancials().getHybridFundRepaid());
-            statsMap.put("financials", financialStats);
+            statsMap.put("financials", buildFinancialStatsMap(stats.getFinancials()));
         }
         
         // Performance stats
@@ -266,6 +259,17 @@ public class TransparencyReportService {
         return statsMap;
     }
     
+    private Map<String, Object> buildFinancialStatsMap(TransparencyReportDTO.FinancialStats financials) {
+        Map<String, Object> financialStats = new HashMap<>();
+        financialStats.put("totalRevenue", financials.getTotalRevenue());
+        financialStats.put("teamDisbursed", financials.getTeamDisbursed());
+        financialStats.put("mentorDisbursed", financials.getMentorDisbursed());
+        financialStats.put("labRevenue", financials.getLabRevenue());
+        financialStats.put("hybridFundAdvanced", financials.getHybridFundAdvanced());
+        financialStats.put("hybridFundRepaid", financials.getHybridFundRepaid());
+        return financialStats;
+    }
+
     /**
      * Generate charts data map for database storage
      */
