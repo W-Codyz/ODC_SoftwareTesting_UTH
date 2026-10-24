@@ -128,16 +128,7 @@
 }
 
 .heroNewsTitle {
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.4;
-  color: #262626;
-  margin: 0 0 6px 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  composes: heroNewsTitle from '../../../styles/heroNews.module.css';
 }
 
 .heroNewsItem:hover .heroNewsTitle {
