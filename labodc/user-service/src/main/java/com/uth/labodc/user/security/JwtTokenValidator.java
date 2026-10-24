@@ -23,12 +23,12 @@ public final class JwtTokenValidator {
     }
 
     public Jws<Claims> parseAndValidate(String token) {
-        Jws<Claims> jws = Jwts.parserBuilder()
-                .setSigningKey(key)
+        Jws<Claims> jws = Jwts.parser()
+                .verifyWith(key)
                 .build()
-                .parseClaimsJws(token);
+                .parseSignedClaims(token);
 
-        Date exp = jws.getBody().getExpiration();
+        Date exp = jws.getPayload().getExpiration();
         if (exp != null) {
             long now = System.currentTimeMillis();
             if (exp.getTime() + clockSkewMillis < now) {
