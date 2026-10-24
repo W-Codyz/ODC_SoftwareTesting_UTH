@@ -56,20 +56,7 @@ public class AuthService {
         
         log.info("User registered successfully: {}", user.getEmail());
         
-        // Generate tokens
-        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
-        String jwtToken = jwtService.generateToken(userDetails);
-        String refreshToken = jwtService.generateRefreshToken(userDetails);
-        
-        return AuthResponse.builder()
-                .token(jwtToken)
-                .refreshToken(refreshToken)
-                .userId(user.getId())
-                .email(user.getEmail())
-                .role(user.getRole())
-                .status(user.getStatus())
-                .emailVerified(user.getEmailVerified())
-                .build();
+        return buildAuthResponse(user);
     }
     
     @Transactional
@@ -98,11 +85,14 @@ public class AuthService {
         
         log.info("User logged in successfully: {}", user.getEmail());
         
-        // Generate tokens
+        return buildAuthResponse(user);
+    }
+
+    private AuthResponse buildAuthResponse(User user) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
         String jwtToken = jwtService.generateToken(userDetails);
         String refreshToken = jwtService.generateRefreshToken(userDetails);
-        
+
         return AuthResponse.builder()
                 .token(jwtToken)
                 .refreshToken(refreshToken)
