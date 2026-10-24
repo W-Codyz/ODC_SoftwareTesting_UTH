@@ -21,7 +21,7 @@ import {
   ReloadOutlined,
   InfoCircleOutlined,
 } from '@ant-design/icons';
-import { dashboardService } from '../../../services/admin/dashboardService';
+import { dashboardService, rejectApproval } from '../../../services/admin/dashboardService';
 import type { PendingApproval } from '../../../services/admin/dashboardService';
 
 const { Title, Text } = Typography;
@@ -93,13 +93,7 @@ export default function PendingApprovals() {
     
     setActionLoading(true);
     try {
-      if (selectedApproval.type === 'enterprise') {
-        await dashboardService.rejectEnterprise(selectedApproval.id, rejectReason);
-        message.success(`Đã từ chối doanh nghiệp "${selectedApproval.companyName}"`);
-      } else {
-        await dashboardService.rejectProject(selectedApproval.id, rejectReason);
-        message.success(`Đã từ chối dự án "${selectedApproval.title}"`);
-      }
+      message.success(await rejectApproval(selectedApproval, rejectReason));
       setRejectModalOpen(false);
       setRejectReason('');
       loadApprovals(); // Reload list

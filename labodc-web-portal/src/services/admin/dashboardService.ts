@@ -133,6 +133,16 @@ export interface PendingApproval {
   enterpriseName?: string;
 }
 
+export async function rejectApproval(approval: PendingApproval, reason?: string): Promise<string> {
+  if (approval.type === 'enterprise') {
+    await dashboardService.rejectEnterprise(approval.id, reason);
+    return `Đã từ chối doanh nghiệp "${approval.companyName}"`;
+  }
+
+  await dashboardService.rejectProject(approval.id, reason);
+  return `Đã từ chối dự án "${approval.title}"`;
+}
+
 // API Service
 class DashboardService {
   // Lấy thống kê tổng quan

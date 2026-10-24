@@ -54,7 +54,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { dashboardService } from '../../../services/admin/dashboardService';
+import { dashboardService, rejectApproval } from '../../../services/admin/dashboardService';
 import type { DashboardStats, RecentActivity, PendingApproval } from '../../../services/admin/dashboardService';
 import styles from './AdminDashboard.module.css';
 
@@ -185,13 +185,7 @@ export default function AdminDashboard() {
     
     setActionLoading(true);
     try {
-      if (selectedApproval.type === 'enterprise') {
-        await dashboardService.rejectEnterprise(selectedApproval.id, rejectReason);
-        message.success(`Đã từ chối doanh nghiệp "${selectedApproval.companyName}"`);
-      } else {
-        await dashboardService.rejectProject(selectedApproval.id, rejectReason);
-        message.success(`Đã từ chối dự án "${selectedApproval.title}"`);
-      }
+      message.success(await rejectApproval(selectedApproval, rejectReason));
       setRejectModalOpen(false);
       setRejectReason('');
       loadDashboardData(); // Reload dashboard data
