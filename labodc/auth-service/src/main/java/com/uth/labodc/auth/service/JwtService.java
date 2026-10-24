@@ -1,7 +1,6 @@
 package com.uth.labodc.auth.service;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -34,22 +33,22 @@ public class JwtService {
     public String generateToken(String userId, String email, String role) {
         Instant now = Instant.now();
         return Jwts.builder()
-                .setSubject(userId)
-                .setIssuedAt(Date.from(now))
-                .setExpiration(Date.from(now.plusSeconds(expirationSeconds)))
-                .addClaims(Map.of(
+                .subject(userId)
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(now.plusSeconds(expirationSeconds)))
+                .claims(Map.of(
                         "email", email,
                         "role", role
                 ))
-                .signWith(key, SignatureAlgorithm.HS256)
+                .signWith(key)
                 .compact();
     }
 
     public Claims validateAndGetClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
+        return Jwts.parser()
+                .verifyWith(key)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
 }
