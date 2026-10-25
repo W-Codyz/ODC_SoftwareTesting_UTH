@@ -41,7 +41,7 @@ public class ProjectController {
     }
 
     @PutMapping("/{id}/reject")
-    public ProjectResponse reject(@PathVariable("id") long id) {
+        public ProjectResponse reject(@PathVariable long id) {
         return projectService.reject(id);
     }
 
