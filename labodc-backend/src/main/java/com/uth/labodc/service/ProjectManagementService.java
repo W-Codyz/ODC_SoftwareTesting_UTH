@@ -3,7 +3,6 @@ package com.uth.labodc.service;
 import com.uth.labodc.dto.project.ProjectListDTO;
 import com.uth.labodc.dto.project.ProjectStatsDTO;
 import com.uth.labodc.model.entity.Project;
-import com.uth.labodc.model.entity.ProjectRejection;
 import com.uth.labodc.model.entity.ProjectMember;
 import com.uth.labodc.model.enums.ProjectStatus;
 import com.uth.labodc.repository.ProjectMemberRepository;
@@ -64,43 +63,12 @@ public class ProjectManagementService {
                 try {
                     Project p = mapToProject(row);
                     
-                    // Apply validated filter if provided
-                    if (validatedFilter != null && !validatedFilter.equals(p.getValidated())) {
+                    // Apply validated and search filters if provided
+                    if (!matchesFilters(p, validatedFilter, searchText)) {
                         continue;
                     }
                     
-                    // Apply search filter if provided
-                    if (searchText != null && !searchText.trim().isEmpty()) {
-                        String search = searchText.toLowerCase();
-                        boolean matches = (p.getTitle() != null && p.getTitle().toLowerCase().contains(search)) ||
-                                        (p.getDescription() != null && p.getDescription().toLowerCase().contains(search));
-                        if (!matches) {
-                            continue;
-                        }
-                    }
-                    
-                    int totalTeamMembers = safeCountMembers(p.getId());
-                    int totalApplications = safeCountApplications(p.getId());
-                    
-                    ProjectListDTO dto = ProjectListDTO.builder()
-                            .id(p.getId())
-                            .enterpriseId(p.getEnterpriseId())
-                            .title(p.getTitle())
-                            .description(p.getDescription())
-                            .status(p.getStatus())
-                            .validated(p.getValidated())
-                            .validatedAt(p.getValidatedAt())
-                            .budget(p.getBudget())
-                            .numberOfStudents(p.getNumberOfStudents())
-                            .currentMembersCount(p.getCurrentMembersCount())
-                            .progressPercentage(p.getProgressPercentage())
-                            .startDate(p.getStartDate())
-                            .endDate(p.getEndDate())
-                            .createdAt(p.getCreatedAt())
-                            .totalTeamMembers(totalTeamMembers)
-                            .totalApplications(totalApplications)
-                            .technologies(p.getTechnologies())
-                            .build();
+                    ProjectListDTO dto = toProjectListDTO(p, p.getTechnologies());
                     
                     log.debug("Mapped project: id={}, title={}, validated={}, status={}", 
                             dto.getId(), dto.getTitle(), dto.getValidated(), dto.getStatus());
@@ -136,6 +104,43 @@ public class ProjectManagementService {
         return 31; // 0-based index of last column
     }
 
+    private boolean matchesFilters(Project p, String validatedFilter, String searchText) {
+        if (validatedFilter != null && !validatedFilter.equals(p.getValidated())) {
+            return false;
+        }
+        if (searchText == null || searchText.trim().isEmpty()) {
+            return true;
+        }
+        String search = searchText.toLowerCase();
+        return (p.getTitle() != null && p.getTitle().toLowerCase().contains(search))
+                || (p.getDescription() != null && p.getDescription().toLowerCase().contains(search));
+    }
+
+    private ProjectListDTO toProjectListDTO(Project p, List<String> technologies) {
+        int totalTeamMembers = safeCountMembers(p.getId());
+        int totalApplications = safeCountApplications(p.getId());
+
+        return ProjectListDTO.builder()
+                .id(p.getId())
+                .enterpriseId(p.getEnterpriseId())
+                .title(p.getTitle())
+                .description(p.getDescription())
+                .status(p.getStatus())
+                .validated(p.getValidated())
+                .validatedAt(p.getValidatedAt())
+                .budget(p.getBudget())
+                .numberOfStudents(p.getNumberOfStudents())
+                .currentMembersCount(p.getCurrentMembersCount())
+                .progressPercentage(p.getProgressPercentage())
+                .startDate(p.getStartDate())
+                .endDate(p.getEndDate())
+                .createdAt(p.getCreatedAt())
+                .totalTeamMembers(totalTeamMembers)
+                .totalApplications(totalApplications)
+                .technologies(technologies)
+                .build();
+    }
+
     private int safeCountMembers(Long projectId) {
         try {
             Integer approved = projectMemberRepository.countByProjectIdAndStatus(
@@ -165,41 +170,11 @@ public class ProjectManagementService {
         List<ProjectListDTO> result = new ArrayList<>();
 
         for (Project p : projects) {
-            if (validatedFilter != null && !validatedFilter.equals(p.getValidated())) {
+            if (!matchesFilters(p, validatedFilter, searchText)) {
                 continue;
             }
-            if (searchText != null && !searchText.trim().isEmpty()) {
-                String search = searchText.toLowerCase();
-                boolean matches = (p.getTitle() != null && p.getTitle().toLowerCase().contains(search)) ||
-                        (p.getDescription() != null && p.getDescription().toLowerCase().contains(search));
-                if (!matches) {
-                    continue;
-                }
-            }
 
-            int totalTeamMembers = safeCountMembers(p.getId());
-            int totalApplications = safeCountApplications(p.getId());
-
-            ProjectListDTO dto = ProjectListDTO.builder()
-                    .id(p.getId())
-                    .enterpriseId(p.getEnterpriseId())
-                    .title(p.getTitle())
-                    .description(p.getDescription())
-                    .status(p.getStatus())
-                    .validated(p.getValidated())
-                    .validatedAt(p.getValidatedAt())
-                    .budget(p.getBudget())
-                    .numberOfStudents(p.getNumberOfStudents())
-                    .currentMembersCount(p.getCurrentMembersCount())
-                    .progressPercentage(p.getProgressPercentage())
-                    .startDate(p.getStartDate())
-                    .endDate(p.getEndDate())
-                    .createdAt(p.getCreatedAt())
-                    .totalTeamMembers(totalTeamMembers)
-                    .totalApplications(totalApplications)
-                    .technologies(new ArrayList<>())
-                    .build();
-            result.add(dto);
+            result.add(toProjectListDTO(p, new ArrayList<>()));
         }
 
         log.info("Fallback query returned {} projects after filtering", result.size());
