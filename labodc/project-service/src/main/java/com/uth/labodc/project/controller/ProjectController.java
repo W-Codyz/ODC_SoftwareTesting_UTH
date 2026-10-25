@@ -36,7 +36,7 @@ public class ProjectController {
     }
 
     @PutMapping("/{id}/approve")
-    public ProjectResponse approve(@PathVariable("id") long id) {
+    public ProjectResponse approve(@PathVariable long id) {
         return projectService.approve(id);
     }
 
