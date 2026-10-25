@@ -46,7 +46,7 @@ public class ProjectController {
     }
 
     @PostMapping("/{id}/join")
-    public ProjectDetailResponse join(@PathVariable("id") long id, Authentication authentication) {
+        public ProjectDetailResponse join(@PathVariable long id, Authentication authentication)  {
         AuthenticatedUser user = (AuthenticatedUser) authentication.getPrincipal();
         return projectService.join(id, user);
     }
