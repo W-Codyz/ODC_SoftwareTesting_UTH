@@ -8,7 +8,6 @@ import com.uth.labodc.model.entity.User;
 import com.uth.labodc.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -122,7 +121,7 @@ public class TalentController {
         User user = currentUser(authentication);
         try {
             talentService.removeSkill(user.getId(), id);
-            return ResponseEntity.ok(ApiResponse.success("Skill removed successfully", (Void) null));
+            return ResponseEntity.ok(ApiResponse.success("Skill removed successfully", null));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(ApiResponse.error(e.getMessage()));
