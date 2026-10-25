@@ -67,17 +67,7 @@ public class TalentAdminService {
         
         Talent talent = new Talent();
         talent.setUserId(userId);
-        talent.setFullName(dto.getFullName());
-        talent.setStudentId(dto.getStudentId());
-        talent.setDateOfBirth(dto.getDateOfBirth());
-        talent.setFaculty(dto.getFaculty());
-        talent.setMajor(dto.getMajor());
-        talent.setYearOfStudy(dto.getYearOfStudy());
-        talent.setGpa(dto.getGpa() != null ? BigDecimal.valueOf(dto.getGpa()) : null);
-        talent.setGithubUrl(dto.getGithubUrl());
-        talent.setLinkedinUrl(dto.getLinkedinUrl());
-        talent.setPortfolioUrl(dto.getPortfolioUrl());
-        talent.setBio(dto.getBio());
+        applyBasicFields(talent, dto);
         talent.setAvailableForProjects(dto.getAvailable() != null ? dto.getAvailable() : true);
         talent.setCreatedAt(LocalDateTime.now());
         talent.setUpdatedAt(LocalDateTime.now());
@@ -108,17 +98,7 @@ public class TalentAdminService {
                 .orElseThrow(() -> new RuntimeException("Talent not found with id: " + id));
         
         // Update basic fields
-        talent.setFullName(dto.getFullName());
-        talent.setStudentId(dto.getStudentId());
-        talent.setDateOfBirth(dto.getDateOfBirth());
-        talent.setFaculty(dto.getFaculty());
-        talent.setMajor(dto.getMajor());
-        talent.setYearOfStudy(dto.getYearOfStudy());
-        talent.setGpa(dto.getGpa() != null ? BigDecimal.valueOf(dto.getGpa()) : null);
-        talent.setGithubUrl(dto.getGithubUrl());
-        talent.setLinkedinUrl(dto.getLinkedinUrl());
-        talent.setPortfolioUrl(dto.getPortfolioUrl());
-        talent.setBio(dto.getBio());
+        applyBasicFields(talent, dto);
         talent.setAvailableForProjects(dto.getAvailable());
         talent.setUpdatedAt(LocalDateTime.now());
         
@@ -156,6 +136,20 @@ public class TalentAdminService {
         
         log.info("Talent {} updated successfully", id);
         return convertToDTO(saved);
+    }
+    
+    private void applyBasicFields(Talent talent, TalentDTO dto) {
+        talent.setFullName(dto.getFullName());
+        talent.setStudentId(dto.getStudentId());
+        talent.setDateOfBirth(dto.getDateOfBirth());
+        talent.setFaculty(dto.getFaculty());
+        talent.setMajor(dto.getMajor());
+        talent.setYearOfStudy(dto.getYearOfStudy());
+        talent.setGpa(dto.getGpa() != null ? BigDecimal.valueOf(dto.getGpa()) : null);
+        talent.setGithubUrl(dto.getGithubUrl());
+        talent.setLinkedinUrl(dto.getLinkedinUrl());
+        talent.setPortfolioUrl(dto.getPortfolioUrl());
+        talent.setBio(dto.getBio());
     }
     
     @Transactional
