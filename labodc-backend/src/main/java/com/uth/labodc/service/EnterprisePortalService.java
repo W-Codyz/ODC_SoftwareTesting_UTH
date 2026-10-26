@@ -355,6 +355,22 @@ public class EnterprisePortalService {
 
     public List<EnterpriseProposalDTO> getProposals(User user, String status) {
         long enterpriseId = requireEnterpriseId(user);
+        Map<String, Object> params = new java.util.HashMap<>();
+        params.put("enterpriseId", enterpriseId);
+        if (status != null && !status.equalsIgnoreCase("ALL")) {
+            params.put("status", status);
+        }
+
+        return jdbcTemplate.query(buildProposalsSql(status), params, (rs, rowNum) -> EnterpriseProposalDTO.builder()
+                .key(String.valueOf(rs.getLong("id")))
+                .name(rs.getString("title"))
+                .budget(rs.getDouble("budget"))
+                .status(rs.getString("proposal_status"))
+                .createdAt(toLocalDateTime(rs.getTimestamp("created_at")))
+                .build());
+    }
+
+    private String buildProposalsSql(String status) {
         String sql = """
                 SELECT id, title, budget, created_at,
                          CASE
@@ -366,24 +382,14 @@ public class EnterprisePortalService {
                 WHERE enterprise_id = :enterpriseId AND deleted_at IS NULL
                 """;
         StringBuilder sb = new StringBuilder(sql);
-        Map<String, Object> params = new java.util.HashMap<>();
-        params.put("enterpriseId", enterpriseId);
         if (status != null && !status.equalsIgnoreCase("ALL")) {
             sb.append(" AND (");
             sb.append("CASE WHEN status = 'REJECTED' THEN 'REJECTED' ");
             sb.append("WHEN validated = 'approved' OR status IN ('VALIDATED', 'RECRUITING', 'IN_PROGRESS', 'COMPLETED') THEN 'APPROVED' ");
             sb.append("ELSE 'PENDING' END) = :status");
-            params.put("status", status);
         }
         sb.append(" ORDER BY created_at DESC");
-
-        return jdbcTemplate.query(sb.toString(), params, (rs, rowNum) -> EnterpriseProposalDTO.builder()
-                .key(String.valueOf(rs.getLong("id")))
-                .name(rs.getString("title"))
-                .budget(rs.getDouble("budget"))
-                .status(rs.getString("proposal_status"))
-                .createdAt(toLocalDateTime(rs.getTimestamp("created_at")))
-                .build());
+        return sb.toString();
     }
 
     public EnterprisePaymentSummaryDTO getPaymentSummary(User user) {
