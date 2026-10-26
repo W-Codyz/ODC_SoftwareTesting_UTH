@@ -176,10 +176,10 @@ public class DashboardService {
             String status = "info";
             
             if (project.getStatus() == ProjectStatus.COMPLETED) {
-                description = String.format("Dự án hoàn thành thành công");
+                description = "Dự án hoàn thành thành công";
                 status = "success";
             } else if (project.getStatus() == ProjectStatus.RECRUITING) {
-                description = String.format("Dự án đang tuyển thành viên");
+                description = "Dự án đang tuyển thành viên";
                 status = "warning";
             }
             
