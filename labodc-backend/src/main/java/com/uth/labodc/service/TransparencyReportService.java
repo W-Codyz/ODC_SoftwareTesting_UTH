@@ -27,8 +27,6 @@ public class TransparencyReportService {
     private final EnterpriseRepository enterpriseRepository;
     private final UserRepository userRepository;
     private final TransparencyReportRepository transparencyReportRepository;
-    private final FundAllocationRepository fundAllocationRepository;
-    private final PaymentRepository paymentRepository;
     private final CloudinaryService cloudinaryService;
     private final PDFGeneratorService pdfGeneratorService;
     
@@ -216,9 +214,7 @@ public class TransparencyReportService {
         if (stats.getFinancials() != null) {
             statsMap.put("financials", buildFinancialStatsMap(stats.getFinancials()));
         }
-            statsMap.put("financials", buildFinancialStatsMap(stats.getFinancials()));
-        }
-        
+
         // Performance stats
         if (stats.getPerformance() != null) {
             statsMap.put("performance", buildPerformanceStatsMap(stats.getPerformance()));
@@ -637,15 +633,12 @@ public class TransparencyReportService {
         }
         
         try {
-            // Fetch PDF from Cloudinary URL
-            java.net.URL url = new java.net.URL(report.getPdfUrl());
-            java.io.InputStream in = url.openStream();
-            byte[] pdfBytes = in.readAllBytes();
-            in.close();
-            
-            log.info("PDF downloaded successfully for report: {}", reportId);
-            return pdfBytes;
-            
+            java.net.URI uri = java.net.URI.create(report.getPdfUrl());
+            try (java.io.InputStream in = uri.toURL().openStream()) {
+                byte[] pdfBytes = in.readAllBytes();
+                log.info("PDF downloaded successfully for report: {}", reportId);
+                return pdfBytes;
+            }
         } catch (Exception e) {
             log.error("Failed to download PDF from Cloudinary", e);
             throw new RuntimeException("Failed to download PDF: " + e.getMessage());
