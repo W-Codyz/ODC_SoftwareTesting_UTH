@@ -417,7 +417,6 @@ public class ProjectDataService {
     private String mapDbStatus(String dbStatus) {
         return switch (dbStatus) {
             case "DRAFT" -> "draft";
-            case "PENDING_VALIDATION", "ON_HOLD" -> "pending";
             case "VALIDATED", "RECRUITING" -> "approved";
             case "REJECTED" -> "rejected";
             case "IN_PROGRESS" -> "inProgress";
