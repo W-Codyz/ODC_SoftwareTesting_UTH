@@ -231,11 +231,11 @@ public class MentorAdminService {
                 : technologies.stream()
                     .filter(t -> t != null && !t.trim().isEmpty())
                     .map(t -> t.toLowerCase(Locale.ROOT))
-                    .collect(Collectors.toList());
+                    .toList();
 
         List<MentorDTO> all = mentorRepository.findAll().stream()
                 .map(this::convertToDTO)
-                .collect(Collectors.toList());
+                .toList();
 
         List<MentorDTO> available = new ArrayList<>();
         for (MentorDTO m : all) {
