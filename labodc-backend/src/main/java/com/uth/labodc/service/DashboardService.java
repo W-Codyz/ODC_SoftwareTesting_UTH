@@ -66,7 +66,7 @@ public class DashboardService {
             // Enterprise Stats
             long totalEnterprises = enterpriseRepository.count();
             long newEnterprises = enterpriseRepository.countNewEnterprises(thirtyDaysAgo);
-            long activeEnterprises = 0; // Simplified - will fix later
+            long activeEnterprises;
             try {
                 activeEnterprises = enterpriseRepository.countActiveEnterprises();
             } catch (Exception e) {
@@ -85,7 +85,7 @@ public class DashboardService {
             // Talent Stats
             long totalTalents = talentRepository.count();
             long newTalents = talentRepository.countNewTalents(thirtyDaysAgo);
-            long activeTalents = 0;
+            long activeTalents;
             try {
                 activeTalents = talentRepository.countActiveTalents();
             } catch (Exception e) {
