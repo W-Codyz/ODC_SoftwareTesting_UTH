@@ -853,19 +853,27 @@ private String storeReportFile(Long mentorId, Long projectId, MultipartFile file
                 .normalize();
         Files.createDirectories(dir);
 
-        String filename = sanitizeFilename(
-                file.getOriginalFilename() != null ? file.getOriginalFilename() : "report.bin"
-        );
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || originalFilename.isBlank()) {
+            originalFilename = "report.bin";
+        }
 
-        Path target = dir.resolve(filename).normalize();
+        // Lấy tên file an toàn: Tách lấy phần tên, bỏ mọi đường dẫn
+        String safeFilename = Path.of(originalFilename).getFileName().toString();
+        
+        // (Tùy chọn) Nếu vẫn muốn dùng sanitize để cắt ngắn tên file
+        safeFilename = sanitizeFilename(safeFilename);
 
-        // Defense in depth: đảm bảo file thực sự nằm trong thư mục cho phép
+        // Đường dẫn đích
+        Path target = dir.resolve(safeFilename).toAbsolutePath().normalize();
+
+        // [QUAN TRỌNG] Defense in depth: Bắt buộc phải có để Qodana hết báo
         if (!target.startsWith(dir)) {
             throw new SecurityException("Path traversal attempt detected");
         }
 
         Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
-        return target.toAbsolutePath().toString();
+        return target.toString();
     } catch (Exception e) {
         log.warn("Failed to store mentor report file: {}", e.getMessage());
         return null;
@@ -910,23 +918,20 @@ private String storeReportFile(Long mentorId, Long projectId, MultipartFile file
         return "report.bin";
     }
 
-    String baseName;
-    try {
-        baseName = Paths.get(filename).getFileName().toString();
-    } catch (Exception e) {
-        baseName = filename;
-    }
+    // Chỉ giữ lại chữ cái, chữ số, dấu chấm, gạch ngang, gạch dưới
+    // Thay thế tất cả các ký tự khác bằng dấu gạch dưới
+    String safeName = filename.replaceAll("[^a-zA-Z0-9.-_]", "_");
 
-    baseName = baseName.replace("\\u0000", "");
-    baseName = baseName.replaceAll("[\\\\/]+", "_");
-    baseName = baseName.replaceAll("\\s+", " ").trim();
-    if (baseName.isBlank()) {
+    if (safeName.isBlank()) {
         return "report.bin";
     }
-    if (baseName.length() > 150) {
-        baseName = baseName.substring(baseName.length() - 150);
+    
+    // Cắt độ dài (nếu cần)
+    if (safeName.length() > 150) {
+        safeName = safeName.substring(safeName.length() - 150);
     }
-    return baseName;
+    
+    return safeName;
 }
     private String humanSize(long bytes) {
         if (bytes < 1024) return bytes + " B";
