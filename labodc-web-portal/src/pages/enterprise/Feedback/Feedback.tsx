@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+﻿import React, { useCallback, useEffect, useState } from 'react';
 import { Card, Form, Input, Button, Rate, Select, message, List, Tag, Switch, Divider } from 'antd';
 import { MessageOutlined } from '@ant-design/icons';
 import { useSearchParams } from 'react-router-dom';
@@ -14,6 +14,18 @@ const Feedback: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
 
+  const loadFeedbacks = useCallback(async () => {
+    const list = await getFeedbacks();
+    const all = Array.isArray(list) ? list : [];
+    const projectIdParam = searchParams.get('projectId');
+    if (projectIdParam) {
+      const projectId = Number(projectIdParam);
+      setFeedbacks(all.filter((f) => Number(f.projectId) === projectId));
+    } else {
+      setFeedbacks(all);
+    }
+  }, [searchParams]);
+
   useEffect(() => {
     const loadProjects = async () => {
       try {
@@ -25,18 +37,10 @@ const Feedback: React.FC = () => {
       }
     };
 
-    const loadFeedbacks = async () => {
+    const loadFeedbacksWithLoading = async () => {
       try {
         setLoading(true);
-        const list = await getFeedbacks();
-        const all = Array.isArray(list) ? list : [];
-        const projectIdParam = searchParams.get('projectId');
-        if (projectIdParam) {
-          const projectId = Number(projectIdParam);
-          setFeedbacks(all.filter((f) => Number(f.projectId) === projectId));
-        } else {
-          setFeedbacks(all);
-        }
+        await loadFeedbacks();
       } catch {
         setFeedbacks([]);
       } finally {
@@ -45,8 +49,8 @@ const Feedback: React.FC = () => {
     };
 
     loadProjects();
-    loadFeedbacks();
-  }, [searchParams]);
+    loadFeedbacksWithLoading();
+  }, [loadFeedbacks]);
 
   const onSubmit = async () => {
     try {
@@ -71,15 +75,7 @@ const Feedback: React.FC = () => {
       });
       message.success('Gửi đánh giá thành công');
       form.resetFields();
-      const list = await getFeedbacks();
-      const all = Array.isArray(list) ? list : [];
-      const projectIdParam = searchParams.get('projectId');
-      if (projectIdParam) {
-        const projectId = Number(projectIdParam);
-        setFeedbacks(all.filter((f) => Number(f.projectId) === projectId));
-      } else {
-        setFeedbacks(all);
-      }
+      await loadFeedbacks();
     } catch (err: any) {
       if (err?.errorFields) return;
       message.error(err?.message || 'Không thể gửi đánh giá');
