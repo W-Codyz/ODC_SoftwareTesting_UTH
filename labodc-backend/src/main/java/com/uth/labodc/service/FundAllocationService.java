@@ -192,11 +192,6 @@ public class FundAllocationService {
         if (request.getDistributionId() != null) {
             teamDistribution = teamFundDistributionRepository.findById(request.getDistributionId())
                     .orElseThrow(() -> new RuntimeException("Team distribution not found: " + request.getDistributionId()));
-            teamDistribution.setTotalTeamAmount(totalRequested);
-            teamDistribution.setStatus("DISBURSED");
-            teamDistribution.setApprovedByLab(allocation.getValidatedBy());
-            teamDistribution.setApprovedByLabAt(java.time.LocalDateTime.now());
-            teamDistribution = teamFundDistributionRepository.save(teamDistribution);
         } else {
             Long submittedBy = request.getTeamDistribution().get(0).getTalentId();
             if (submittedBy == null) {
@@ -207,13 +202,14 @@ public class FundAllocationService {
                     .projectId(projectId)
                     .allocationId(allocation.getId())
                     .submittedBy(submittedBy)
-                    .totalTeamAmount(totalRequested)
-                    .status("DISBURSED")
-                    .approvedByLab(allocation.getValidatedBy())
-                    .approvedByLabAt(java.time.LocalDateTime.now())
                     .build();
-            teamDistribution = teamFundDistributionRepository.save(teamDistribution);
         }
+
+        teamDistribution.setTotalTeamAmount(totalRequested);
+        teamDistribution.setStatus("DISBURSED");
+        teamDistribution.setApprovedByLab(allocation.getValidatedBy());
+        teamDistribution.setApprovedByLabAt(java.time.LocalDateTime.now());
+        teamDistribution = teamFundDistributionRepository.save(teamDistribution);
 
         for (DisburseTeamRequest.TeamMemberDisbursement member : request.getTeamDistribution()) {
             if (member.getTalentId() == null) {
