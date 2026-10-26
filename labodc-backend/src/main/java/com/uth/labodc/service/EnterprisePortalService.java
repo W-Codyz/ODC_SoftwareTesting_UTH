@@ -531,24 +531,7 @@ public class EnterprisePortalService {
                 WHERE f.enterprise_id = :enterpriseId
                 ORDER BY f.created_at DESC
                 """;
-        return jdbcTemplate.query(sql, Map.of("enterpriseId", enterpriseId), (rs, rowNum) -> EnterpriseFeedbackDTO.builder()
-                .id(rs.getLong("id"))
-                .projectId(rs.getLong("project_id"))
-                .projectName(rs.getString("title"))
-                .overallRating(rs.getObject("overall_rating") != null ? rs.getDouble("overall_rating") : null)
-                .qualityRating(rs.getObject("quality_rating") != null ? rs.getDouble("quality_rating") : null)
-                .communicationRating(rs.getObject("communication_rating") != null ? rs.getDouble("communication_rating") : null)
-                .timelineRating(rs.getObject("timeline_rating") != null ? rs.getDouble("timeline_rating") : null)
-                .professionalismRating(rs.getObject("professionalism_rating") != null ? rs.getDouble("professionalism_rating") : null)
-                .positiveFeedback(rs.getString("positive_feedback"))
-                .negativeFeedback(rs.getString("negative_feedback"))
-                .suggestions(rs.getString("suggestions"))
-                .wouldRecommend(rs.getObject("would_recommend") != null ? rs.getBoolean("would_recommend") : null)
-                .wouldWorkAgain(rs.getObject("would_work_again") != null ? rs.getBoolean("would_work_again") : null)
-                .status(rs.getString("status"))
-                .submittedAt(rs.getTimestamp("submitted_at") != null ? rs.getTimestamp("submitted_at").toString() : null)
-                .createdAt(rs.getTimestamp("created_at") != null ? rs.getTimestamp("created_at").toString() : null)
-                .build());
+        return jdbcTemplate.query(sql, Map.of("enterpriseId", enterpriseId), this::mapEnterpriseFeedback);
     }
 
     public EnterpriseFeedbackDTO createFeedback(User user, CreateEnterpriseFeedbackRequest request) {
@@ -606,27 +589,31 @@ public class EnterprisePortalService {
                 ORDER BY f.id DESC
                 LIMIT 1
                 """;
-        List<EnterpriseFeedbackDTO> rows = jdbcTemplate.query(fetchSql, Map.of("enterpriseId", enterpriseId),
-                (rs, rowNum) -> EnterpriseFeedbackDTO.builder()
-                        .id(rs.getLong("id"))
-                        .projectId(rs.getLong("project_id"))
-                        .projectName(rs.getString("title"))
-                        .overallRating(rs.getObject("overall_rating") != null ? rs.getDouble("overall_rating") : null)
-                        .qualityRating(rs.getObject("quality_rating") != null ? rs.getDouble("quality_rating") : null)
-                        .communicationRating(rs.getObject("communication_rating") != null ? rs.getDouble("communication_rating") : null)
-                        .timelineRating(rs.getObject("timeline_rating") != null ? rs.getDouble("timeline_rating") : null)
-                        .professionalismRating(rs.getObject("professionalism_rating") != null ? rs.getDouble("professionalism_rating") : null)
-                        .positiveFeedback(rs.getString("positive_feedback"))
-                        .negativeFeedback(rs.getString("negative_feedback"))
-                        .suggestions(rs.getString("suggestions"))
-                        .wouldRecommend(rs.getObject("would_recommend") != null ? rs.getBoolean("would_recommend") : null)
-                        .wouldWorkAgain(rs.getObject("would_work_again") != null ? rs.getBoolean("would_work_again") : null)
-                        .status(rs.getString("status"))
-                        .submittedAt(rs.getTimestamp("submitted_at") != null ? rs.getTimestamp("submitted_at").toString() : null)
-                        .createdAt(rs.getTimestamp("created_at") != null ? rs.getTimestamp("created_at").toString() : null)
-                        .build());
+        List<EnterpriseFeedbackDTO> rows = jdbcTemplate.query(fetchSql, Map.of("enterpriseId", enterpriseId), this::mapEnterpriseFeedback);
         return rows.isEmpty() ? null : rows.get(0);
     }
+
+    private EnterpriseFeedbackDTO mapEnterpriseFeedback(ResultSet rs, int rowNum) throws SQLException {
+        return EnterpriseFeedbackDTO.builder()
+                .id(rs.getLong("id"))
+                .projectId(rs.getLong("project_id"))
+                .projectName(rs.getString("title"))
+                .overallRating(rs.getObject("overall_rating") != null ? rs.getDouble("overall_rating") : null)
+                .qualityRating(rs.getObject("quality_rating") != null ? rs.getDouble("quality_rating") : null)
+                .communicationRating(rs.getObject("communication_rating") != null ? rs.getDouble("communication_rating") : null)
+                .timelineRating(rs.getObject("timeline_rating") != null ? rs.getDouble("timeline_rating") : null)
+                .professionalismRating(rs.getObject("professionalism_rating") != null ? rs.getDouble("professionalism_rating") : null)
+                .positiveFeedback(rs.getString("positive_feedback"))
+                .negativeFeedback(rs.getString("negative_feedback"))
+                .suggestions(rs.getString("suggestions"))
+                .wouldRecommend(rs.getObject("would_recommend") != null ? rs.getBoolean("would_recommend") : null)
+                .wouldWorkAgain(rs.getObject("would_work_again") != null ? rs.getBoolean("would_work_again") : null)
+                .status(rs.getString("status"))
+                .submittedAt(rs.getTimestamp("submitted_at") != null ? rs.getTimestamp("submitted_at").toString() : null)
+                .createdAt(rs.getTimestamp("created_at") != null ? rs.getTimestamp("created_at").toString() : null)
+                .build();
+    }
+
 
     private void ensureProjectCompleted(Long projectId, long enterpriseId) {
         Integer progress = jdbcTemplate.query("""
