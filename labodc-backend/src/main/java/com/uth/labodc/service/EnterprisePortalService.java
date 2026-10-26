@@ -160,22 +160,7 @@ public class EnterprisePortalService {
 
     public List<EnterpriseProjectItemDTO> getProjects(User user, String status) {
         long enterpriseId = requireEnterpriseId(user);
-        String base = """
-                SELECT p.id, p.title, p.budget, p.progress_percentage, p.status,
-                       COALESCE(spent.total_spent, 0) AS spent,
-                       p.current_members_count,
-                       p.start_date,
-                       p.end_date
-                FROM projects p
-                LEFT JOIN (
-                    SELECT project_id, SUM(amount) AS total_spent
-                    FROM payments
-                    WHERE status = 'COMPLETED'
-                    GROUP BY project_id
-                ) spent ON spent.project_id = p.id
-                WHERE p.enterprise_id = :enterpriseId AND p.deleted_at IS NULL
-                """;
-        StringBuilder sql = new StringBuilder(base);
+        StringBuilder sql = new StringBuilder(buildProjectsBaseSql());
         Map<String, Object> params = new java.util.HashMap<>();
         params.put("enterpriseId", enterpriseId);
         if (status != null && !status.equalsIgnoreCase("ALL")) {
@@ -195,6 +180,24 @@ public class EnterprisePortalService {
                 .startDate(rs.getDate("start_date") != null ? rs.getDate("start_date").toString() : null)
                 .endDate(rs.getDate("end_date") != null ? rs.getDate("end_date").toString() : null)
                 .build());
+    }
+
+    private String buildProjectsBaseSql() {
+        return """
+                SELECT p.id, p.title, p.budget, p.progress_percentage, p.status,
+                       COALESCE(spent.total_spent, 0) AS spent,
+                       p.current_members_count,
+                       p.start_date,
+                       p.end_date
+                FROM projects p
+                LEFT JOIN (
+                    SELECT project_id, SUM(amount) AS total_spent
+                    FROM payments
+                    WHERE status = 'COMPLETED'
+                    GROUP BY project_id
+                ) spent ON spent.project_id = p.id
+                WHERE p.enterprise_id = :enterpriseId AND p.deleted_at IS NULL
+                """;
     }
 
     public List<EnterpriseMentorOptionDTO> getMentors(User user) {
