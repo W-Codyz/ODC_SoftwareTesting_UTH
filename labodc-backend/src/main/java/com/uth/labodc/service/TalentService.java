@@ -6,8 +6,6 @@ import com.uth.labodc.model.entity.*;
 import com.uth.labodc.model.entity.TalentSkill.SkillLevel;
 import com.uth.labodc.model.entity.ProjectMember.MemberStatus;
 import com.uth.labodc.repository.*;
-import com.uth.labodc.dto.talent.TalentTaskSubmissionDTO;
-import com.uth.labodc.model.entity.MentorTaskSubmission;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -657,16 +655,22 @@ public class TalentService {
     private StoredFileInfo storeTaskSubmissionFile(Long talentId, Long taskId, MultipartFile file) {
         try {
             String base = System.getProperty("java.io.tmpdir");
+            java.nio.file.Path baseDir = java.nio.file.Path.of(base, "labodc", "task-submissions").toAbsolutePath().normalize();
             java.nio.file.Path dir = java.nio.file.Path.of(
                     base,
                     "labodc",
                     "task-submissions",
                     String.valueOf(taskId),
-                    String.valueOf(talentId)
-            );
+                    String.valueOf(talentId)).toAbsolutePath().normalize();
+            if (!dir.startsWith(baseDir)) {
+                throw new IllegalArgumentException("Invalid storage path");
+            }
             java.nio.file.Files.createDirectories(dir);
             String filename = sanitizeFilename(file.getOriginalFilename() != null ? file.getOriginalFilename() : "submission.bin");
-            java.nio.file.Path target = dir.resolve(filename);
+            java.nio.file.Path target = dir.resolve(filename).normalize();
+            if (!target.startsWith(dir)) {
+                throw new IllegalArgumentException("Invalid file name");
+            }
             java.nio.file.Files.copy(file.getInputStream(), target, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
             return new StoredFileInfo(filename, target.toAbsolutePath().toString(), file.getSize());
         } catch (Exception e) {
