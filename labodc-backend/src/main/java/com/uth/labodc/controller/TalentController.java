@@ -7,8 +7,6 @@ import com.uth.labodc.exception.ResourceNotFoundException;
 import com.uth.labodc.model.entity.User;
 import com.uth.labodc.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +21,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/talent")
 @RequiredArgsConstructor
-@Slf4j
 public class TalentController {
     
     private final TalentService talentService;
@@ -122,8 +119,8 @@ public class TalentController {
         User user = currentUser(authentication);
         try {
             talentService.removeSkill(user.getId(), id);
-            return ResponseEntity.ok(ApiResponse.success("Skill removed successfully", (Void) null));
-        } catch (Exception e) {
+            return ResponseEntity.ok(ApiResponse.success("Skill removed successfully", null));
+        } catch (RuntimeException e) {
             return ResponseEntity.badRequest()
                     .body(ApiResponse.error(e.getMessage()));
         }
@@ -211,7 +208,7 @@ public class TalentController {
 
     /**
      * POST /api/talent/tasks/{taskId}/submit
-     * Talent ná»™p file bÃ¡o cÃ¡o cho nhiá»‡m vá»¥
+     * Talent nộp file báo cáo cho nhiệm vụ
      */
     @PostMapping(value = "/tasks/{taskId}/submit", consumes = "multipart/form-data")
     public ResponseEntity<ApiResponse<TalentTaskSubmissionDTO>> submitTaskReport(
