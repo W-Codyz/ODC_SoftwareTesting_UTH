@@ -41,6 +41,15 @@ const escapeCsv = (value: string | number) => {
   return raw;
 };
 
+const formatList = (value: unknown, fallback: string) =>
+  Array.isArray(value) ? value.join(', ') : fallback;
+
+const formatProjectDetailLists = (detail: any) => ({
+  objectives: formatList(detail?.objectives, detail?.objective ?? '-'),
+  technologies: formatList(detail?.technologies, '-'),
+  skills: formatList(detail?.requiredSkills, '-'),
+});
+
 const Reports: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [selectedProjectKeys, setSelectedProjectKeys] = useState<string[]>([]);
@@ -136,15 +145,7 @@ const Reports: React.FC = () => {
             : 0;
       const unpaidValue =
         typeof budgetValue === 'number' ? Math.max(0, budgetValue - paidTotal) : 0;
-      const objectives = Array.isArray(detail?.objectives)
-        ? detail.objectives.join(', ')
-        : detail?.objective ?? '-';
-      const technologies = Array.isArray(detail?.technologies)
-        ? detail.technologies.join(', ')
-        : '-';
-      const skills = Array.isArray(detail?.requiredSkills)
-        ? detail.requiredSkills.join(', ')
-        : '-';
+      const { objectives, technologies, skills } = formatProjectDetailLists(detail);
 
       return [
         project.name ?? '-',
@@ -250,15 +251,7 @@ const Reports: React.FC = () => {
           typeof budgetValue === 'number' ? formatCurrencyVND(unpaidValue) : '-';
         const startDate = detail?.startDate ?? '-';
         const endDate = detail?.endDate ?? '-';
-        const objectives = Array.isArray(detail?.objectives)
-          ? detail.objectives.join(', ')
-          : detail?.objective ?? '-';
-        const technologies = Array.isArray(detail?.technologies)
-          ? detail.technologies.join(', ')
-          : '-';
-        const skills = Array.isArray(detail?.requiredSkills)
-          ? detail.requiredSkills.join(', ')
-          : '-';
+        const { objectives, technologies, skills } = formatProjectDetailLists(detail);
         const description = detail?.description ?? '-';
         const requirements = detail?.requirements ?? '-';
 
