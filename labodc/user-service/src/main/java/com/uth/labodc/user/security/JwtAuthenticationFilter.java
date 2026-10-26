@@ -2,6 +2,7 @@ package com.uth.labodc.user.security;
 
 import io.jsonwebtoken.Claims;
 import org.springframework.http.HttpHeaders;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
