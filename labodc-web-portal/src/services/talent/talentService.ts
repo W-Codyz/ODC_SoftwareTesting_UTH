@@ -1,73 +1,19 @@
 import axiosInstance from '../api/axios.config';
 import { mockDashboard, mockProjects } from './talentService.mock';
+import type {
+  TalentProfile,
+  TalentSkill,
+  TalentCertification,
+  TalentProject,
+} from '../../types/talent.types';
 
-export interface TalentProfile {
-  id: number;
-  fullName: string;
-  studentId: string;
-  faculty: string;
-  major: string;
-  yearOfStudy: number;
-  email: string;
-  phone?: string;
-  avatarUrl?: string;
-  cvUrl?: string;
-  portfolioUrl?: string;
-  githubUrl?: string;
-  linkedinUrl?: string;
-  bio?: string;
-  gpa?: number;
-  dateOfBirth?: string;
-  expectedGraduation?: string;
-  availableForProjects: boolean;
-  workAvailability?: string;
-  hoursPerWeek?: number;
-  skills: TalentSkill[];
-  certifications: TalentCertification[];
-  projectsCompleted: number;
-  averageRating: number;
-  status: string;
-}
+export type {
+  TalentProfile,
+  TalentSkill,
+  TalentCertification,
+  TalentProject,
+} from '../../types/talent.types';
 
-export interface TalentSkill {
-  id: number;
-  skillName: string;
-  skillCategory?: string;
-  proficiencyLevel: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'EXPERT';
-  yearsOfExperience: number;
-}
-
-export interface TalentCertification {
-  id: number;
-  name: string;
-  issuer?: string;
-  issueDate?: string;
-  expiryDate?: string;
-  credentialUrl?: string;
-  description?: string;
-}
-
-export interface TalentProject {
-  id: number;
-  title: string;
-  description: string;
-  company?: {
-    name: string;
-    logoUrl?: string;
-  };
-  technologies: string[];
-  startDate: string;
-  endDate: string;
-  duration: string;
-  budget: number;
-  allowancePerStudent?: string;
-  numberOfStudents: number;
-  spotsAvailable?: number;
-  skillRequirements: string[];
-  status: string;
-  memberStatus?: string;
-  memberRole?: string;
-}
 
 export interface TalentDashboard {
   stats: {
