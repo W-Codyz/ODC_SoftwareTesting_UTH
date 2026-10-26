@@ -840,21 +840,48 @@ public class MentorPortalService {
         }
     }
 
-    private String storeReportFile(Long mentorId, Long projectId, MultipartFile file) {
-        try {
-            String base = System.getProperty("java.io.tmpdir");
-            Path dir = Path.of(base, "labodc", "mentor-reports", String.valueOf(mentorId), String.valueOf(projectId != null ? projectId : 0));
-            Files.createDirectories(dir);
-            String filename = sanitizeFilename(file.getOriginalFilename() != null ? file.getOriginalFilename() : "report.bin");
-            Path target = dir.resolve(filename);
-            Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
-            return target.toAbsolutePath().toString();
-        } catch (Exception e) {
-            log.warn("Failed to store mentor report file: {}", e.getMessage());
-            return null;
-        }
-    }
+    // private String storeReportFile(Long mentorId, Long projectId, MultipartFile file) {
+    //     try {
+    //         String base = System.getProperty("java.io.tmpdir");
+    //         Path dir = Path.of(base, "labodc", "mentor-reports", String.valueOf(mentorId), String.valueOf(projectId != null ? projectId : 0));
+    //         Files.createDirectories(dir);
+    //         String filename = sanitizeFilename(file.getOriginalFilename() != null ? file.getOriginalFilename() : "report.bin");
+    //         Path target = dir.resolve(filename);
+    //         Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
+    //         return target.toAbsolutePath().toString();
+    //     } catch (Exception e) {
+    //         log.warn("Failed to store mentor report file: {}", e.getMessage());
+    //         return null;
+    //     }
+    // }
+private String storeReportFile(Long mentorId, Long projectId, MultipartFile file) {
+    try {
+        String base = System.getProperty("java.io.tmpdir");
+        Path dir = Path.of(base, "labodc", "mentor-reports",
+                        String.valueOf(mentorId),
+                        String.valueOf(projectId != null ? projectId : 0))
+                .toAbsolutePath()
+                .normalize();
+        Files.createDirectories(dir);
 
+        String filename = sanitizeFilename(
+                file.getOriginalFilename() != null ? file.getOriginalFilename() : "report.bin"
+        );
+
+        Path target = dir.resolve(filename).normalize();
+
+        // Defense in depth: đảm bảo file thực sự nằm trong thư mục cho phép
+        if (!target.startsWith(dir)) {
+            throw new SecurityException("Path traversal attempt detected");
+        }
+
+        Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
+        return target.toAbsolutePath().toString();
+    } catch (Exception e) {
+        log.warn("Failed to store mentor report file: {}", e.getMessage());
+        return null;
+    }
+}
     private String extractFileName(String filePath) {
         if (filePath == null || filePath.isBlank()) {
             return null;
@@ -866,30 +893,52 @@ public class MentorPortalService {
         }
     }
 
+    // private String sanitizeFilename(String filename) {
+    //     if (filename == null || filename.isBlank()) {
+    //         return "report.bin";
+    //     }
+
+    //     String baseName;
+    //     try {
+    //         baseName = Paths.get(filename).getFileName().toString();
+    //     } catch (Exception e) {
+    //         baseName = filename;
+    //     }
+
+    //     baseName = baseName.replace("\\u0000", "");
+    //     baseName = baseName.replaceAll("[\\\\/]+", "_");
+    //     baseName = baseName.replaceAll("\\s+", " ").trim();
+    //     if (baseName.isBlank()) {
+    //         return "report.bin";
+    //     }
+    //     if (baseName.length() > 150) {
+    //         baseName = baseName.substring(baseName.length() - 150);
+    //     }
+    //     return baseName;
+    // }
     private String sanitizeFilename(String filename) {
-        if (filename == null || filename.isBlank()) {
-            return "report.bin";
-        }
-
-        String baseName;
-        try {
-            baseName = Paths.get(filename).getFileName().toString();
-        } catch (Exception e) {
-            baseName = filename;
-        }
-
-        baseName = baseName.replace("\\u0000", "");
-        baseName = baseName.replaceAll("[\\\\/]+", "_");
-        baseName = baseName.replaceAll("\\s+", " ").trim();
-        if (baseName.isBlank()) {
-            return "report.bin";
-        }
-        if (baseName.length() > 150) {
-            baseName = baseName.substring(baseName.length() - 150);
-        }
-        return baseName;
+    if (filename == null || filename.isBlank()) {
+        return "report.bin";
     }
 
+    String baseName;
+    try {
+        baseName = Paths.get(filename).getFileName().toString();
+    } catch (Exception e) {
+        baseName = filename;
+    }
+
+    baseName = baseName.replace("\\u0000", "");
+    baseName = baseName.replaceAll("[\\\\/]+", "_");
+    baseName = baseName.replaceAll("\\s+", " ").trim();
+    if (baseName.isBlank()) {
+        return "report.bin";
+    }
+    if (baseName.length() > 150) {
+        baseName = baseName.substring(baseName.length() - 150);
+    }
+    return baseName;
+}
     private String humanSize(long bytes) {
         if (bytes < 1024) return bytes + " B";
         double kb = bytes / 1024.0;
