@@ -144,22 +144,7 @@ public class EnterpriseService {
         
         Enterprise enterprise = new Enterprise();
         enterprise.setUserId(userId);
-        enterprise.setCompanyName(dto.getCompanyName());
-        enterprise.setTaxCode(dto.getTaxCode());
-        enterprise.setBusinessLicenseNumber(dto.getBusinessLicenseNumber());
-        enterprise.setAddress(dto.getAddress());
-        enterprise.setCity(dto.getCity());
-        enterprise.setDistrict(dto.getDistrict());
-        enterprise.setWard(dto.getWard());
-        enterprise.setRepresentativeName(dto.getRepresentativeName());
-        enterprise.setRepresentativePosition(dto.getRepresentativePosition());
-        enterprise.setContactEmail(dto.getContactEmail());
-        enterprise.setContactPhone(dto.getContactPhone());
-        enterprise.setWebsite(dto.getWebsite());
-        enterprise.setIndustry(dto.getIndustry());
-        enterprise.setCompanySize(dto.getCompanySize());
-        enterprise.setYearEstablished(dto.getYearEstablished());
-        enterprise.setDescription(dto.getDescription());
+        applyDtoToEnterprise(enterprise, dto);
         enterprise.setStatus(EnterpriseStatus.PENDING);
         enterprise.setCreatedAt(LocalDateTime.now());
         enterprise.setUpdatedAt(LocalDateTime.now());
@@ -177,6 +162,22 @@ public class EnterpriseService {
         Enterprise enterprise = findById(id);
         
         // Update fields
+        applyDtoToEnterprise(enterprise, dto);
+        
+        // Update status if provided (Lab Admin can change status manually)
+        if (dto.getStatus() != null) {
+            enterprise.setStatus(EnterpriseStatus.valueOf(dto.getStatus()));
+        }
+        
+        enterprise.setUpdatedAt(LocalDateTime.now());
+        
+        Enterprise saved = enterpriseRepository.save(enterprise);
+        log.info("Enterprise {} updated successfully", id);
+        
+        return convertToDTO(saved);
+    }
+    
+    private void applyDtoToEnterprise(Enterprise enterprise, EnterpriseDTO dto) {
         enterprise.setCompanyName(dto.getCompanyName());
         enterprise.setTaxCode(dto.getTaxCode());
         enterprise.setBusinessLicenseNumber(dto.getBusinessLicenseNumber());
@@ -193,18 +194,6 @@ public class EnterpriseService {
         enterprise.setCompanySize(dto.getCompanySize());
         enterprise.setYearEstablished(dto.getYearEstablished());
         enterprise.setDescription(dto.getDescription());
-        
-        // Update status if provided (Lab Admin can change status manually)
-        if (dto.getStatus() != null) {
-            enterprise.setStatus(EnterpriseStatus.valueOf(dto.getStatus()));
-        }
-        
-        enterprise.setUpdatedAt(LocalDateTime.now());
-        
-        Enterprise saved = enterpriseRepository.save(enterprise);
-        log.info("Enterprise {} updated successfully", id);
-        
-        return convertToDTO(saved);
     }
     
     private EnterpriseDTO convertToDTO(Enterprise enterprise) {
