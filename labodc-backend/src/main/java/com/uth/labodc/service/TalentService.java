@@ -3,15 +3,12 @@ package com.uth.labodc.service;
 import com.uth.labodc.dto.ApiResponse;
 import com.uth.labodc.dto.talent.*;
 import com.uth.labodc.model.entity.*;
-import com.uth.labodc.model.entity.TalentSkill.SkillLevel;
 import com.uth.labodc.model.entity.ProjectMember.MemberStatus;
 import com.uth.labodc.repository.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -20,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -492,10 +488,17 @@ public class TalentService {
         }
         try {
             String base = System.getProperty("java.io.tmpdir");
-            java.nio.file.Path dir = java.nio.file.Path.of(base, "labodc", "talent", String.valueOf(userId), category);
+            java.nio.file.Path baseDir = java.nio.file.Path.of(base, "labodc", "talent").toAbsolutePath().normalize();
+            java.nio.file.Path dir = java.nio.file.Path.of(base, "labodc", "talent", String.valueOf(userId), category).toAbsolutePath().normalize();
+            if (!dir.startsWith(baseDir)) {
+                throw new IllegalArgumentException("Invalid storage path");
+            }
             java.nio.file.Files.createDirectories(dir);
             String filename = sanitizeFilename(file.getOriginalFilename() != null ? file.getOriginalFilename() : category + ".bin");
-            java.nio.file.Path target = dir.resolve(filename);
+            java.nio.file.Path target = dir.resolve(filename).normalize();
+            if (!target.startsWith(dir)) {
+                throw new IllegalArgumentException("Invalid file name");
+            }
             java.nio.file.Files.copy(file.getInputStream(), target, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
             return target.toAbsolutePath().toString();
         } catch (Exception e) {
