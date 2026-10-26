@@ -201,64 +201,69 @@ public class TransparencyReportService {
         
         Map<String, Object> statsMap = new HashMap<>();
         
-        // Project stats
         if (stats.getProjects() != null) {
-            Map<String, Object> projectStats = new HashMap<>();
-            projectStats.put("total", stats.getProjects().getTotal());
-            projectStats.put("newProjects", stats.getProjects().getNewProjects());
-            projectStats.put("ongoing", stats.getProjects().getOngoing());
-            projectStats.put("completed", stats.getProjects().getCompleted());
-            projectStats.put("cancelled", stats.getProjects().getCancelled());
-            projectStats.put("successRate", stats.getProjects().getSuccessRate());
-            statsMap.put("projects", projectStats);
+            statsMap.put("projects", buildProjectStatsMap(stats.getProjects()));
         }
-        
-        // Enterprise stats
         if (stats.getEnterprises() != null) {
-            Map<String, Object> enterpriseStats = new HashMap<>();
-            enterpriseStats.put("total", stats.getEnterprises().getTotal());
-            enterpriseStats.put("newEnterprises", stats.getEnterprises().getNewEnterprises());
-            enterpriseStats.put("active", stats.getEnterprises().getActive());
-            enterpriseStats.put("verified", stats.getEnterprises().getVerified());
-            statsMap.put("enterprises", enterpriseStats);
+            statsMap.put("enterprises", buildEnterpriseStatsMap(stats.getEnterprises()));
         }
-        
-        // Talent stats
         if (stats.getTalents() != null) {
-            Map<String, Object> talentStats = new HashMap<>();
-            talentStats.put("total", stats.getTalents().getTotal());
-            talentStats.put("newTalents", stats.getTalents().getNewTalents());
-            talentStats.put("active", stats.getTalents().getActive());
-            talentStats.put("averageRating", stats.getTalents().getAverageRating());
-            statsMap.put("talents", talentStats);
+            statsMap.put("talents", buildTalentStatsMap(stats.getTalents()));
         }
-        
-        // Mentor stats
         if (stats.getMentors() != null) {
-            Map<String, Object> mentorStats = new HashMap<>();
-            mentorStats.put("total", stats.getMentors().getTotal());
-            mentorStats.put("active", stats.getMentors().getActive());
-            mentorStats.put("averageRating", stats.getMentors().getAverageRating());
-            statsMap.put("mentors", mentorStats);
+            statsMap.put("mentors", buildMentorStatsMap(stats.getMentors()));
         }
-        
-        // Financial stats
         if (stats.getFinancials() != null) {
+            statsMap.put("financials", buildFinancialStatsMap(stats.getFinancials()));
+        }
             statsMap.put("financials", buildFinancialStatsMap(stats.getFinancials()));
         }
         
         // Performance stats
         if (stats.getPerformance() != null) {
-            Map<String, Object> performanceStats = new HashMap<>();
-            performanceStats.put("avgProjectCompletion", stats.getPerformance().getAvgProjectCompletion());
-            performanceStats.put("onTimeDelivery", stats.getPerformance().getOnTimeDelivery());
-            performanceStats.put("customerSatisfaction", stats.getPerformance().getCustomerSatisfaction());
-            statsMap.put("performance", performanceStats);
+            statsMap.put("performance", buildPerformanceStatsMap(stats.getPerformance()));
         }
         
         return statsMap;
     }
     
+    private Map<String, Object> buildProjectStatsMap(TransparencyReportDTO.ProjectStats projects) {
+        Map<String, Object> projectStats = new HashMap<>();
+        projectStats.put("total", projects.getTotal());
+        projectStats.put("newProjects", projects.getNewProjects());
+        projectStats.put("ongoing", projects.getOngoing());
+        projectStats.put("completed", projects.getCompleted());
+        projectStats.put("cancelled", projects.getCancelled());
+        projectStats.put("successRate", projects.getSuccessRate());
+        return projectStats;
+    }
+
+    private Map<String, Object> buildEnterpriseStatsMap(TransparencyReportDTO.EnterpriseStats enterprises) {
+        Map<String, Object> enterpriseStats = new HashMap<>();
+        enterpriseStats.put("total", enterprises.getTotal());
+        enterpriseStats.put("newEnterprises", enterprises.getNewEnterprises());
+        enterpriseStats.put("active", enterprises.getActive());
+        enterpriseStats.put("verified", enterprises.getVerified());
+        return enterpriseStats;
+    }
+
+    private Map<String, Object> buildTalentStatsMap(TransparencyReportDTO.TalentStats talents) {
+        Map<String, Object> talentStats = new HashMap<>();
+        talentStats.put("total", talents.getTotal());
+        talentStats.put("newTalents", talents.getNewTalents());
+        talentStats.put("active", talents.getActive());
+        talentStats.put("averageRating", talents.getAverageRating());
+        return talentStats;
+    }
+
+    private Map<String, Object> buildMentorStatsMap(TransparencyReportDTO.MentorStats mentors) {
+        Map<String, Object> mentorStats = new HashMap<>();
+        mentorStats.put("total", mentors.getTotal());
+        mentorStats.put("active", mentors.getActive());
+        mentorStats.put("averageRating", mentors.getAverageRating());
+        return mentorStats;
+    }
+
     private Map<String, Object> buildFinancialStatsMap(TransparencyReportDTO.FinancialStats financials) {
         Map<String, Object> financialStats = new HashMap<>();
         financialStats.put("totalRevenue", financials.getTotalRevenue());
@@ -268,6 +273,14 @@ public class TransparencyReportService {
         financialStats.put("hybridFundAdvanced", financials.getHybridFundAdvanced());
         financialStats.put("hybridFundRepaid", financials.getHybridFundRepaid());
         return financialStats;
+    }
+
+    private Map<String, Object> buildPerformanceStatsMap(TransparencyReportDTO.PerformanceStats performance) {
+        Map<String, Object> performanceStats = new HashMap<>();
+        performanceStats.put("avgProjectCompletion", performance.getAvgProjectCompletion());
+        performanceStats.put("onTimeDelivery", performance.getOnTimeDelivery());
+        performanceStats.put("customerSatisfaction", performance.getCustomerSatisfaction());
+        return performanceStats;
     }
 
     /**
