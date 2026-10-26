@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { downloadFileFromBlob, tryGetFilename } from '../../../utils/fileUtils';
 import { useNavigate } from 'react-router-dom';
 import {
   UploadOutlined,
@@ -77,21 +78,6 @@ const ReportSubmission: React.FC = () => {
     loadReports();
   }, []);
 
-  const tryGetFilename = (contentDisposition?: string, fallback?: string) => {
-    if (contentDisposition) {
-      const match = /filename\*=UTF-8''([^;]+)|filename="?([^";]+)"?/i.exec(contentDisposition);
-      const raw = match?.[1] || match?.[2];
-      if (raw) {
-        try {
-          return decodeURIComponent(raw);
-        } catch {
-          return raw;
-        }
-      }
-    }
-    return fallback || 'report.bin';
-  };
-
   const downloadJustSubmittedFile = async () => {
     if (!submitted?.hasFile) {
       message.info('Báo cáo vừa nộp không có file đính kèm.');
@@ -106,14 +92,7 @@ const ReportSubmission: React.FC = () => {
         submitted.uploadedFilename || submitted.report.reportName
       );
 
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
+      downloadFileFromBlob(blob, filename);
     } catch (err) {
       console.error('Failed to download just-submitted report file', err);
       message.error('Tải file thất bại.');
@@ -123,13 +102,8 @@ const ReportSubmission: React.FC = () => {
   };
 
   const downloadExistingFile = async (report: IMentorReport) => {
-    if (!report.fileName && !report.fileSize) {
-      message.info('Báo cáo này không có file đính kèm.');
-      return;
-    }
-
-    setDownloadingId(report.id);
     try {
+      setDownloadingId(report.id); // Bật loading cho nút
       const res = await mentorService.downloadReportFile(report.id);
       const blob = res.data as Blob;
       const filename = tryGetFilename(
@@ -137,19 +111,12 @@ const ReportSubmission: React.FC = () => {
         report.fileName || report.reportName
       );
 
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
+      downloadFileFromBlob(blob, filename);
     } catch (err) {
       console.error('Failed to download existing report file', err);
       message.error('Tải file thất bại.');
     } finally {
-      setDownloadingId(null);
+      setDownloadingId(null); // Tắt loading
     }
   };
 
