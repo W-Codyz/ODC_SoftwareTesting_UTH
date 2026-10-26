@@ -347,51 +347,51 @@ public class MentorPortalService {
     }
 
     public MentorTaskDTO updateTask(User user, long projectId, long taskId, MentorTaskUpsertRequest request) {
-        Mentor mentor = requireMentor(user);
-        MentorTask task = mentorTaskRepository.findById(taskId)
-                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
-        if (!mentor.getId().equals(task.getMentorId()) || (task.getProjectId() != null && task.getProjectId() != projectId)) {
-            throw new ResourceNotFoundException("Task not found");
-        }
+    MentorTask task = validateMentorTaskPermission(user, taskId);
 
-        if (request != null) {
-            if (request.getTitle() != null && !request.getTitle().isBlank()) {
-                task.setTitle(request.getTitle());
-            }
-            if (request.getDescription() != null) {
-                task.setDescription(request.getDescription());
-            }
-            if (request.getStatus() != null) {
-                task.setStatus(normalizeStatus(request.getStatus()));
-            }
-            if (request.getProgress() != null) {
-                task.setProgress(normalizeProgress(request.getProgress()));
-            }
-            if (request.getAssignedTo() != null) {
-                task.setAssignedTo(toJsonArray(request.getAssignedTo()));
-            }
-            if (request.getDueDate() != null) {
-                task.setDueDate(parseLocalDate(request.getDueDate()));
-            }
-            if (request.getPriority() != null) {
-                task.setPriority(normalizePriority(request.getPriority()));
-            }
-        }
-
-        task.setUpdatedAt(LocalDateTime.now());
-        MentorTask saved = mentorTaskRepository.save(task);
-        return toTaskDTO(saved);
+    // validateMentorTaskPermission chỉ check mentorId, nên cần check thêm projectId
+    if (task.getProjectId() != null && task.getProjectId() != projectId) {
+        throw new ResourceNotFoundException("Task not found");
     }
+
+    if (request != null) {
+        if (request.getTitle() != null && !request.getTitle().isBlank()) {
+            task.setTitle(request.getTitle());
+        }
+        if (request.getDescription() != null) {
+            task.setDescription(request.getDescription());
+        }
+        if (request.getStatus() != null) {
+            task.setStatus(normalizeStatus(request.getStatus()));
+        }
+        if (request.getProgress() != null) {
+            task.setProgress(normalizeProgress(request.getProgress()));
+        }
+        if (request.getAssignedTo() != null) {
+            task.setAssignedTo(toJsonArray(request.getAssignedTo()));
+        }
+        if (request.getDueDate() != null) {
+            task.setDueDate(parseLocalDate(request.getDueDate()));
+        }
+        if (request.getPriority() != null) {
+            task.setPriority(normalizePriority(request.getPriority()));
+        }
+    }
+
+    task.setUpdatedAt(LocalDateTime.now());
+    MentorTask saved = mentorTaskRepository.save(task);
+    return toTaskDTO(saved);
+}
 
     public void deleteTask(User user, long projectId, long taskId) {
-        Mentor mentor = requireMentor(user);
-        MentorTask task = mentorTaskRepository.findById(taskId)
-                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
-        if (!mentor.getId().equals(task.getMentorId()) || (task.getProjectId() != null && task.getProjectId() != projectId)) {
-            throw new ResourceNotFoundException("Task not found");
-        }
-        mentorTaskRepository.delete(task);
+    MentorTask task = validateMentorTaskPermission(user, taskId);
+
+    if (task.getProjectId() != null && task.getProjectId() != projectId) {
+        throw new ResourceNotFoundException("Task not found");
     }
+
+    mentorTaskRepository.delete(task);
+}
 
     public List<MentorTalentEvaluationDTO> getEvaluations(User user, Long projectId) {
         Mentor mentor = requireMentor(user);
@@ -563,83 +563,74 @@ public class MentorPortalService {
     }
 
     public List<MentorTaskSubmissionDTO> getTaskSubmissions(User user, long taskId) {
-        Mentor mentor = requireMentor(user);
-        MentorTask task = mentorTaskRepository.findById(taskId)
-                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
-        if (!mentor.getId().equals(task.getMentorId())) {
-            throw new ResourceNotFoundException("Task not found");
-        }
+    validateMentorTaskPermission(user, taskId);
 
-        List<MentorTaskSubmission> submissions = mentorTaskSubmissionRepository.findByTaskIdOrderBySubmittedAtDesc(taskId);
-        if (submissions.isEmpty()) {
-            return List.of();
-        }
-
-        List<Long> talentIds = submissions.stream().map(MentorTaskSubmission::getTalentId).distinct().toList();
-        java.util.Map<Long, Talent> talentMap = talentRepository.findAllById(talentIds).stream()
-                .collect(java.util.stream.Collectors.toMap(Talent::getId, t -> t, (a, b) -> a));
-
-        return submissions.stream()
-                .map(s -> {
-                    Talent talent = talentMap.get(s.getTalentId());
-                    return MentorTaskSubmissionDTO.builder()
-                            .id(s.getId())
-                            .taskId(s.getTaskId())
-                            .talentId(s.getTalentId())
-                            .talentName(talent != null ? talent.getFullName() : null)
-                            .studentId(talent != null ? talent.getStudentId() : null)
-                            .fileName(s.getFileName())
-                            .fileSize(s.getFileSize())
-                            .submittedAt(s.getSubmittedAt() != null ? s.getSubmittedAt().toString() : null)
-                            .build();
-                })
-                .toList();
+    List<MentorTaskSubmission> submissions = mentorTaskSubmissionRepository
+            .findByTaskIdOrderBySubmittedAtDesc(taskId);
+    if (submissions.isEmpty()) {
+        return List.of();
     }
+
+    List<Long> talentIds = submissions.stream()
+            .map(MentorTaskSubmission::getTalentId)
+            .distinct()
+            .toList();
+    Map<Long, Talent> talentMap = talentRepository.findAllById(talentIds).stream()
+            .collect(java.util.stream.Collectors.toMap(Talent::getId, t -> t, (a, b) -> a));
+
+    return submissions.stream()
+            .map(s -> {
+                Talent talent = talentMap.get(s.getTalentId());
+                return MentorTaskSubmissionDTO.builder()
+                        .id(s.getId())
+                        .taskId(s.getTaskId())
+                        .talentId(s.getTalentId())
+                        .talentName(talent != null ? talent.getFullName() : null)
+                        .studentId(talent != null ? talent.getStudentId() : null)
+                        .fileName(s.getFileName())
+                        .fileSize(s.getFileSize())
+                        .submittedAt(s.getSubmittedAt() != null ? s.getSubmittedAt().toString() : null)
+                        .build();
+            })
+            .toList();
+}
 
     public Resource getTaskSubmissionFile(User user, long taskId, long submissionId) {
-        Mentor mentor = requireMentor(user);
-        MentorTask task = mentorTaskRepository.findById(taskId)
-                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
-        if (!mentor.getId().equals(task.getMentorId())) {
-            throw new ResourceNotFoundException("Task not found");
-        }
+    validateMentorTaskPermission(user, taskId);
 
-        MentorTaskSubmission submission = mentorTaskSubmissionRepository.findById(submissionId)
-                .orElseThrow(() -> new ResourceNotFoundException("File not found"));
-        if (!submission.getTaskId().equals(taskId)) {
-            throw new ResourceNotFoundException("File not found");
-        }
+    MentorTaskSubmission submission = mentorTaskSubmissionRepository.findById(submissionId)
+            .orElseThrow(() -> new ResourceNotFoundException("File not found"));
 
-        if (submission.getFilePath() == null || submission.getFilePath().isBlank()) {
-            throw new ResourceNotFoundException("File not found");
-        }
-
-        try {
-            java.nio.file.Path file = java.nio.file.Paths.get(submission.getFilePath()).toAbsolutePath().normalize();
-            String base = System.getProperty("java.io.tmpdir");
-            java.nio.file.Path allowedBase = java.nio.file.Path.of(
-                    base,
-                    "labodc",
-                    "task-submissions",
-                    String.valueOf(taskId),
-                    String.valueOf(submission.getTalentId())
-            ).toAbsolutePath().normalize();
-
-            if (!file.startsWith(allowedBase)) {
-                throw new ResourceNotFoundException("File not found");
-            }
-            if (!java.nio.file.Files.exists(file) || !java.nio.file.Files.isRegularFile(file)) {
-                throw new ResourceNotFoundException("File not found");
-            }
-
-            return new org.springframework.core.io.UrlResource(file.toUri());
-        } catch (ResourceNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            log.warn("Failed to read task submission file {}: {}", submissionId, e.getMessage());
-            throw new ResourceNotFoundException("File not found");
-        }
+    if (submission.getFilePath() == null || submission.getFilePath().isBlank()) {
+        throw new ResourceNotFoundException("File not found");
     }
+
+    try {
+        Path file = Paths.get(submission.getFilePath()).toAbsolutePath().normalize();
+        String base = System.getProperty("java.io.tmpdir");
+        Path allowedBase = Path.of(
+                base,
+                "labodc",
+                "task-submissions",
+                String.valueOf(taskId),
+                String.valueOf(submission.getTalentId())
+        ).toAbsolutePath().normalize();
+
+        if (!file.startsWith(allowedBase)) {
+            throw new ResourceNotFoundException("File not found");
+        }
+        if (!Files.exists(file) || !Files.isRegularFile(file)) {
+            throw new ResourceNotFoundException("File not found");
+        }
+
+        return new UrlResource(file.toUri());
+    } catch (ResourceNotFoundException e) {
+        throw e;
+    } catch (Exception e) {
+        log.warn("Failed to read task submission file {}: {}", submissionId, e.getMessage());
+        throw new ResourceNotFoundException("File not found");
+    }
+}
 
     public void closeRecruiting(User user, long projectId) {
         Mentor mentor = requireMentor(user);
@@ -964,7 +955,15 @@ private String storeReportFile(Long mentorId, Long projectId, MultipartFile file
         }
         return sum;
     }
-
+    private MentorTask validateMentorTaskPermission(User user, long taskId) {
+    Mentor mentor = requireMentor(user);
+    MentorTask task = mentorTaskRepository.findById(taskId)
+            .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+    if (!mentor.getId().equals(task.getMentorId())) {
+        throw new ResourceNotFoundException("Task not found");
+    }
+    return task;
+}
     private Map<Long, String> loadProjectTitles(List<Long> ids) {
         if (ids == null || ids.isEmpty()) {
             return Collections.emptyMap();
