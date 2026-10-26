@@ -69,6 +69,15 @@ public class EnterprisePortalService {
                     .build();
         });
 
+        if (summary == null) {
+            summary = EnterpriseDashboardSummaryDTO.builder()
+                    .totalProjects(0)
+                    .activeProjects(0)
+                    .completedProjects(0)
+                    .totalSpent(0)
+                    .build();
+        }
+
         String spentSql = """
                 SELECT COALESCE(SUM(amount), 0) AS total_spent
                 FROM payments
