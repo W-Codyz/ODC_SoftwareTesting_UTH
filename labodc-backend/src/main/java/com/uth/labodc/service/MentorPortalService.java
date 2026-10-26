@@ -331,13 +331,13 @@ public class MentorPortalService {
         MentorTask task = new MentorTask();
         task.setMentorId(mentor.getId());
         task.setProjectId(projectId);
-        task.setTitle(requireNonBlank(request != null ? request.getTitle() : null, "title"));
-        task.setDescription(request != null && request.getDescription() != null ? request.getDescription() : "");
-        task.setStatus(normalizeStatus(request != null ? request.getStatus() : null));
-        task.setProgress(normalizeProgress(request != null ? request.getProgress() : null));
-        task.setAssignedTo(toJsonArray(request != null ? request.getAssignedTo() : null));
-        task.setDueDate(parseLocalDate(request != null ? request.getDueDate() : null));
-        task.setPriority(normalizePriority(request != null ? request.getPriority() : null));
+        task.setTitle(requireNonBlank(request.getTitle(), "title"));
+        task.setDescription(request.getDescription() != null ? request.getDescription() : "");
+        task.setStatus(normalizeStatus(request.getStatus()));
+        task.setProgress(normalizeProgress(request.getProgress()));
+        task.setAssignedTo(toJsonArray(request.getAssignedTo()));
+        task.setDueDate(parseLocalDate(request.getDueDate()));
+        task.setPriority(normalizePriority(request.getPriority()));
         task.setProjectName(resolveProjectTitle(projectId));
         task.setCreatedAt(LocalDateTime.now());
         task.setUpdatedAt(LocalDateTime.now());
@@ -354,28 +354,26 @@ public class MentorPortalService {
         throw new ResourceNotFoundException("Task not found");
     }
 
-    if (request != null) {
-        if (request.getTitle() != null && !request.getTitle().isBlank()) {
-            task.setTitle(request.getTitle());
-        }
-        if (request.getDescription() != null) {
-            task.setDescription(request.getDescription());
-        }
-        if (request.getStatus() != null) {
-            task.setStatus(normalizeStatus(request.getStatus()));
-        }
-        if (request.getProgress() != null) {
-            task.setProgress(normalizeProgress(request.getProgress()));
-        }
-        if (request.getAssignedTo() != null) {
-            task.setAssignedTo(toJsonArray(request.getAssignedTo()));
-        }
-        if (request.getDueDate() != null) {
-            task.setDueDate(parseLocalDate(request.getDueDate()));
-        }
-        if (request.getPriority() != null) {
-            task.setPriority(normalizePriority(request.getPriority()));
-        }
+    if (request.getTitle() != null && !request.getTitle().isBlank()) {
+        task.setTitle(request.getTitle());
+    }
+    if (request.getDescription() != null) {
+        task.setDescription(request.getDescription());
+    }
+    if (request.getStatus() != null) {
+        task.setStatus(normalizeStatus(request.getStatus()));
+    }
+    if (request.getProgress() != null) {
+        task.setProgress(normalizeProgress(request.getProgress()));
+    }
+    if (request.getAssignedTo() != null) {
+        task.setAssignedTo(toJsonArray(request.getAssignedTo()));
+    }
+    if (request.getDueDate() != null) {
+        task.setDueDate(parseLocalDate(request.getDueDate()));
+    }
+    if (request.getPriority() != null) {
+        task.setPriority(normalizePriority(request.getPriority()));
     }
 
     task.setUpdatedAt(LocalDateTime.now());
@@ -424,9 +422,9 @@ public class MentorPortalService {
             throw new ResourceNotFoundException("Project not found");
         }
 
-        if (request == null || request.getTalentId() == null) {
-            throw new IllegalArgumentException("Missing field: talentId");
-        }
+        if (request.getTalentId() == null) {
+                throw new IllegalArgumentException("Missing field: talentId");
+            }
         String period = requireNonBlank(request.getEvaluationPeriod(), "evaluationPeriod");
 
         boolean isMember = projectDataService.getProjectMembers(projectId).stream()
