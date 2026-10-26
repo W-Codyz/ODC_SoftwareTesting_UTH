@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Alert, Button, Card, Divider, Spin, Table, Tag, message } from 'antd';
+import { downloadFileFromResponse } from '../../../utils/fileUtils';
 import {
   DownloadOutlined,
   FileTextOutlined,
@@ -42,46 +43,15 @@ const MentorReports: React.FC = () => {
     load();
   }, []);
 
-  const tryGetFilename = (contentDisposition?: string, fallback?: string) => {
-    if (contentDisposition) {
-      const match = /filename\*=UTF-8''([^;]+)|filename="?([^";]+)"?/i.exec(contentDisposition);
-      const raw = match?.[1] || match?.[2];
-      if (raw) {
-        try {
-          return decodeURIComponent(raw);
-        } catch {
-          return raw;
-        }
-      }
-    }
-    return fallback || 'report.bin';
-  };
-
-  const downloadFile = async (report: IMentorReport) => {
-    if (!report.fileName && !report.fileSize) {
-      message.info('Báo cáo này không có file đính kèm.');
-      return;
-    }
-
-    setDownloadingId(report.id);
+  const handleDownload = async (report: IMentorReport) => {
     try {
+      setDownloadingId(report.id);
       const res = await mentorService.downloadReportFile(report.id);
-      const blob = res.data as Blob;
-      const filename = tryGetFilename(
-        res.headers?.['content-disposition'],
-        report.fileName || report.reportName
-      );
 
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (e) {
-      console.error('Failed to download report file', e);
+      // CHỈ CÒN 1 DÒNG GỌI HÀM DÙNG CHUNG
+      downloadFileFromResponse(res, report.fileName || report.reportName);
+    } catch (err) {
+      console.error('Failed to download existing report file', err);
       message.error('Tải file thất bại.');
     } finally {
       setDownloadingId(null);
@@ -105,7 +75,7 @@ const MentorReports: React.FC = () => {
             type="link"
             icon={<DownloadOutlined />}
             loading={downloadingId === r.id}
-            onClick={() => downloadFile(r)}
+            onClick={() => handleDownload(r)}
           >
             {name}
           </Button>
@@ -131,8 +101,8 @@ const MentorReports: React.FC = () => {
           type="link"
           icon={<DownloadOutlined />}
           loading={downloadingId === r.id}
-          disabled={!r.fileSize}
-          onClick={() => downloadFile(r)}
+          disabled={!r.fileSize && !r.fileName}
+          onClick={() => handleDownload(r)}
         />
       ),
     },

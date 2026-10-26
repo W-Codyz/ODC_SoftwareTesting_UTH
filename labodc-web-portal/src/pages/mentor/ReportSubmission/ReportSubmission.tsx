@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { downloadFileFromBlob, tryGetFilename } from '../../../utils/fileUtils';
+import { downloadFileFromResponse } from '../../../utils/fileUtils';
 import { useNavigate } from 'react-router-dom';
 import {
   UploadOutlined,
@@ -86,13 +86,8 @@ const ReportSubmission: React.FC = () => {
     setDownloading(true);
     try {
       const res = await mentorService.downloadReportFile(submitted.report.id);
-      const blob = res.data as Blob;
-      const filename = tryGetFilename(
-        res.headers?.['content-disposition'],
-        submitted.uploadedFilename || submitted.report.reportName
-      );
 
-      downloadFileFromBlob(blob, filename);
+      downloadFileFromResponse(res, submitted.uploadedFilename || submitted.report.reportName);
     } catch (err) {
       console.error('Failed to download just-submitted report file', err);
       message.error('Tải file thất bại.');
@@ -103,20 +98,15 @@ const ReportSubmission: React.FC = () => {
 
   const downloadExistingFile = async (report: IMentorReport) => {
     try {
-      setDownloadingId(report.id); // Bật loading cho nút
+      setDownloadingId(report.id);
       const res = await mentorService.downloadReportFile(report.id);
-      const blob = res.data as Blob;
-      const filename = tryGetFilename(
-        res.headers?.['content-disposition'],
-        report.fileName || report.reportName
-      );
 
-      downloadFileFromBlob(blob, filename);
+      downloadFileFromResponse(res, report.fileName || report.reportName);
     } catch (err) {
       console.error('Failed to download existing report file', err);
       message.error('Tải file thất bại.');
     } finally {
-      setDownloadingId(null); // Tắt loading
+      setDownloadingId(null);
     }
   };
 
