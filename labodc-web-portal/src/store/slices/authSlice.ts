@@ -39,6 +39,24 @@ interface AuthState {
   error: string | null;
 }
 
+interface AuthPayload {
+  user: IUser;
+  accessToken: string;
+  refreshToken: string;
+}
+
+function applyAuthenticatedState(state: AuthState, payload: AuthPayload): void {
+  state.loading = false;
+  state.user = payload.user;
+  state.accessToken = payload.accessToken;
+  state.refreshToken = payload.refreshToken;
+  state.isAuthenticated = true;
+
+  localStorage.setItem(STORAGE_KEYS.USER_INFO, JSON.stringify(payload.user));
+  localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, payload.accessToken);
+  localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, payload.refreshToken);
+}
+
 const initialState: AuthState = {
   user: JSON.parse(localStorage.getItem(STORAGE_KEYS.USER_INFO) || 'null'),
   accessToken: localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN),
@@ -129,7 +147,7 @@ const authSlice = createSlice({
   reducers: {
     setCredentials: (
       state,
-      action: PayloadAction<{ user: IUser; accessToken: string; refreshToken: string }>
+      action: PayloadAction<AuthPayload>
     ) => {
       state.user = action.payload.user;
       state.accessToken = action.payload.accessToken;
@@ -160,15 +178,7 @@ const authSlice = createSlice({
       state.error = null;
     });
     builder.addCase(login.fulfilled, (state, action) => {
-      state.loading = false;
-      state.user = action.payload.user;
-      state.accessToken = action.payload.accessToken;
-      state.refreshToken = action.payload.refreshToken;
-      state.isAuthenticated = true;
-
-      localStorage.setItem(STORAGE_KEYS.USER_INFO, JSON.stringify(action.payload.user));
-      localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, action.payload.accessToken);
-      localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, action.payload.refreshToken);
+      applyAuthenticatedState(state, action.payload);
     });
     builder.addCase(login.rejected, (state, action) => {
       state.loading = false;
@@ -181,15 +191,7 @@ const authSlice = createSlice({
       state.error = null;
     });
     builder.addCase(register.fulfilled, (state, action) => {
-      state.loading = false;
-      state.user = action.payload.user;
-      state.accessToken = action.payload.accessToken;
-      state.refreshToken = action.payload.refreshToken;
-      state.isAuthenticated = true;
-
-      localStorage.setItem(STORAGE_KEYS.USER_INFO, JSON.stringify(action.payload.user));
-      localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, action.payload.accessToken);
-      localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, action.payload.refreshToken);
+      applyAuthenticatedState(state, action.payload);
     });
     builder.addCase(register.rejected, (state, action) => {
       state.loading = false;
