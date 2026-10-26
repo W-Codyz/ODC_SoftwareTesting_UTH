@@ -20,6 +20,7 @@ import {
   List,
   Empty,
 } from 'antd';
+import type { FormInstance } from 'antd';
 import {
   ProjectOutlined,
   CheckCircleOutlined,
@@ -45,6 +46,76 @@ import { formatCurrencyVND } from '@/utils/formatters';
 import { useNavigate } from 'react-router-dom';
 import '../enterprise-modern.css';
 import dayjs from 'dayjs';
+
+const splitAndTrim = (value: unknown, separator: string): string[] | undefined =>
+  value
+    ? String(value)
+        .split(separator)
+        .map((s: string) => s.trim())
+        .filter(Boolean)
+    : undefined;
+
+const buildProjectPayload = (values: any) => ({
+  name: values.name,
+  description: values.description,
+  requirements: values.requirements,
+  objectives: splitAndTrim(values.objectives, '\n'),
+  startDate: dayjs(values.startDate).format('YYYY-MM-DD'),
+  endDate: dayjs(values.endDate).format('YYYY-MM-DD'),
+  budget: Number(values.budget),
+  requiredTalents: Number(values.requiredTalents),
+  technologies: splitAndTrim(values.technologies, ','),
+  requiredSkills: splitAndTrim(values.requiredSkills, ','),
+  allowApplications: values.allowApplications ?? true,
+});
+
+const ProjectDateRangeFields: React.FC<{ form: FormInstance }> = ({ form }) => (
+  <Form.Item label="Thời gian" style={{ marginBottom: 0 }}>
+    <Form.Item
+      name="startDate"
+      rules={[{ required: true, message: 'Chọn ngày bắt đầu' }]}
+      style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
+    >
+      <DatePicker
+        style={{ width: '100%' }}
+        getPopupContainer={(trigger) => trigger.parentElement as HTMLElement}
+      />
+    </Form.Item>
+    <Form.Item
+      name="endDate"
+      dependencies={['startDate']}
+      rules={[
+        { required: true, message: 'Chọn ngày kết thúc' },
+        ({ getFieldValue }) => ({
+          validator(_, value) {
+            const start = getFieldValue('startDate');
+            if (!start || !value) {
+              return Promise.resolve();
+            }
+            if (dayjs(value).isAfter(start, 'day')) {
+              return Promise.resolve();
+            }
+            return Promise.reject(new Error('Ngày kết thúc phải sau ngày bắt đầu'));
+          },
+        }),
+      ]}
+      style={{ display: 'inline-block', width: 'calc(50% - 8px)', marginLeft: 16 }}
+    >
+      <DatePicker
+        style={{ width: '100%' }}
+        getPopupContainer={(trigger) => trigger.parentElement as HTMLElement}
+        disabledDate={(current) => {
+          const start = form.getFieldValue('startDate');
+          if (!start || !current) return false;
+          return (
+            dayjs(current).isBefore(dayjs(start), 'day') ||
+            dayjs(current).isSame(dayjs(start), 'day')
+          );
+        }}
+      />
+    </Form.Item>
+  </Form.Item>
+);
 
 const ProjectManagement: React.FC = () => {
   const navigate = useNavigate();
@@ -506,36 +577,7 @@ const ProjectManagement: React.FC = () => {
             const values = await form.validateFields();
             setCreating(true);
 
-            const objectives = values.objectives
-              ? String(values.objectives)
-                  .split('\n')
-                  .map((s: string) => s.trim())
-                  .filter(Boolean)
-              : undefined;
-
-            await createProject({
-              name: values.name,
-              description: values.description,
-              requirements: values.requirements,
-              objectives,
-              startDate: dayjs(values.startDate).format('YYYY-MM-DD'),
-              endDate: dayjs(values.endDate).format('YYYY-MM-DD'),
-              budget: Number(values.budget),
-              requiredTalents: Number(values.requiredTalents),
-              technologies: values.technologies
-                ? String(values.technologies)
-                    .split(',')
-                    .map((s: string) => s.trim())
-                    .filter(Boolean)
-                : undefined,
-              requiredSkills: values.requiredSkills
-                ? String(values.requiredSkills)
-                    .split(',')
-                    .map((s: string) => s.trim())
-                    .filter(Boolean)
-                : undefined,
-              allowApplications: values.allowApplications ?? true,
-            });
+            await createProject(buildProjectPayload(values));
 
             message.success('Tạo dự án thành công');
             setCreateOpen(false);
@@ -573,51 +615,7 @@ const ProjectManagement: React.FC = () => {
           <Form.Item label="Yêu cầu" name="requirements">
             <Input.TextArea rows={3} placeholder="Yêu cầu kỹ thuật / quy trình" />
           </Form.Item>
-          <Form.Item label="Thời gian" style={{ marginBottom: 0 }}>
-            <Form.Item
-              name="startDate"
-              rules={[{ required: true, message: 'Chọn ngày bắt đầu' }]}
-              style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
-            >
-              <DatePicker
-                style={{ width: '100%' }}
-                getPopupContainer={(trigger) => trigger.parentElement as HTMLElement}
-              />
-            </Form.Item>
-            <Form.Item
-              name="endDate"
-              dependencies={['startDate']}
-              rules={[
-                { required: true, message: 'Chọn ngày kết thúc' },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    const start = getFieldValue('startDate');
-                    if (!start || !value) {
-                      return Promise.resolve();
-                    }
-                    if (dayjs(value).isAfter(start, 'day')) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(new Error('Ngày kết thúc phải sau ngày bắt đầu'));
-                  },
-                }),
-              ]}
-              style={{ display: 'inline-block', width: 'calc(50% - 8px)', marginLeft: 16 }}
-            >
-              <DatePicker
-                style={{ width: '100%' }}
-                getPopupContainer={(trigger) => trigger.parentElement as HTMLElement}
-                disabledDate={(current) => {
-                  const start = form.getFieldValue('startDate');
-                  if (!start || !current) return false;
-                  return (
-                    dayjs(current).isBefore(dayjs(start), 'day') ||
-                    dayjs(current).isSame(dayjs(start), 'day')
-                  );
-                }}
-              />
-            </Form.Item>
-          </Form.Item>
+          <ProjectDateRangeFields form={form} />
           <Form.Item
             label="Ngân sách (VND)"
             name="budget"
@@ -656,36 +654,7 @@ const ProjectManagement: React.FC = () => {
             const values = await form.validateFields();
             setEditing(true);
 
-            const objectives = values.objectives
-              ? String(values.objectives)
-                  .split('\n')
-                  .map((s: string) => s.trim())
-                  .filter(Boolean)
-              : undefined;
-
-            await updateProject(editId, {
-              name: values.name,
-              description: values.description,
-              requirements: values.requirements,
-              objectives,
-              startDate: dayjs(values.startDate).format('YYYY-MM-DD'),
-              endDate: dayjs(values.endDate).format('YYYY-MM-DD'),
-              budget: Number(values.budget),
-              requiredTalents: Number(values.requiredTalents),
-              technologies: values.technologies
-                ? String(values.technologies)
-                    .split(',')
-                    .map((s: string) => s.trim())
-                    .filter(Boolean)
-                : undefined,
-              requiredSkills: values.requiredSkills
-                ? String(values.requiredSkills)
-                    .split(',')
-                    .map((s: string) => s.trim())
-                    .filter(Boolean)
-                : undefined,
-              allowApplications: values.allowApplications ?? true,
-            });
+            await updateProject(editId, buildProjectPayload(values));
 
             message.success('Cập nhật dự án thành công');
             setEditOpen(false);
@@ -724,51 +693,7 @@ const ProjectManagement: React.FC = () => {
           <Form.Item label="Yêu cầu" name="requirements">
             <Input.TextArea rows={3} />
           </Form.Item>
-          <Form.Item label="Thời gian" style={{ marginBottom: 0 }}>
-            <Form.Item
-              name="startDate"
-              rules={[{ required: true, message: 'Chọn ngày bắt đầu' }]}
-              style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
-            >
-              <DatePicker
-                style={{ width: '100%' }}
-                getPopupContainer={(trigger) => trigger.parentElement as HTMLElement}
-              />
-            </Form.Item>
-            <Form.Item
-              name="endDate"
-              dependencies={['startDate']}
-              rules={[
-                { required: true, message: 'Chọn ngày kết thúc' },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    const start = getFieldValue('startDate');
-                    if (!start || !value) {
-                      return Promise.resolve();
-                    }
-                    if (dayjs(value).isAfter(start, 'day')) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(new Error('Ngày kết thúc phải sau ngày bắt đầu'));
-                  },
-                }),
-              ]}
-              style={{ display: 'inline-block', width: 'calc(50% - 8px)', marginLeft: 16 }}
-            >
-              <DatePicker
-                style={{ width: '100%' }}
-                getPopupContainer={(trigger) => trigger.parentElement as HTMLElement}
-                disabledDate={(current) => {
-                  const start = form.getFieldValue('startDate');
-                  if (!start || !current) return false;
-                  return (
-                    dayjs(current).isBefore(dayjs(start), 'day') ||
-                    dayjs(current).isSame(dayjs(start), 'day')
-                  );
-                }}
-              />
-            </Form.Item>
-          </Form.Item>
+          <ProjectDateRangeFields form={form} />
           <Form.Item
             label="Ngân sách (VND)"
             name="budget"
