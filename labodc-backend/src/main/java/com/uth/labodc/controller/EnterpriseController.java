@@ -109,7 +109,7 @@ public class EnterpriseController {
                 statusFilter = EnterpriseStatus.valueOf(status.toUpperCase());
             } catch (IllegalArgumentException e) {
                 log.warn("Invalid status value: {}", status);
-                return ResponseEntity.badRequest().body(ApiResponse.error("Invalid status value: " + status));
+                return ResponseEntity.badRequest().body(ApiResponse.error("Invalid status value"));
             }
         }
         
