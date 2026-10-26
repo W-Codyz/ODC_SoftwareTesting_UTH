@@ -293,7 +293,7 @@ public class MentorPortalService {
         member.setJoinedAt(LocalDateTime.now());
         projectMemberRepository.save(member);
 
-        Integer current = project.getCurrentMembersCount() != null ? project.getCurrentMembersCount() : 0;
+        int current = project.getCurrentMembersCount() != null ? project.getCurrentMembersCount() : 0;
         project.setCurrentMembersCount(current + 1);
         projectRepository.save(project);
     }
