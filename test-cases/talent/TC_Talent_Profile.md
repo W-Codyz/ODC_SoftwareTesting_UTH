@@ -15,7 +15,7 @@
 | :--- | :--- | :--- | :--- |
 | Số điện thoại Việt Nam hợp lệ (10 chữ số, bắt đầu bằng 0) | Valid | V1 | `0901234567` |
 | Số điện thoại sai định dạng (chứa chữ/ký tự đặc biệt) | Invalid | X1 | `0901234abc` |
-| Số điện thoại không đủ/quá số lượng chữ số (ví dụ: 8 hoặc 12 số) | Invalid | X2 | `0901234` |
+| Số điện thoại không đủ/quá số lượng chữ số (8 số) | Invalid | X2 | `0901234` |
 | Số điện thoại rỗng | Invalid | X3 | `(empty)` |
 
 ### 1.2 Portfolio URL
@@ -30,43 +30,43 @@
 
 | Điều kiện | Loại | Tag | Giá trị đại diện |
 | :--- | :--- | :--- | :--- |
-| Tên kỹ năng, level và kinh nghiệm hợp lệ | Valid | V4 | `Name: Python, Level: Intermediate, Exp: 2.0` |
-| Tên kỹ năng rỗng | Invalid | X5 | `Name: (empty), Level: Beginner` |
-| Số năm kinh nghiệm âm (< 0) | Invalid | X6 | `Exp: -1.0` |
+| Tên kỹ năng, level và kinh nghiệm hợp lệ | Valid | V4 | `Python (Intermediate, 2.0 yrs)` |
+| Tên kỹ năng rỗng | Invalid | X5 | `(empty)` |
+| Số năm kinh nghiệm âm (< 0) | Invalid | X6 | `-1.0` |
 
 ### 1.4 File Ảnh Đại diện (Avatar)
 
 | Điều kiện | Loại | Tag | Giá trị đại diện |
 | :--- | :--- | :--- | :--- |
-| File ảnh hợp lệ (JPG/PNG, kích thước $\le$ 5MB) | Valid | V5 | `avatar.jpg (2MB)` |
-| Định dạng file không hỗ trợ (ví dụ: PDF, ZIP, EXE) | Invalid | X7 | `document.pdf` |
+| File ảnh hợp lệ (JPG/PNG, kích thước ≤ 5MB) | Valid | V5 | `avatar.jpg (2MB)` |
+| Định dạng file không hỗ trợ (file PDF) | Invalid | X7 | `document.pdf` |
 | Kích thước file vượt quá giới hạn (> 5MB) | Boundary | B1 | `large_avatar.png (6MB)` |
 
 ### 1.5 File CV
 
 | Điều kiện | Loại | Tag | Giá trị đại diện |
 | :--- | :--- | :--- | :--- |
-| File CV hợp lệ (PDF/DOC/DOCX, kích thước $\le$ 20MB) | Valid | V6 | `cv.pdf (3MB)` |
-| Định dạng file không hỗ trợ (ví dụ: PNG, MP4) | Invalid | X8 | `cv_video.mp4` |
+| File CV hợp lệ (PDF/DOC/DOCX, kích thước ≤ 20MB) | Valid | V6 | `cv.pdf (3MB)` |
+| Định dạng file không hỗ trợ (file MP4) | Invalid | X8 | `cv_video.mp4` |
 | Kích thước file vượt quá giới hạn (> 20MB) | Boundary | B2 | `heavy_cv.pdf (25MB)` |
 
 ---
 
 ## 2. Bảng Test Cases
 
-| TC ID | Mô tả | Phone | Portfolio URL | Avatar / CV / Skill | Expected Result | Tags |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **TC-TAL-01** | Xem thông tin hồ sơ cá nhân thành công | `0901234567` | `https://github.com/tranthic` | Valid data | Trả về JSON thông tin cá nhân, danh sách skills, certs, avatarUrl, cvUrl và averageRating | V1, V2, V4 |
-| **TC-TAL-02** | Cập nhật hồ sơ thành công với thông tin hợp lệ | `0901234568` | `https://github.com/newtran` | - | Cập nhật thành công, trả về message "Cập nhật hồ sơ thành công" | V1, V2 |
-| **TC-TAL-03** | Cập nhật hồ sơ với Số điện thoại sai định dạng | `0901234abc` | `https://github.com/tranthic` | - | Trả về lỗi validation "Số điện thoại không hợp lệ" | X1 |
-| **TC-TAL-04** | Cập nhật hồ sơ với Số điện thoại không đủ độ dài | `0901234` | `https://github.com/tranthic` | - | Trả về lỗi validation "Số điện thoại không đủ 10 chữ số" | X2 |
-| **TC-TAL-05** | Cập nhật hồ sơ với Portfolio URL sai định dạng | `0901234567` | `github.com/tranthic` | - | Trả về lỗi validation "URL không hợp lệ" | X4 |
-| **TC-TAL-06** | Thêm kỹ năng mới thành công | - | - | `Name: Python, Level: Intermediate, Exp: 2` | Thêm kỹ năng thành công, trả về skillId mới và thông tin kỹ năng | V4 |
-| **TC-TAL-07** | Thêm kỹ năng mới nhưng để trống Tên kỹ năng | - | - | `Name: (empty), Level: Beginner` | Trả về lỗi validation "Tên kỹ năng không được để trống" | X5 |
-| **TC-TAL-08** | Thêm kỹ năng mới với số năm kinh nghiệm âm | - | - | `Name: Java, Exp: -1` | Trả về lỗi validation "Số năm kinh nghiệm phải lớn hơn hoặc bằng 0" | X6 |
-| **TC-TAL-09** | Upload Ảnh đại diện (Avatar) thành công | - | - | `avatar.jpg (2MB)` | Upload thành công lên Cloudinary, trả về avatarUrl và thumbnailUrl | V5 |
-| **TC-TAL-10** | Upload Avatar sai định dạng file (file PDF) | - | - | `document.pdf` | Trả về lỗi "Định dạng file không được hỗ trợ (chỉ chấp nhận JPG/PNG)" | X7 |
-| **TC-TAL-11** | Upload Avatar vượt quá kích thước cho phép (> 5MB) | - | - | `large_avatar.png (6MB)` | Trả về lỗi "Kích thước file vượt quá giới hạn 5MB" | B1 |
-| **TC-TAL-12** | Upload CV thành công (File PDF $\le$ 20MB) | - | - | `cv.pdf (3MB)` | Upload CV thành công lên Cloudinary, trả về cvUrl | V6 |
-| **TC-TAL-13** | Upload CV vượt quá kích thước cho phép (> 20MB) | - | - | `heavy_cv.pdf (25MB)` | Trả về lỗi "Kích thước file CV vượt quá giới hạn 20MB" | B2 |
-| **TC-TAL-14** | Xóa kỹ năng khỏi hồ sơ cá nhân thành công | - | - | `skillId: 1` | Xóa thành công kỹ năng khỏi hồ sơ | V4 |
+| TC ID | Mô tả | Phone | Portfolio URL | Skill Input | File Input (Avatar/CV) | Expected Result | Tags |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **TC-TAL-01** | Xem thông tin hồ sơ cá nhân thành công | `0901234567` | `https://github.com/tranthic` | `ReactJS` | `avatar.jpg` | Trả về JSON thông tin cá nhân, danh sách skills, certs, avatarUrl, cvUrl và averageRating | V1, V2, V4 |
+| **TC-TAL-02** | Cập nhật hồ sơ thành công với thông tin hợp lệ | `0901234568` | `https://github.com/newtran` | `(giữ nguyên)` | `(giữ nguyên)` | Cập nhật thành công, trả về message "Cập nhật hồ sơ thành công" | V1, V2 |
+| **TC-TAL-03** | Cập nhật hồ sơ với Số điện thoại sai định dạng | `0901234abc` | `https://github.com/tranthic` | `(giữ nguyên)` | `(giữ nguyên)` | Trả về lỗi validation "Số điện thoại không hợp lệ" | X1 |
+| **TC-TAL-04** | Cập nhật hồ sơ với Số điện thoại không đủ độ dài | `0901234` | `https://github.com/tranthic` | `(giữ nguyên)` | `(giữ nguyên)` | Trả về lỗi validation "Số điện thoại không đủ 10 chữ số" | X2 |
+| **TC-TAL-05** | Cập nhật hồ sơ với Portfolio URL sai định dạng | `0901234567` | `github.com/tranthic` | `(giữ nguyên)` | `(giữ nguyên)` | Trả về lỗi validation "URL không hợp lệ" | X4 |
+| **TC-TAL-06** | Thêm kỹ năng mới thành công | `0901234567` | `https://github.com/tranthic` | `Python, Intermediate, 2 yrs` | `(không thay đổi)` | Thêm kỹ năng thành công, trả về skillId mới và thông tin kỹ năng | V4 |
+| **TC-TAL-07** | Thêm kỹ năng mới nhưng để trống Tên kỹ năng | `0901234567` | `https://github.com/tranthic` | `Name: (empty), Beginner` | `(không thay đổi)` | Trả về lỗi validation "Tên kỹ năng không được để trống" | X5 |
+| **TC-TAL-08** | Thêm kỹ năng mới với số năm kinh nghiệm âm | `0901234567` | `https://github.com/tranthic` | `Java, Exp: -1` | `(không thay đổi)` | Trả về lỗi validation "Số năm kinh nghiệm phải lớn hơn hoặc bằng 0" | X6 |
+| **TC-TAL-09** | Upload Ảnh đại diện (Avatar) thành công | `0901234567` | `https://github.com/tranthic` | `(không thay đổi)` | `avatar.jpg (2MB)` | Upload thành công lên Cloudinary, trả về avatarUrl và thumbnailUrl | V5 |
+| **TC-TAL-10** | Upload Avatar sai định dạng file (file PDF) | `0901234567` | `https://github.com/tranthic` | `(không thay đổi)` | `document.pdf` | Trả về lỗi "Định dạng file không được hỗ trợ (chỉ chấp nhận JPG/PNG)" | X7 |
+| **TC-TAL-11** | Upload Avatar vượt quá kích thước cho phép (> 5MB) | `0901234567` | `https://github.com/tranthic` | `(không thay đổi)` | `large_avatar.png (6MB)` | Trả về lỗi "Kích thước file vượt quá giới hạn 5MB" | B1 |
+| **TC-TAL-12** | Upload CV thành công (File PDF ≤ 20MB) | `0901234567` | `https://github.com/tranthic` | `(không thay đổi)` | `cv.pdf (3MB)` | Upload CV thành công lên Cloudinary, trả về cvUrl | V6 |
+| **TC-TAL-13** | Upload CV vượt quá kích thước cho phép (> 20MB) | `0901234567` | `https://github.com/tranthic` | `(không thay đổi)` | `heavy_cv.pdf (25MB)` | Trả về lỗi "Kích thước file CV vượt quá giới hạn 20MB" | B2 |
+| **TC-TAL-14** | Xóa kỹ năng khỏi hồ sơ cá nhân thành công | `0901234567` | `https://github.com/tranthic` | `Delete skillId: 1` | `(không thay đổi)` | Xóa thành công kỹ năng khỏi hồ sơ | V4 |
