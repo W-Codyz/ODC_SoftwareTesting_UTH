@@ -10,8 +10,8 @@
 | **Tên dự án** | LabOdc - Hệ thống quản lý kết nối doanh nghiệp với sinh viên UTH trong dự án thực tế |
 | **Tên tiếng Anh** | LabOdc - A System for Managing Enterprise-Student Collaborations at UTH on Real-World Projects |
 | **Loại tài liệu** | Software Requirements Specification (SRS) |
-| **Phiên bản** | 1.0 |
-| **Ngày** | 17 tháng 01 năm 2026 |
+| **Phiên bản** | 1.2 |
+| **Ngày** | 31 tháng 10 năm 2026 |
 | **Người chuẩn bị** | Nhóm phát triển - Nhóm 6 |
 | **Tổ chức** | Đại học Giao thông Vận tải TP.HCM (UTH) |
 | **Trạng thái** | Bản nháp |
@@ -24,6 +24,7 @@
 |-----------|------|---------|----------------|
 | 1.0 | 17/01/2026 | Nhóm 6 | Tài liệu SRS ban đầu |
 | 1.1 | 22/10/2026 | Nhóm 6 | Cập nhật: đánh dấu PayOS, Hybrid Fund, Redis, ES, WebSocket, 2FA, GDPR là tham khảo/tương lai; điều chỉnh NFR phù hợp scope 5 tuần |
+| 1.2 | 31/10/2026 | Đình Phát | FR-AUTH-001: bổ sung email case-sensitive vào Business Rules và Input; làm rõ ràng buộc min 8 ký tự chỉ áp dụng tại đăng ký (FR-AUTH-002), không áp dụng tại login |
 
 ---
 
@@ -224,11 +225,11 @@ LabOdc là một hệ thống độc lập được phát triển đặc biệt 
 **Mô tả:** Người dùng đăng nhập vào hệ thống bằng email và password.
 
 **Input:**
-- `email`: String, required, format email
-- `password`: String, required, min 8 characters
+- `email`: String, required, format email, case-sensitive
+- `password`: String, required, not blank (không áp dụng ràng buộc độ dài tại login)
 
 **Processing:**
-1. Validate input (email format, password not empty)
+1. Validate input (email format, password not blank)
 2. Query database để tìm user theo email
 3. So sánh hashed password
 4. Kiểm tra account status (active/inactive/locked)
@@ -264,6 +265,8 @@ LabOdc là một hệ thống độc lập được phát triển đặc biệt 
 - `500 Internal Server Error`: Database error
 
 **Business Rules:**
+- Email đăng nhập **phân biệt chữ hoa/thường (case-sensitive)**. `TESTLOGIN@LABODC.COM` và `testlogin@labodc.com` được coi là hai địa chỉ khác nhau.
+- Ràng buộc **độ dài mật khẩu tối thiểu 8 ký tự** chỉ áp dụng tại tầng **đăng ký (FR-AUTH-002)**. Tại login, chỉ validate không rỗng và so khớp hash — password dưới 8 ký tự hợp lệ nếu khớp với hash đã lưu.
 - Lock account sau 5 lần sai (reset sau 30 phút)
 - JWT token expire: 30 phút
 - Refresh token expire: 7 ngày
