@@ -434,7 +434,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"newuser{{test_suffix}}@example.com\",\n  \"password\": \"123123\",\n  \"fullName\": \"Test User\",\n  \"role\": \"TALENT\"\n}",
+              "raw": "{\n  \"email\": \"newuser{{test_suffix}}@example.com\",\n  \"password\": \"123123\",\n  \"confirmPassword\": \"123123\",\n  \"fullName\": \"Test User\",\n  \"role\": \"TALENT\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
