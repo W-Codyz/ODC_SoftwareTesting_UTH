@@ -1,0 +1,725 @@
+{
+  "info": {
+    "_postman_id": "0dee54d7-3187-4ca9-a34a-1958381b547d",
+    "name": "LabODC API Testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "58698132",
+    "_collection_link": "https://go.postman.co/collection/58698132-0dee54d7-3187-4ca9-a34a-1958381b547d?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var res = pm.response.json();\r\n\r\nif (res.data && res.data.token) {\r\n    pm.environment.set(\"token\", res.data.token);\r\n    console.log(\"Token saved!\");\r\n}\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response has token\", function () {\r\n    pm.expect(res.data).to.have.property(\"token\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"labadmin2@labodc.com\",\r\n  \"password\": \"123123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"testuser@mail.com\",\r\n  \"password\": \"test123123\",\r\n  \"confirmPassword\": \"test123123\",\r\n  \"role\": \"TALENT\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Get Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response has user email\", function () {\r\n    var res = pm.response.json();\r\n    pm.expect(res.data).to.have.property(\"email\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/user/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "user",
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Get Dashboard Stats",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dashboard/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard",
+                "stats"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Recent Activities",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dashboard/activities?limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard",
+                "activities"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Pending Approvals",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dashboard/approvals?limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard",
+                "approvals"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Revenue Chart",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dashboard/revenue?months=6",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard",
+                "revenue"
+              ],
+              "query": [
+                {
+                  "key": "months",
+                  "value": "6"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Mentor Admin",
+      "item": [
+        {
+          "name": "Get All Mentors",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const loginRequest = {\r\n    url: pm.environment.get(\"base_url\") + \"/api/auth/login\",\r\n    method: \"POST\",\r\n    header: { \"Content-Type\": \"application/json\" },\r\n    body: {\r\n        mode: \"raw\",\r\n        raw: JSON.stringify({\r\n            email: \"admin@labodc.com\",\r\n            password: \"123123\"\r\n        })\r\n    }\r\n};\r\n\r\npm.sendRequest(loginRequest, function (err, res) {\r\n    var data = res.json();\r\n    if (data.data && data.data.token) {\r\n        pm.environment.set(\"token\", data.data.token);\r\n    }\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/mentors?page=0&size=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "mentors"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Mentor By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/mentors/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "mentors",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Expertise",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/mentors/expertise/all",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "mentors",
+                "expertise",
+                "all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Available Mentors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/mentors/available?technologies=Java,Spring",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "mentors",
+                "available"
+              ],
+              "query": [
+                {
+                  "key": "technologies",
+                  "value": "Java,Spring"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Mentor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var res = pm.response.json();\r\nvar id = res.id || (res.data && res.data.id);\r\nif (id) {\r\n    pm.environment.set(\"mentor_id\", id);\r\n}\r\npm.test(\"Mentor created\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const loginRequest = {\r\n    url: pm.environment.get(\"base_url\") + \"/api/auth/login\",\r\n    method: \"POST\",\r\n    header: { \"Content-Type\": \"application/json\" },\r\n    body: {\r\n        mode: \"raw\",\r\n        raw: JSON.stringify({\r\n            email: \"admin@labodc.com\",\r\n            password: \"123123\"\r\n        })\r\n    }\r\n};\r\n\r\npm.sendRequest(loginRequest, function (err, res) {\r\n    var data = res.json();\r\n    if (data.data && data.data.token) {\r\n        pm.environment.set(\"token\", data.data.token);\r\n    }\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fullName\": \"Test API Mentor\",\r\n  \"title\": \"Mr.\",\r\n  \"currentPosition\": \"Senior Developer\",\r\n  \"currentCompany\": \"Tech Corp\",\r\n  \"yearsOfExperience\": 5,\r\n  \"bio\": \"Experienced developer\",\r\n  \"expertise\": [\"Java\", \"Spring Boot\"],\r\n  \"hourlyRate\": 50.0,\r\n  \"currency\": \"USD\",\r\n  \"maxConcurrentProjects\": 3,\r\n  \"available\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/mentors",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "mentors"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Mentor",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const loginRequest = {\r\n    url: pm.environment.get(\"base_url\") + \"/api/auth/login\",\r\n    method: \"POST\",\r\n    header: { \"Content-Type\": \"application/json\" },\r\n    body: {\r\n        mode: \"raw\",\r\n        raw: JSON.stringify({\r\n            email: \"admin@labodc.com\",\r\n            password: \"admin123\"\r\n        })\r\n    }\r\n};\r\n\r\npm.sendRequest(loginRequest, function (err, res) {\r\n    var data = res.json();\r\n    if (data.data && data.data.token) {\r\n        pm.environment.set(\"token\", data.data.token);\r\n    }\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fullName\": \"Test API Mentor\",\r\n  \"title\": \"Dr.\",\r\n  \"currentPosition\": \"Lead Developer\",\r\n  \"currentCompany\": \"Tech Corp\",\r\n  \"yearsOfExperience\": 7,\r\n  \"bio\": \"Updated bio\",\r\n  \"expertise\": [\"Java\", \"Spring Boot\", \"React\"],\r\n  \"hourlyRate\": 75.0,\r\n  \"currency\": \"USD\",\r\n  \"maxConcurrentProjects\": 5,\r\n  \"available\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/mentors/{{mentor_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "mentors",
+                "{{mentor_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Mentor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Mentor deleted\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/mentors/{{mentor_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "mentors",
+                "{{mentor_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Talent Admin",
+      "item": [
+        {
+          "name": "Get All Talents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/talents?page=0&size=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "talents"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Talent By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/talents/11",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "talents",
+                "11"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Talent",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var res = pm.response.json();\r\nvar id = res.id || (res.data && res.data.id);\r\nif (id) {\r\n    pm.environment.set(\"talent_id\", id);\r\n}\r\npm.test(\"Talent created\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const loginRequest = {\r\n    url: pm.environment.get(\"base_url\") + \"/api/auth/login\",\r\n    method: \"POST\",\r\n    header: { \"Content-Type\": \"application/json\" },\r\n    body: {\r\n        mode: \"raw\",\r\n        raw: JSON.stringify({\r\n            email: \"admin@labodc.com\",\r\n            password: \"123123\"\r\n        })\r\n    }\r\n};\r\n\r\npm.sendRequest(loginRequest, function (err, res) {\r\n    var data = res.json();\r\n    if (data.data && data.data.token) {\r\n        pm.environment.set(\"token\", data.data.token);\r\n    }\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fullName\": \"Tran Test Talent\",\r\n  \"studentId\": \"TEST001\",\r\n  \"university\": \"UTH\",\r\n  \"major\": \"Information Technology\",\r\n  \"yearOfStudy\": 3,\r\n  \"bio\": \"Test talent student\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/talents",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "talents"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Talent",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Dán vào tab Scripts > Pre-request\r\nconst loginRequest = {\r\n    url: pm.environment.get(\"base_url\") + \"/api/auth/login\",\r\n    method: \"POST\",\r\n    header: { \"Content-Type\": \"application/json\" },\r\n    body: {\r\n        mode: \"raw\",\r\n        raw: JSON.stringify({\r\n            email: \"admin@labodc.com\",\r\n            password: \"123123\"\r\n        })\r\n    }\r\n};\r\n\r\npm.sendRequest(loginRequest, function (err, res) {\r\n    var data = res.json();\r\n    if (data.data && data.data.token) {\r\n        pm.environment.set(\"token\", data.data.token);\r\n    }\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fullName\": \"Tran Updated Talent\",\r\n  \"studentId\": \"TEST001\",\r\n  \"university\": \"UTH\",\r\n  \"major\": \"Software Engineering\",\r\n  \"yearOfStudy\": 4,\r\n  \"bio\": \"Updated bio\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/talents/{{talent_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "talents",
+                "{{talent_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Talent",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Dán vào tab Scripts > Pre-request\r\nconst loginRequest = {\r\n    url: pm.environment.get(\"base_url\") + \"/api/auth/login\",\r\n    method: \"POST\",\r\n    header: { \"Content-Type\": \"application/json\" },\r\n    body: {\r\n        mode: \"raw\",\r\n        raw: JSON.stringify({\r\n            email: \"admin@labodc.com\",\r\n            password: \"123123\"\r\n        })\r\n    }\r\n};\r\n\r\npm.sendRequest(loginRequest, function (err, res) {\r\n    var data = res.json();\r\n    if (data.data && data.data.token) {\r\n        pm.environment.set(\"token\", data.data.token);\r\n    }\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/talents/{{talent_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "talents",
+                "{{talent_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  }
+}
