@@ -1,0 +1,670 @@
+{
+  "info": {
+    "_postman_id": "edf9dfac-dac3-462e-88c2-1eb422202544",
+    "name": "ThanhNhan_Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "58751056",
+    "_collection_link": "https://go.postman.co/collection/58751056-edf9dfac-dac3-462e-88c2-1eb422202544?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login ENTERPRISE",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\nif (res.data && res.data.token) { pm.environment.set(\"token\", res.data.token); }\npm.test(\"Login success\", function () { pm.response.to.have.status(200); });\npm.test(\"Token saved\", function () { pm.expect(pm.environment.get(\"token\")).to.not.be.empty; });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"contact@techcorp.vn\",\"password\":\"123123\"}",
+              "options": {
+                "raw": {
+                  "language": "text"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login SYSTEM_ADMIN",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\nif (res.data && res.data.token) { pm.environment.set(\"token\", res.data.token); }\npm.test(\"Login success\", function () { pm.response.to.have.status(200); });\npm.test(\"Token saved\", function () { pm.expect(pm.environment.get(\"token\")).to.not.be.empty; });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"admin@labodc.com\",\"password\":\"123123\"}",
+              "options": {
+                "raw": {
+                  "language": "text"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "EnterprisePortalController",
+      "item": [
+        {
+          "name": "Get Dashboard Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/dashboard/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "dashboard",
+                "summary"
+              ]
+            },
+            "description": "Tá»•ng quan dashboard doanh nghiá»‡p"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Recent Projects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/dashboard/recent-projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "dashboard",
+                "recent-projects"
+              ]
+            },
+            "description": "Dá»± Ã¡n gáº§n Ä‘Ã¢y"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Projects Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/projects/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "projects",
+                "summary"
+              ]
+            },
+            "description": "Tá»•ng quan dá»± Ã¡n"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Projects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "projects"
+              ]
+            },
+            "description": "Danh sÃ¡ch dá»± Ã¡n"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Mentors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/mentors",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "mentors"
+              ]
+            },
+            "description": "Danh sÃ¡ch mentor"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Proposals Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/proposals/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "proposals",
+                "summary"
+              ]
+            },
+            "description": "Tá»•ng quan Ä‘á» xuáº¥t"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Proposals",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/proposals",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "proposals"
+              ]
+            },
+            "description": "Danh sÃ¡ch Ä‘á» xuáº¥t"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Payments Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/payments/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "payments",
+                "summary"
+              ]
+            },
+            "description": "Tá»•ng quan thanh toÃ¡n"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/payments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "payments"
+              ]
+            },
+            "description": "Danh sÃ¡ch thanh toÃ¡n"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"projectId\":  \"{{project_id}}\",\r\n    \"amount\":  1000000,\r\n    \"note\":  \"Postman test payment\"\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/payments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "payments"
+              ]
+            },
+            "description": "Táº¡o thanh toÃ¡n má»›i"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Project",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\":  \"Updated project from Postman\",\r\n    \"description\":  \"Updated project description\"\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/projects/{{project_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "projects",
+                "{{project_id}}"
+              ]
+            },
+            "description": "Cáº­p nháº­t dá»± Ã¡n"
+          },
+          "response": []
+        },
+        {
+          "name": "Assign Mentor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"mentorId\":  \"{{mentor_id}}\"\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/projects/{{project_id}}/assign-mentor",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "projects",
+                "{{project_id}}",
+                "assign-mentor"
+              ]
+            },
+            "description": "GÃ¡n mentor cho dá»± Ã¡n"
+          },
+          "response": []
+        },
+        {
+          "name": "Start Project",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/projects/{{project_id}}/start",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "projects",
+                "{{project_id}}",
+                "start"
+              ]
+            },
+            "description": "Báº¯t Ä‘áº§u dá»± Ã¡n"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Project",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/projects/{{project_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "projects",
+                "{{project_id}}"
+              ]
+            },
+            "description": "XÃ³a dá»± Ã¡n"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Reports Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/reports/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "reports",
+                "summary"
+              ]
+            },
+            "description": "Tá»•ng quan bÃ¡o cÃ¡o"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project Reports",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/reports/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "reports",
+                "projects"
+              ]
+            },
+            "description": "BÃ¡o cÃ¡o theo dá»± Ã¡n"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Feedback",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/feedback",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "feedback"
+              ]
+            },
+            "description": "Danh sÃ¡ch feedback"
+          },
+          "response": []
+        },
+        {
+          "name": "Send Feedback",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"projectId\":  \"{{project_id}}\",\r\n    \"rating\":  5,\r\n    \"comment\":  \"Postman test feedback\"\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/feedback",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "feedback"
+              ]
+            },
+            "description": "Gá»­i feedback"
+          },
+          "response": []
+        }
+      ],
+      "description": "Base URL: /api/enterprise. Account: contact@techcorp.vn (ENTERPRISE)."
+    },
+    {
+      "name": "ProjectValidationController",
+      "item": [
+        {
+          "name": "Get Validation Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/lab-admin/project-validation/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lab-admin",
+                "project-validation",
+                "stats"
+              ]
+            },
+            "description": "Thá»‘ng kÃª validation"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Projects Pending Validation",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/lab-admin/project-validation/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lab-admin",
+                "project-validation",
+                "projects"
+              ]
+            },
+            "description": "Danh sÃ¡ch dá»± Ã¡n chá» duyá»‡t"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project Pending Validation By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/lab-admin/project-validation/projects/{{project_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lab-admin",
+                "project-validation",
+                "projects",
+                "{{project_id}}"
+              ]
+            },
+            "description": "Chi tiáº¿t dá»± Ã¡n chá» duyá»‡t"
+          },
+          "response": []
+        },
+        {
+          "name": "Approve Project",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/lab-admin/project-validation/projects/{{project_id}}/approve",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lab-admin",
+                "project-validation",
+                "projects",
+                "{{project_id}}",
+                "approve"
+              ]
+            },
+            "description": "Duyá»‡t dá»± Ã¡n"
+          },
+          "response": []
+        },
+        {
+          "name": "Reject Project",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"reason\":  \"Postman validation rejection test\"\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/lab-admin/project-validation/projects/{{project_id}}/reject",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lab-admin",
+                "project-validation",
+                "projects",
+                "{{project_id}}",
+                "reject"
+              ]
+            },
+            "description": "Tá»« chá»‘i dá»± Ã¡n"
+          },
+          "response": []
+        },
+        {
+          "name": "Assign Mentor To Project",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"mentorId\":  \"{{mentor_id}}\"\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/lab-admin/project-validation/projects/{{project_id}}/assign-mentor",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lab-admin",
+                "project-validation",
+                "projects",
+                "{{project_id}}",
+                "assign-mentor"
+              ]
+            },
+            "description": "GÃ¡n mentor cho dá»± Ã¡n"
+          },
+          "response": []
+        }
+      ],
+      "description": "Base URL: /lab-admin/project-validation. Account: admin@labodc.com (SYSTEM_ADMIN)."
+    }
+  ]
+}
