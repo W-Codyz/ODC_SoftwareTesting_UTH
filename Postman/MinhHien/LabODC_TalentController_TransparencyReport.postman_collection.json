@@ -1,0 +1,1484 @@
+{
+  "info": {
+    "_postman_id": "labodc-talent-transparency-2024",
+    "name": "LabODC - TalentController + TransparencyReport",
+    "description": "Collection chứa 14 API TalentController (tài khoản TALENT: nguyenvana@student.uth.edu.vn) và 8 API TransparencyReportController (tài khoản SYSTEM_ADMIN: admin@labodc.com). Base URL: http://localhost:8080",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "skill_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "task_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "project_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "report_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "A. TalentController",
+      "description": "14 API cho Talent user. Tài khoản: nguyenvana@student.uth.edu.vn / 123123",
+      "item": [
+        {
+          "name": "TL-01 Get Talent Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/talent/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "talent", "profile"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.variables.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'nguyenvana@student.uth.edu.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        if (jsonData.data && jsonData.data.token) {",
+                  "            pm.variables.set('token', jsonData.data.token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "pm.test('Profile has email of logged-in talent', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.email).to.eql('nguyenvana@student.uth.edu.vn');",
+                  "});",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TL-02 Get Talent Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/talent/dashboard",
+              "host": ["{{base_url}}"],
+              "path": ["api", "talent", "dashboard"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.variables.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'nguyenvana@student.uth.edu.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        if (jsonData.data && jsonData.data.token) {",
+                  "            pm.variables.set('token', jsonData.data.token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "pm.test('Dashboard data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TL-03 Get Available Projects",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/talent/projects/available?page=0&size=20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "talent", "projects", "available"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "20" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.variables.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'nguyenvana@student.uth.edu.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        if (jsonData.data && jsonData.data.token) {",
+                  "            pm.variables.set('token', jsonData.data.token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "pm.test('Projects data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TL-04 Get Project Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/talent/projects/2",
+              "host": ["{{base_url}}"],
+              "path": ["api", "talent", "projects", "2"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.variables.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'nguyenvana@student.uth.edu.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        if (jsonData.data && jsonData.data.token) {",
+                  "            pm.variables.set('token', jsonData.data.token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "pm.test('Project data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "pm.test('Project ID is 2', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.id).to.eql(2);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TL-05 Put Talent Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Nguyen Van A\",\n  \"studentId\": \"2020600001\",\n  \"faculty\": \"Computer Science\",\n  \"major\": \"Software Engineering\",\n  \"yearOfStudy\": 3,\n  \"email\": \"nguyenvana@student.uth.edu.vn\",\n  \"portfolioUrl\": \"https://nguyenvana.dev\",\n  \"githubUrl\": \"https://github.com/nguyenvana\",\n  \"linkedinUrl\": \"https://linkedin.com/in/nguyenvana\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/talent/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "talent", "profile"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.variables.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'nguyenvana@student.uth.edu.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        if (jsonData.data && jsonData.data.token) {",
+                  "            pm.variables.set('token', jsonData.data.token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response has data object', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('data');",
+                  "});",
+                  "pm.test('Email matches', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.email).to.eql('nguyenvana@student.uth.edu.vn');",
+                  "});",
+                  "pm.test('Full name matches', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.fullName).to.eql('Nguyen Van A');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TL-06 Post Skills",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"skillName\": \"Java\",\n  \"skillCategory\": \"Programming\",\n  \"proficiencyLevel\": \"INTERMEDIATE\",\n  \"yearsOfExperience\": 2.0\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/talent/skills",
+              "host": ["{{base_url}}"],
+              "path": ["api", "talent", "skills"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.variables.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'nguyenvana@student.uth.edu.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        if (jsonData.data && jsonData.data.token) {",
+                  "            pm.variables.set('token', jsonData.data.token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 201', function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "pm.test('Skill name is not null', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.skillName).to.not.be.null;",
+                  "});",
+                  "pm.test('Skill name matches input', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.skillName).to.eql('Java');",
+                  "});",
+                  "pm.test('Proficiency level is valid', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(['BEGINNER','INTERMEDIATE','ADVANCED','EXPERT']).to.include(jsonData.data.proficiencyLevel);",
+                  "});",
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.id) {",
+                  "        pm.variables.set('skill_id', jsonData.data.id);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TL-07 Delete Skill",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/talent/skills/{{skill_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "talent", "skills", "{{skill_id}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.variables.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'nguyenvana@student.uth.edu.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        if (jsonData.data && jsonData.data.token) {",
+                  "            pm.variables.set('token', jsonData.data.token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TL-08 Post Certifications",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"certificationName\": \"AWS Certified Developer\",\n  \"issuingOrganization\": \"Amazon Web Services\",\n  \"issueDate\": \"2024-01-15\",\n  \"expiryDate\": \"2027-01-15\",\n  \"credentialId\": \"AWS-DEV-2024-001\",\n  \"credentialUrl\": \"https://aws.amazon.com/certification/verify\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/talent/certifications",
+              "host": ["{{base_url}}"],
+              "path": ["api", "talent", "certifications"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.variables.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'nguyenvana@student.uth.edu.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        if (jsonData.data && jsonData.data.token) {",
+                  "            pm.variables.set('token', jsonData.data.token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 201', function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "pm.test('Certification data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "pm.test('Certification name matches input', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.certificationName).to.eql('AWS Certified Developer');",
+                  "});",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TL-09 Upload Avatar",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "",
+                  "description": "Avatar image file (jpg/png)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/talent/profile/avatar",
+              "host": ["{{base_url}}"],
+              "path": ["api", "talent", "profile", "avatar"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.variables.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'nguyenvana@student.uth.edu.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        if (jsonData.data && jsonData.data.token) {",
+                  "            pm.variables.set('token', jsonData.data.token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 201', function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "pm.test('Avatar URL exists in response', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "pm.test('Response time is under 5000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TL-10 Upload CV",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "",
+                  "description": "CV file (pdf/docx)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/talent/profile/cv",
+              "host": ["{{base_url}}"],
+              "path": ["api", "talent", "profile", "cv"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.variables.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'nguyenvana@student.uth.edu.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        if (jsonData.data && jsonData.data.token) {",
+                  "            pm.variables.set('token', jsonData.data.token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 201', function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "pm.test('CV URL exists in response', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "pm.test('Response time is under 5000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TL-11 Join Project",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/talent/projects/{{project_id}}/join",
+              "host": ["{{base_url}}"],
+              "path": ["api", "talent", "projects", "{{project_id}}", "join"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.variables.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'nguyenvana@student.uth.edu.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        if (jsonData.data && jsonData.data.token) {",
+                  "            pm.variables.set('token', jsonData.data.token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 201', function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "pm.test('Join project data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TL-12 Get My Projects",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/talent/projects/my-projects",
+              "host": ["{{base_url}}"],
+              "path": ["api", "talent", "projects", "my-projects"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.variables.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'nguyenvana@student.uth.edu.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        if (jsonData.data && jsonData.data.token) {",
+                  "            pm.variables.set('token', jsonData.data.token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "pm.test('My projects data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TL-13 Get Tasks",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/talent/tasks",
+              "host": ["{{base_url}}"],
+              "path": ["api", "talent", "tasks"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.variables.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'nguyenvana@student.uth.edu.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        if (jsonData.data && jsonData.data.token) {",
+                  "            pm.variables.set('token', jsonData.data.token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "pm.test('Tasks data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TL-14 Submit Task",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"submissionNote\": \"Task completed as required. All acceptance criteria met.\",\n  \"submissionUrl\": \"https://github.com/nguyenvana/task-submission\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/talent/tasks/{{task_id}}/submit",
+              "host": ["{{base_url}}"],
+              "path": ["api", "talent", "tasks", "{{task_id}}", "submit"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.variables.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'nguyenvana@student.uth.edu.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        if (jsonData.data && jsonData.data.token) {",
+                  "            pm.variables.set('token', jsonData.data.token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 201', function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "pm.test('Submission data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "B. TransparencyReportController",
+      "description": "8 API cho Transparency Reports. Tài khoản: admin@labodc.com / 123123 (SYSTEM_ADMIN). Lưu ý: TR-03 Create sẽ tự lưu report_id vào biến để dùng cho các request sau.",
+      "item": [
+        {
+          "name": "TR-01 Get All Transparency Reports",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/transparency-reports",
+              "host": ["{{base_url}}"],
+              "path": ["api", "lab-admin", "transparency-reports"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.variables.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'admin@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        if (jsonData.data && jsonData.data.token) {",
+                  "            pm.variables.set('token', jsonData.data.token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "pm.test('Reports data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TR-02 Get Transparency Report By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/transparency-reports/{{report_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "lab-admin", "transparency-reports", "{{report_id}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.variables.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'admin@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        if (jsonData.data && jsonData.data.token) {",
+                  "            pm.variables.set('token', jsonData.data.token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "pm.test('Report data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TR-03 Create Transparency Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Q4 2026 Transparency Report\",\n  \"period\": \"Q4 2026\",\n  \"summary\": \"Quarterly transparency report for Q4 2026\",\n  \"content\": \"This report covers all activities in Q4 2026.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/transparency-reports",
+              "host": ["{{base_url}}"],
+              "path": ["api", "lab-admin", "transparency-reports"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.variables.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'admin@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        if (jsonData.data && jsonData.data.token) {",
+                  "            pm.variables.set('token', jsonData.data.token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 201', function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "pm.test('Report created with ID', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "    if (jsonData.data && jsonData.data.id) {",
+                  "        pm.variables.set('report_id', jsonData.data.id);",
+                  "    }",
+                  "});",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TR-04 Publish Transparency Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/transparency-reports/{{report_id}}/publish",
+              "host": ["{{base_url}}"],
+              "path": ["api", "lab-admin", "transparency-reports", "{{report_id}}", "publish"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.variables.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'admin@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        if (jsonData.data && jsonData.data.token) {",
+                  "            pm.variables.set('token', jsonData.data.token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TR-05 Delete Transparency Report",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/transparency-reports/{{report_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "lab-admin", "transparency-reports", "{{report_id}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.variables.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'admin@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        if (jsonData.data && jsonData.data.token) {",
+                  "            pm.variables.set('token', jsonData.data.token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TR-06 Export Report to Excel",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/transparency-reports/{{report_id}}/export/excel",
+              "host": ["{{base_url}}"],
+              "path": ["api", "lab-admin", "transparency-reports", "{{report_id}}", "export", "excel"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.variables.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'admin@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        if (jsonData.data && jsonData.data.token) {",
+                  "            pm.variables.set('token', jsonData.data.token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response has content', function () {",
+                  "    pm.expect(pm.response.body).to.not.be.empty;",
+                  "});",
+                  "pm.test('Response time is under 5000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TR-07 Archive Transparency Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/transparency-reports/{{report_id}}/archive",
+              "host": ["{{base_url}}"],
+              "path": ["api", "lab-admin", "transparency-reports", "{{report_id}}", "archive"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.variables.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'admin@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        if (jsonData.data && jsonData.data.token) {",
+                  "            pm.variables.set('token', jsonData.data.token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TR-08 Download Transparency Report",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/transparency-reports/{{report_id}}/download",
+              "host": ["{{base_url}}"],
+              "path": ["api", "lab-admin", "transparency-reports", "{{report_id}}", "download"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.variables.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'admin@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        if (jsonData.data && jsonData.data.token) {",
+                  "            pm.variables.set('token', jsonData.data.token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response has content', function () {",
+                  "    pm.expect(pm.response.body).to.not.be.empty;",
+                  "});",
+                  "pm.test('Response time is under 5000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
