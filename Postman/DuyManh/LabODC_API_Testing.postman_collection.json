@@ -1,0 +1,115 @@
+{
+  "info": {
+    "name": "DuyManh - Mentor Portal APIs",
+    "description": "Postman requests for GET /api/mentor/projects and GET /api/mentor/invitations. Use with the labodc-backend monolith (default port 8080), a running database, and a MENTOR account that has a Mentor profile. Login stores the returned token in the selected environment. Invitation results depend on database fixtures; an empty list is a valid response.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0 - Login MENTOR",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"mentor1@labodc.com\",\n  \"password\": \"123123\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/auth/login",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "auth", "login" ]
+        },
+        "description": "Login against this same backend. The test stores data.token (or token) in the unified-compatible environment variable `token`. If your local seed credentials differ, replace the email/password in this request body."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Login returns 200', function () { pm.response.to.have.status(200); });",
+              "let body = {}; try { body = pm.response.json(); } catch (e) {}",
+              "const token = body?.data?.token || body?.token;",
+              "pm.test('Login response contains a token', function () { pm.expect(token).to.be.a('string').and.not.empty; });",
+              "if (token) pm.environment.set('token', token);"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "1 - Mentor Projects",
+      "item": [
+        {
+          "name": "MP-01 Get my projects",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{token}}", "type": "string" } ] },
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/mentor/projects", "host": [ "{{base_url}}" ], "path": [ "api", "mentor", "projects" ] },
+            "description": "Expected 200 with ApiResponse.data as an array. Projects come from the database used by labodc-backend and must be assigned to this mentor."
+          },
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "pm.test('Returns 200', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('Response has success envelope and array data', function () { pm.expect(body.success).to.eql(true); pm.expect(body.data).to.be.an('array'); });",
+              "if (Array.isArray(body.data)) pm.test('Project item fields are present', function () { body.data.forEach(x => { pm.expect(x).to.have.property('id'); pm.expect(x).to.have.property('title'); pm.expect(x).to.have.property('progressPercentage'); }); });"
+            ] } }
+          ],
+          "response": []
+        },
+        {
+          "name": "MP-02 No token is rejected",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/mentor/projects", "host": [ "{{base_url}}" ], "path": [ "api", "mentor", "projects" ] }
+          },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test('Returns 401 without a token', function () { pm.response.to.have.status(401); });" ] } } ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2 - Mentor Invitations",
+      "item": [
+        {
+          "name": "MI-01 Get my pending invitations",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{token}}", "type": "string" } ] },
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/mentor/invitations", "host": [ "{{base_url}}" ], "path": [ "api", "mentor", "invitations" ] },
+            "description": "Returns this mentor's PENDING invitations, newest receivedDate first. An empty data array is valid if there are no pending invitation fixtures."
+          },
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "pm.test('Returns 200', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('Response has success envelope and array data', function () { pm.expect(body.success).to.eql(true); pm.expect(body.data).to.be.an('array'); });",
+              "if (Array.isArray(body.data)) pm.test('Invitation item fields are present', function () { body.data.forEach(x => { ['id','projectName','groupName','studentCount','description','deadline','skills','receivedDate','priority'].forEach(k => pm.expect(x).to.have.property(k)); }); });"
+            ] } }
+          ],
+          "response": []
+        },
+        {
+          "name": "MI-02 No token is rejected",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/mentor/invitations", "host": [ "{{base_url}}" ], "path": [ "api", "mentor", "invitations" ] }
+          },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test('Returns 401 without a token', function () { pm.response.to.have.status(401); });" ] } } ],
+          "response": []
+        }
+      ]
+    }
+  ]
+}
