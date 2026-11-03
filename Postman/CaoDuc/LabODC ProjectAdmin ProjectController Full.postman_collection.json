@@ -1,0 +1,654 @@
+{
+  "info": {
+    "_postman_id": "ab08104a-a710-4d13-9cdf-4d04e42188a5",
+    "name": "LabODC Person 4 - ProjectAdmin + ProjectController",
+    "description": "Covers the 21 ProjectAdminController and ProjectController endpoints listed in ProjectAdmin_ProjectController.docx. Uses the documented local test accounts and {{base_url}} from the LabODC Local environment. Create/update/approve/reject/validate/delete/join/leave requests change database state; use disposable test projects and do not run conflicting state transitions on the same project.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{project_admin_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.test(\"HTTP response is successful (2xx)\", function () {",
+          "    pm.expect(pm.response.code).to.be.within(200, 299);",
+          "});"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "project_admin_token",
+      "value": ""
+    },
+    {
+      "key": "project_talent_token",
+      "value": ""
+    },
+    {
+      "key": "project_system_admin_token",
+      "value": ""
+    },
+    {
+      "key": "project_enterprise_token",
+      "value": ""
+    },
+    {
+      "key": "project_mentor_token",
+      "value": ""
+    },
+    {
+      "key": "project_admin_test_id",
+      "value": ""
+    },
+    {
+      "key": "project_controller_test_id",
+      "value": ""
+    },
+    {
+      "key": "enterprise_id",
+      "value": "1"
+    },
+    {
+      "key": "project_test_suffix",
+      "value": ""
+    },
+    {
+      "key": "project_start_date",
+      "value": ""
+    },
+    {
+      "key": "project_end_date",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "0 - Đăng nhập (chạy đầu tiên)",
+      "item": [
+        {
+          "name": "Login LAB_ADMIN - labadmin1@labodc.com",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Đăng nhập LAB_ADMIN thành công\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var res = pm.response.json();",
+                  "    pm.test(\"LAB_ADMIN token và role đúng\", function () {",
+                  "        pm.expect(res.data).to.have.property(\"token\");",
+                  "        pm.expect(res.data.user.role).to.eql(\"LAB_ADMIN\");",
+                  "    });",
+                  "    pm.collectionVariables.set(\"project_admin_token\", res.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"labadmin1@labodc.com\",\n  \"password\": \"123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/auth/login"
+          },
+          "response": []
+        },
+        {
+          "name": "Login SYSTEM_ADMIN - admin@labodc.com",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Đăng nhập SYSTEM_ADMIN thành công\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var res = pm.response.json();",
+                  "    pm.test(\"SYSTEM_ADMIN token và role đúng\", function () {",
+                  "        pm.expect(res.data).to.have.property(\"token\");",
+                  "        pm.expect(res.data.user.role).to.eql(\"SYSTEM_ADMIN\");",
+                  "    });",
+                  "    pm.collectionVariables.set(\"project_system_admin_token\", res.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@labodc.com\",\n  \"password\": \"123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/auth/login",
+            "response": []
+          }
+        },
+        {
+          "name": "Login ENTERPRISE - contact@techcorp.vn",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Đăng nhập ENTERPRISE thành công\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var res = pm.response.json();",
+                  "    pm.test(\"ENTERPRISE token và role đúng\", function () {",
+                  "        pm.expect(res.data).to.have.property(\"token\");",
+                  "        pm.expect(res.data.user.role).to.eql(\"ENTERPRISE\");",
+                  "    });",
+                  "    pm.collectionVariables.set(\"project_enterprise_token\", res.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"contact@techcorp.vn\",\n  \"password\": \"123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/auth/login",
+            "response": []
+          }
+        },
+        {
+          "name": "Login MENTOR - mentor.nguyenquang@uth.edu.vn",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Đăng nhập MENTOR thành công\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var res = pm.response.json();",
+                  "    pm.test(\"MENTOR token và role đúng\", function () {",
+                  "        pm.expect(res.data).to.have.property(\"token\");",
+                  "        pm.expect(res.data.user.role).to.eql(\"MENTOR\");",
+                  "    });",
+                  "    pm.collectionVariables.set(\"project_mentor_token\", res.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"mentor.nguyenquang@uth.edu.vn\",\n  \"password\": \"123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/auth/login",
+            "response": []
+          }
+        },
+        {
+          "name": "Login TALENT - nguyenvana@student.uth.edu.vn",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Đăng nhập TALENT thành công\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var res = pm.response.json();",
+                  "    pm.test(\"TALENT token và role đúng\", function () {",
+                  "        pm.expect(res.data).to.have.property(\"token\");",
+                  "        pm.expect(res.data.user.role).to.eql(\"TALENT\");",
+                  "    });",
+                  "    pm.collectionVariables.set(\"project_talent_token\", res.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"nguyenvana@student.uth.edu.vn\",\n  \"password\": \"123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/auth/login"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "1 - ProjectAdminController (LAB_ADMIN)",
+      "item": [
+        {
+          "name": "Create Admin Test Project",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var now = new Date();",
+                  "var start = new Date(now.getTime() + 86400000);",
+                  "var end = new Date(now.getTime() + 30 * 86400000);",
+                  "pm.collectionVariables.set(\"project_test_suffix\", String(Date.now()));",
+                  "pm.collectionVariables.set(\"project_start_date\", start.toISOString().slice(0, 10));",
+                  "pm.collectionVariables.set(\"project_end_date\", end.toISOString().slice(0, 10));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var res = pm.response.json();",
+                  "var project = res.data || res;",
+                  "pm.test(\"Tạo project admin và lưu ID\", function () {",
+                  "    pm.expect(project).to.have.property(\"id\");",
+                  "    pm.collectionVariables.set(\"project_admin_test_id\", String(project.id));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"enterpriseId\": {{enterprise_id}},\n  \"title\": \"Postman Admin Test {{project_test_suffix}}\",\n  \"description\": \"Test project created by the ProjectAdmin Postman collection.\",\n  \"objectives\": \"[\\\"Verify ProjectAdmin endpoints\\\"]\",\n  \"requirements\": \"Postman API test data\",\n  \"startDate\": \"{{project_start_date}}\",\n  \"endDate\": \"{{project_end_date}}\",\n  \"budget\": 10000000,\n  \"currency\": \"VND\",\n  \"numberOfStudents\": 3,\n  \"status\": \"PENDING_VALIDATION\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/lab-admin/projects"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Admin Projects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/lab-admin/projects?page=0&size=20"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Admin Test Project By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/lab-admin/projects/{{project_admin_test_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Admin Test Project",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"enterpriseId\": {{enterprise_id}},\n  \"title\": \"Postman Admin Updated {{project_test_suffix}}\",\n  \"description\": \"Updated by the ProjectAdmin Postman collection.\",\n  \"objectives\": \"[\\\"Verify update endpoint\\\"]\",\n  \"requirements\": \"Postman API test data\",\n  \"startDate\": \"{{project_start_date}}\",\n  \"endDate\": \"{{project_end_date}}\",\n  \"budget\": 12000000,\n  \"currency\": \"VND\",\n  \"numberOfStudents\": 4,\n  \"status\": \"PENDING_VALIDATION\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/lab-admin/projects/{{project_admin_test_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Validate Admin Test Project",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/api/lab-admin/projects/{{project_admin_test_id}}/validate"
+          },
+          "response": []
+        },
+        {
+          "name": "Reject Admin Test Project",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/api/lab-admin/projects/{{project_admin_test_id}}/reject?reason=Postman%20collection%20test"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Admin Test Project (xóa dữ liệu test)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/api/lab-admin/projects/{{project_admin_test_id}}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2 - ProjectController",
+      "item": [
+        {
+          "name": "Create Controller Test Project",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var res = pm.response.json();",
+                  "var project = res.data || res;",
+                  "pm.test(\"Tạo project controller và lưu ID\", function () {",
+                  "    pm.expect(project).to.have.property(\"id\");",
+                  "    pm.collectionVariables.set(\"project_controller_test_id\", String(project.id));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman Controller Test {{project_test_suffix}}\",\n  \"description\": \"Test project created by the ProjectController Postman collection.\",\n  \"objectives\": [\"Verify ProjectController endpoints\"],\n  \"requirements\": \"Postman API test data\",\n  \"startDate\": \"{{project_start_date}}\",\n  \"endDate\": \"{{project_end_date}}\",\n  \"budget\": 10000000,\n  \"requiredTalents\": 3,\n  \"technologies\": [\"Java\", \"Postman\"],\n  \"requiredSkills\": [\"API testing\"],\n  \"enterpriseId\": {{enterprise_id}},\n  \"allowApplications\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/projects"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Projects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/projects"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/projects/stats"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Controller Test Project By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/projects/{{project_controller_test_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Projects For Management",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/projects/management"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Projects By Enterprise",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/projects/enterprise/{{enterprise_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Projects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/projects/my"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project Members",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/projects/{{project_controller_test_id}}/members"
+          },
+          "response": []
+        },
+        {
+          "name": "Approve Controller Test Project",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{base_url}}/api/projects/{{project_controller_test_id}}/approve"
+          },
+          "response": []
+        },
+        {
+          "name": "Join Controller Test Project (TALENT)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{project_talent_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"motivationLetter\": \"Joining as a Postman API test participant.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/projects/{{project_controller_test_id}}/join"
+          },
+          "response": []
+        },
+        {
+          "name": "Leave Controller Test Project (TALENT)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{project_talent_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/api/projects/{{project_controller_test_id}}/leave"
+          },
+          "response": []
+        },
+        {
+          "name": "Reject Controller Test Project",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Postman collection test rejection\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/projects/{{project_controller_test_id}}/reject"
+          },
+          "response": []
+        },
+        {
+          "name": "Validate Controller Test Project",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{base_url}}/api/projects/{{project_controller_test_id}}/validate"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Controller Test Project (xóa dữ liệu test)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/api/projects/{{project_controller_test_id}}"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
