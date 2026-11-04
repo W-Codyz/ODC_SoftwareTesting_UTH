@@ -1,0 +1,1692 @@
+{
+  "info": {
+    "_postman_id": "e0f58ffe-a268-425b-8489-376bad1eba3f",
+    "name": "LabODC API Testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "58700179",
+    "_collection_link": "https://go.postman.co/collection/58700179-e0f58ffe-a268-425b-8489-376bad1eba3f?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var res = pm.response.json();\r\n\r\nif (res.data && res.data.token) {\r\n    pm.environment.set(\"token\", res.data.token);\r\n    console.log(\"Token saved!\");\r\n}\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response has token\", function () {\r\n    pm.expect(res.data).to.have.property(\"token\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"labadmin2@labodc.com\",\r\n  \"password\": \"123123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"testuser@mail.com\",\r\n  \"password\": \"test123123\",\r\n  \"confirmPassword\": \"test123123\",\r\n  \"role\": \"TALENT\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Get Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response has user email\", function () {\r\n    var res = pm.response.json();\r\n    pm.expect(res.data).to.have.property(\"email\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/user/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "user",
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Get Dashboard Stats",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dashboard/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard",
+                "stats"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Recent Activities",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dashboard/activities?limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard",
+                "activities"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Pending Approvals",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dashboard/approvals?limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard",
+                "approvals"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Revenue Chart",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dashboard/revenue?months=6",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard",
+                "revenue"
+              ],
+              "query": [
+                {
+                  "key": "months",
+                  "value": "6"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Mentor Admin",
+      "item": [
+        {
+          "name": "Get All Mentors",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const loginRequest = {\r\n    url: pm.environment.get(\"base_url\") + \"/api/auth/login\",\r\n    method: \"POST\",\r\n    header: { \"Content-Type\": \"application/json\" },\r\n    body: {\r\n        mode: \"raw\",\r\n        raw: JSON.stringify({\r\n            email: \"admin@labodc.com\",\r\n            password: \"123123\"\r\n        })\r\n    }\r\n};\r\n\r\npm.sendRequest(loginRequest, function (err, res) {\r\n    var data = res.json();\r\n    if (data.data && data.data.token) {\r\n        pm.environment.set(\"token\", data.data.token);\r\n    }\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/mentors?page=0&size=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "mentors"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Mentor By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/mentors/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "mentors",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Expertise",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/mentors/expertise/all",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "mentors",
+                "expertise",
+                "all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Available Mentors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/mentors/available?technologies=Java,Spring",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "mentors",
+                "available"
+              ],
+              "query": [
+                {
+                  "key": "technologies",
+                  "value": "Java,Spring"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Mentor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var res = pm.response.json();\r\nvar id = res.id || (res.data && res.data.id);\r\nif (id) {\r\n    pm.environment.set(\"mentor_id\", id);\r\n}\r\npm.test(\"Mentor created\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const loginRequest = {\r\n    url: pm.environment.get(\"base_url\") + \"/api/auth/login\",\r\n    method: \"POST\",\r\n    header: { \"Content-Type\": \"application/json\" },\r\n    body: {\r\n        mode: \"raw\",\r\n        raw: JSON.stringify({\r\n            email: \"admin@labodc.com\",\r\n            password: \"123123\"\r\n        })\r\n    }\r\n};\r\n\r\npm.sendRequest(loginRequest, function (err, res) {\r\n    var data = res.json();\r\n    if (data.data && data.data.token) {\r\n        pm.environment.set(\"token\", data.data.token);\r\n    }\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fullName\": \"Test API Mentor\",\r\n  \"title\": \"Mr.\",\r\n  \"currentPosition\": \"Senior Developer\",\r\n  \"currentCompany\": \"Tech Corp\",\r\n  \"yearsOfExperience\": 5,\r\n  \"bio\": \"Experienced developer\",\r\n  \"expertise\": [\"Java\", \"Spring Boot\"],\r\n  \"hourlyRate\": 50.0,\r\n  \"currency\": \"USD\",\r\n  \"maxConcurrentProjects\": 3,\r\n  \"available\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/mentors",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "mentors"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Mentor",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const loginRequest = {\r\n    url: pm.environment.get(\"base_url\") + \"/api/auth/login\",\r\n    method: \"POST\",\r\n    header: { \"Content-Type\": \"application/json\" },\r\n    body: {\r\n        mode: \"raw\",\r\n        raw: JSON.stringify({\r\n            email: \"admin@labodc.com\",\r\n            password: \"admin123\"\r\n        })\r\n    }\r\n};\r\n\r\npm.sendRequest(loginRequest, function (err, res) {\r\n    var data = res.json();\r\n    if (data.data && data.data.token) {\r\n        pm.environment.set(\"token\", data.data.token);\r\n    }\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fullName\": \"Test API Mentor\",\r\n  \"title\": \"Dr.\",\r\n  \"currentPosition\": \"Lead Developer\",\r\n  \"currentCompany\": \"Tech Corp\",\r\n  \"yearsOfExperience\": 7,\r\n  \"bio\": \"Updated bio\",\r\n  \"expertise\": [\"Java\", \"Spring Boot\", \"React\"],\r\n  \"hourlyRate\": 75.0,\r\n  \"currency\": \"USD\",\r\n  \"maxConcurrentProjects\": 5,\r\n  \"available\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/mentors/{{mentor_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "mentors",
+                "{{mentor_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Mentor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Mentor deleted\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/mentors/{{mentor_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "mentors",
+                "{{mentor_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Talent Admin",
+      "item": [
+        {
+          "name": "Get All Talents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/talents?page=0&size=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "talents"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Talent By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/talents/11",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "talents",
+                "11"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Talent",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var res = pm.response.json();\r\nvar id = res.id || (res.data && res.data.id);\r\nif (id) {\r\n    pm.environment.set(\"talent_id\", id);\r\n}\r\npm.test(\"Talent created\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const loginRequest = {\r\n    url: pm.environment.get(\"base_url\") + \"/api/auth/login\",\r\n    method: \"POST\",\r\n    header: { \"Content-Type\": \"application/json\" },\r\n    body: {\r\n        mode: \"raw\",\r\n        raw: JSON.stringify({\r\n            email: \"admin@labodc.com\",\r\n            password: \"123123\"\r\n        })\r\n    }\r\n};\r\n\r\npm.sendRequest(loginRequest, function (err, res) {\r\n    var data = res.json();\r\n    if (data.data && data.data.token) {\r\n        pm.environment.set(\"token\", data.data.token);\r\n    }\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fullName\": \"Tran Test Talent\",\r\n  \"studentId\": \"TEST001\",\r\n  \"university\": \"UTH\",\r\n  \"major\": \"Information Technology\",\r\n  \"yearOfStudy\": 3,\r\n  \"bio\": \"Test talent student\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/talents",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "talents"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Talent",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Dán vào tab Scripts > Pre-request\r\nconst loginRequest = {\r\n    url: pm.environment.get(\"base_url\") + \"/api/auth/login\",\r\n    method: \"POST\",\r\n    header: { \"Content-Type\": \"application/json\" },\r\n    body: {\r\n        mode: \"raw\",\r\n        raw: JSON.stringify({\r\n            email: \"admin@labodc.com\",\r\n            password: \"123123\"\r\n        })\r\n    }\r\n};\r\n\r\npm.sendRequest(loginRequest, function (err, res) {\r\n    var data = res.json();\r\n    if (data.data && data.data.token) {\r\n        pm.environment.set(\"token\", data.data.token);\r\n    }\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fullName\": \"Tran Updated Talent\",\r\n  \"studentId\": \"TEST001\",\r\n  \"university\": \"UTH\",\r\n  \"major\": \"Software Engineering\",\r\n  \"yearOfStudy\": 4,\r\n  \"bio\": \"Updated bio\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/talents/{{talent_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "talents",
+                "{{talent_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Talent",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Dán vào tab Scripts > Pre-request\r\nconst loginRequest = {\r\n    url: pm.environment.get(\"base_url\") + \"/api/auth/login\",\r\n    method: \"POST\",\r\n    header: { \"Content-Type\": \"application/json\" },\r\n    body: {\r\n        mode: \"raw\",\r\n        raw: JSON.stringify({\r\n            email: \"admin@labodc.com\",\r\n            password: \"123123\"\r\n        })\r\n    }\r\n};\r\n\r\npm.sendRequest(loginRequest, function (err, res) {\r\n    var data = res.json();\r\n    if (data.data && data.data.token) {\r\n        pm.environment.set(\"token\", data.data.token);\r\n    }\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/talents/{{talent_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "talents",
+                "{{talent_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Invitations",
+      "item": [
+        {
+          "name": "TC02 - Get Invitations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/invitations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "invitations"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "MentorPortalController",
+      "item": [
+        {
+          "name": "Login - Mentor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\nif (res.success) {\r\n    pm.environment.set(\"token\", res.data.token);\r\n}\r\n\r\npm.test(\"Login thành công\", () => {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"mentor.nguyenquang@uth.edu.vn\",\r\n  \"password\": \"123123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC01.1 - GET - /dashboard",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r\npm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/dashboard",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "dashboard"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC02.1 - GET - /invitations",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r\npm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r\npm.test(\"data là mảng\", () => pm.expect(pm.response.json().data).to.be.an(\"array\"));\r\n\r\nconst list = pm.response.json().data;\r\nif (Array.isArray(list) && list.length) pm.environment.set(\"invitationId\", list[0].id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/invitations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "invitations"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC03.1 - GET - /projects",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r\npm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r\npm.test(\"data là mảng\", () => pm.expect(pm.response.json().data).to.be.an(\"array\"));\r\n\r\nconst list = pm.response.json().data;\r\nif (Array.isArray(list) && list.length) pm.environment.set(\"projectId\", list[0].id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC04.1 - POST - /invitations/{id}/accept",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r\npm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r\npm.test(\"message = Accepted\", () => pm.expect(pm.response.json().message).to.eql(\"Accepted\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/invitations/1/accept",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "invitations",
+                "1",
+                "accept"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC05.1 - POST - /invitations/{id}/reject",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r\npm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r\npm.test(\"message = Rejected\", () => pm.expect(pm.response.json().message).to.eql(\"Rejected\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"reason\": \"Ban lich\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/mentor/invitations/2/reject",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "invitations",
+                "2",
+                "reject"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC06.1 - GET - /tasks",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r\npm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r\npm.test(\"data là mảng\", () => pm.expect(pm.response.json().data).to.be.an(\"array\"));\r\n\r\nconst list = pm.response.json().data;\r\nif (Array.isArray(list) && list.length) pm.environment.set(\"taskId\", list[0].id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/tasks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC07.1 - GET - /projects/{projectId}/tasks",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r\npm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r\npm.test(\"data là mảng\", () => pm.expect(pm.response.json().data).to.be.an(\"array\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects/{{projectId}}/tasks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects",
+                "{{projectId}}",
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC08.1 - GET - /tasks/{taskId}/submissions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r\npm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r\npm.test(\"data là mảng\", () => pm.expect(pm.response.json().data).to.be.an(\"array\"));\r\n\r\nconst list = pm.response.json().data;\r\nif (Array.isArray(list) && list.length) pm.environment.set(\"submissionId\", list[0].id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/tasks/14/submissions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "tasks",
+                "14",
+                "submissions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC09.1 - GET - /tasks/{taskId}/submissions/{submissionId}/file",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r\npm.test(\"Có header attachment\", () => {\r\n    pm.expect(pm.response.headers.get(\"Content-Disposition\") || \"\").to.include(\"attachment\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/tasks/14/submissions/1/file",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "tasks",
+                "14",
+                "submissions",
+                "1",
+                "file"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC10.1 - GET - /projects/{projectId}/applications",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r\npm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r\npm.test(\"data là mảng\", () => pm.expect(pm.response.json().data).to.be.an(\"array\"));\r\n\r\nconst list = pm.response.json().data;\r\nif (Array.isArray(list) && list.length) pm.environment.set(\"memberId\", list[0].id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects/{{projectId}}/applications",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects",
+                "{{projectId}}",
+                "applications"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC11.1 - POST - /projects/{projectId}/applications/{memberId}/approve",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r\npm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r\npm.test(\"message = Approved\", () => pm.expect(pm.response.json().message).to.eql(\"Approved\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects/{{projectId}}/applications/15/approve",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects",
+                "{{projectId}}",
+                "applications",
+                "15",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC12.1 - POST - /projects/{projectId}/applications/{memberId}/reject",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r\npm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r\npm.test(\"message = Rejected\", () => pm.expect(pm.response.json().message).to.eql(\"Rejected\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"reason\": \"Khong phu hop\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects/{{projectId}}/applications/16/reject",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects",
+                "{{projectId}}",
+                "applications",
+                "16",
+                "reject"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC13.1 - POST - /projects/{projectId}/tasks",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r",
+                  "pm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r",
+                  "pm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r",
+                  "pm.test(\"data có id\", () => pm.expect(pm.response.json().data).to.have.property(\"id\"));\r",
+                  "\r",
+                  "const d = pm.response.json().data;\r",
+                  "if (d && d.id) pm.environment.set(\"newTaskId\", d.id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Task test TC13\",\r\n  \"description\": \"Mo ta task\",\r\n  \"status\": \"pending\",\r\n  \"progress\": 0,\r\n  \"assignedTo\": [\"nguyenvana@student.uth.edu.vn\"],\r\n  \"dueDate\": \"2026-12-31\",\r\n  \"priority\": \"medium\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects/{{projectId}}/tasks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects",
+                "{{projectId}}",
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC14.1 - POST - /projects/{projectId}/close-recruiting",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r",
+                  "pm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r",
+                  "pm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r",
+                  "pm.test(\"message = Closed recruiting\", () => pm.expect(pm.response.json().message).to.eql(\"Closed recruiting\"));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects/{{projectId}}/close-recruiting",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects",
+                "{{projectId}}",
+                "close-recruiting"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC15.1 - POST - /projects/{projectId}/progress",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r",
+                  "pm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r",
+                  "pm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r",
+                  "pm.test(\"data = 50\", () => pm.expect(pm.response.json().data).to.eql(50));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"progress\": 50}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects/{{projectId}}/progress",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects",
+                "{{projectId}}",
+                "progress"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC16.1 - PUT - /projects/{projectId}/tasks/{taskId}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r\npm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r\npm.test(\"title đã đổi\", () => pm.expect(pm.response.json().data.title).to.eql(\"Task da sua TC16\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Task da sua TC16\",\r\n  \"description\": \"Mo ta da sua\",\r\n  \"status\": \"in-progress\",\r\n  \"progress\": 50,\r\n  \"assignedTo\": [\"nguyenvana@student.uth.edu.vn\"],\r\n  \"dueDate\": \"2026-12-31\",\r\n  \"priority\": \"high\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects/{{projectId}}/tasks/{{newTaskId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects",
+                "{{projectId}}",
+                "tasks",
+                "{{newTaskId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC17.1 - DELETE - /projects/{projectId}/tasks/{taskId}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r\npm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r\npm.test(\"message = Deleted\", () => pm.expect(pm.response.json().message).to.eql(\"Deleted\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects/{{projectId}}/tasks/{{newTaskId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects",
+                "{{projectId}}",
+                "tasks",
+                "{{newTaskId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC18.1 - GET - /evaluations -",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r",
+                  "pm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r",
+                  "pm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r",
+                  "pm.test(\"data là mảng\", () => pm.expect(pm.response.json().data).to.be.an(\"array\"));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/evaluations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "evaluations"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC19.1 - GET - /projects/{projectId}/evaluations",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r",
+                  "pm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r",
+                  "pm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r",
+                  "pm.test(\"data là mảng\", () => pm.expect(pm.response.json().data).to.be.an(\"array\"));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects/{{projectId}}/evaluations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects",
+                "{{projectId}}",
+                "evaluations"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC20.1 - GET - /projects/{projectId}/talents",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r",
+                  "pm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r",
+                  "pm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r",
+                  "pm.test(\"data là mảng\", () => pm.expect(pm.response.json().data).to.be.an(\"array\"));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects/{{projectId}}/talents",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects",
+                "{{projectId}}",
+                "talents"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC21.1 - POST - /projects/{projectId}/evaluations",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r\npm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r\npm.test(\"data có id\", () => pm.expect(pm.response.json().data).to.have.property(\"id\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"talentId\": 1,\r\n  \"evaluationPeriod\": \"2026-10\",\r\n  \"overallScore\": 8.5,\r\n  \"technicalSkills\": { \"score\": 8, \"comment\": \"Nam vung kien thuc\" },\r\n  \"problemSolving\": { \"score\": 8, \"comment\": \"Giai quyet van de tot\" },\r\n  \"teamwork\": { \"score\": 9, \"comment\": \"Lam viec nhom tot\" },\r\n  \"communication\": { \"score\": 8, \"comment\": \"Giao tiep ro rang\" },\r\n  \"codeQuality\": { \"score\": 7, \"comment\": \"Code kha sach\" },\r\n  \"punctuality\": { \"score\": 9, \"comment\": \"Dung han\" },\r\n  \"strengths\": [\"Cham chi\", \"Hoc nhanh\"],\r\n  \"weaknesses\": [\"Can viet test nhieu hon\"],\r\n  \"recommendations\": [\"Tiep tuc phat huy\"],\r\n  \"tasksCompleted\": 8,\r\n  \"tasksTotal\": 10,\r\n  \"hoursWorked\": 40\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects/{{projectId}}/evaluations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects",
+                "{{projectId}}",
+                "evaluations"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC22.1 - GET - /reports",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r\npm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r\npm.test(\"data là mảng\", () => pm.expect(pm.response.json().data).to.be.an(\"array\"));\r\n\r\n   const list = pm.response.json().data;\r\n   const withFile = list.filter(r => r.fileName).pop();\r\n   if (withFile) pm.environment.set(\"reportId\", withFile.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/reports",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "reports"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC23.1 - POST - /reports-thành công",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r\npm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r\npm.test(\"data có id\", () => pm.expect(pm.response.json().data).to.have.property(\"id\"));\r\n\r\nconst d = pm.response.json().data;\r\nif (d && d.id) pm.environment.set(\"newReportId\", d.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "projectId",
+                  "value": "{{projectId}}",
+                  "type": "text"
+                },
+                {
+                  "key": "student",
+                  "value": "Nguyen Van A",
+                  "type": "text"
+                },
+                {
+                  "key": "studentId",
+                  "value": "\tSV001",
+                  "type": "text"
+                },
+                {
+                  "key": "reportName",
+                  "value": "Bao cao tuan 1",
+                  "type": "text"
+                },
+                {
+                  "key": "dueDate",
+                  "value": "2026-12-31",
+                  "type": "text"
+                },
+                {
+                  "key": "summary",
+                  "value": "Tom tat",
+                  "type": "text"
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": [
+                    "RJ3dVu6lB/bao_cao_test.txt"
+                  ]
+                },
+                {
+                  "key": "status",
+                  "value": "SUBMITTED",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/mentor/reports",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "reports"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC24.1 - GET - /reports/{id}/file",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r\npm.test(\"Có header attachment\", () => {\r\n    pm.expect(pm.response.headers.get(\"Content-Disposition\") || \"\").to.include(\"attachment\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/reports/{{reportId}}/file",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "reports",
+                "{{reportId}}",
+                "file"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  }
+}
