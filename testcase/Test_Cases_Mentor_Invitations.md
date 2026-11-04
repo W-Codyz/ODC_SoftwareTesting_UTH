@@ -1,6 +1,6 @@
 # Test Cases - Mentor Invitations
 
-**Người thực hiện:** [Tên của bạn]  
+**Người thực hiện:** Lê Duy Mạnh
 **Module:** Mentor Portal  
 **Chức năng:** Danh sách lời mời Mentor (`GET /api/mentor/invitations`)  
 **Ngày tạo:** 04/11/2026
