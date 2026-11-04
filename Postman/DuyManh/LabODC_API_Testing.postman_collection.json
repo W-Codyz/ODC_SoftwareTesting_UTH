@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "DuyManh - Mentor Portal APIs",
-    "description": "Postman requests for GET /api/mentor/projects and GET /api/mentor/invitations. Use with the labodc-backend monolith (default port 8080), a running database, and a MENTOR account that has a Mentor profile. Login stores the returned token in the selected environment. Invitation results depend on database fixtures; an empty list is a valid response.",
+    "description": "Mentor Portal requests for labodc-backend on localhost:8089. Before running invitation fixture cases, execute scripts/postman_mentor_invitations_fixtures.sql in pgAdmin; run cleanup_postman_mentor_invitations_fixtures.sql afterward. Seed login: mentor.nguyenquang@uth.edu.vn / 123123. MI-05 validates null/default mapping with an existing project; missing-project fallback cannot be represented while the FK is enabled. Mentor Projects suite added: MP-01?MP-16. Run scripts/postman_mentor_projects_fixtures.sql before MP-03/05; run cleanup_postman_mentor_projects_fixtures.sql afterward.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -10,19 +10,32 @@
       "request": {
         "method": "POST",
         "header": [
-          { "key": "Content-Type", "value": "application/json" }
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"email\": \"mentor1@labodc.com\",\n  \"password\": \"123123\"\n}",
-          "options": { "raw": { "language": "json" } }
+          "raw": "{\n  \"email\": \"mentor.nguyenquang@uth.edu.vn\",\n  \"password\": \"123123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
         },
         "url": {
-          "raw": "{{base_url}}/api/auth/login",
-          "host": [ "{{base_url}}" ],
-          "path": [ "api", "auth", "login" ]
+          "raw": "{{mentor_base_url}}/api/auth/login",
+          "host": [
+            "{{mentor_base_url}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
         },
-        "description": "Login against this same backend. The test stores data.token (or token) in the unified-compatible environment variable `token`. If your local seed credentials differ, replace the email/password in this request body."
+        "description": "Login with seeded Mentor 1. Stores data.token in environment variable token."
       },
       "event": [
         {
@@ -45,34 +58,1025 @@
       "name": "1 - Mentor Projects",
       "item": [
         {
-          "name": "MP-01 Get my projects",
+          "name": "MP-00 Login Mentor 1",
           "request": {
-            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{token}}", "type": "string" } ] },
-            "method": "GET",
-            "header": [],
-            "url": { "raw": "{{base_url}}/api/mentor/projects", "host": [ "{{base_url}}" ], "path": [ "api", "mentor", "projects" ] },
-            "description": "Expected 200 with ApiResponse.data as an array. Projects come from the database used by labodc-backend and must be assigned to this mentor."
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"mentor.nguyenquang@uth.edu.vn\",\n  \"password\": \"123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{mentor_base_url}}/api/auth/login",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Run first in this folder; stores Mentor 1 token for MP-02/04/05."
           },
           "event": [
-            { "listen": "test", "script": { "type": "text/javascript", "exec": [
-              "pm.test('Returns 200', function () { pm.response.to.have.status(200); });",
-              "const body = pm.response.json();",
-              "pm.test('Response has success envelope and array data', function () { pm.expect(body.success).to.eql(true); pm.expect(body.data).to.be.an('array'); });",
-              "if (Array.isArray(body.data)) pm.test('Project item fields are present', function () { body.data.forEach(x => { pm.expect(x).to.have.property('id'); pm.expect(x).to.have.property('title'); pm.expect(x).to.have.property('progressPercentage'); }); });"
-            ] } }
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login returns 200',()=>pm.response.to.have.status(200));pm.environment.set('token',pm.response.json().data.token);"
+                ]
+              }
+            }
           ],
           "response": []
         },
         {
-          "name": "MP-02 No token is rejected",
+          "name": "MP-02 Mentor with multiple projects",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{base_url}}/api/mentor/projects", "host": [ "{{base_url}}" ], "path": [ "api", "mentor", "projects" ] }
+            "url": {
+              "raw": "{{mentor_base_url}}/api/mentor/projects",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "Uses the root Login MENTOR request (Mentor 1). Seed database currently returns project ids 1 and 3."
           },
-          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test('Returns 401 without a token', function () { pm.response.to.have.status(401); });" ] } } ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Returns 200',()=>pm.response.to.have.status(200)); const b=pm.response.json(); const a=b.data||[];",
+                  "pm.test('Success envelope contains array with at least two projects',()=>{pm.expect(b.success).to.eql(true);pm.expect(a).to.be.an('array').and.have.lengthOf.at.least(2);});",
+                  "pm.test('Project DTO fields are present',()=>a.forEach(x=>['id','title','progressPercentage'].forEach(k=>pm.expect(x).to.have.property(k))));"
+                ]
+              }
+            }
+          ],
           "response": []
+        },
+        {
+          "name": "MP-06 No token (expected 401; current API returns 403)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/mentor/projects",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected 401 without a token',()=>pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "MP-01a Login Mentor with one project",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/auth/login",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Mentor 3 has exactly one assigned project in the current seed data.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"mentor.lehong@uth.edu.vn\",\n  \"password\": \"123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login returns 200',()=>pm.response.to.have.status(200));pm.environment.set('token_mentor_single',pm.response.json().data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-01b Mentor with one project",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/mentor/projects",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "TC-MP-01: Mentor 3 currently has project id 2.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_mentor_single}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Returns exactly one project',()=>{pm.response.to.have.status(200);const b=pm.response.json();pm.expect(b.success).to.eql(true);pm.expect(b.data).to.have.lengthOf(1);pm.expect(b.data[0]).to.have.property('id');pm.expect(b.data[0]).to.have.property('title');pm.expect(b.data[0]).to.have.property('progressPercentage');});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-03a Login empty Mentor fixture",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/auth/login",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Requires scripts/postman_mentor_projects_fixtures.sql; it creates a temporary Mentor profile with no projects.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"qa-postman-mp-empty@labodc.com\",\n  \"password\": \"123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login returns 200',()=>pm.response.to.have.status(200));pm.environment.set('token_mentor_empty',pm.response.json().data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-03b Mentor with no projects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/mentor/projects",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "TC-MP-03: expected an empty array for the fixture Mentor.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_mentor_empty}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Returns empty project array',()=>{pm.response.to.have.status(200);const b=pm.response.json();pm.expect(b.success).to.eql(true);pm.expect(b.data).to.eql([]);});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-04 Project data is isolated by Mentor",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/mentor/projects",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "TC-MP-04: uses Mentor 1 token. Current seed data assigns ids 1 and 3 to Mentor 1 and id 2 to Mentor 3.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Mentor 1 sees only own project ids',()=>{pm.response.to.have.status(200);const b=pm.response.json();const ids=b.data.map(x=>x.id);pm.expect(ids).to.include(1);pm.expect(ids).to.include(3);pm.expect(ids).to.not.include(2);});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-05 Progress boundaries 0, 1, 99, 100",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/mentor/projects",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "TC-MP-05: run scripts/postman_mentor_projects_fixtures.sql first. Fixture projects use slugs qa-postman-mp-boundary-*.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('All four progress boundary fixtures are returned unchanged',()=>{pm.response.to.have.status(200);const a=pm.response.json().data;const f=a.filter(x=>x.title.startsWith('QA POSTMAN MP Boundary '));const got=Object.fromEntries(f.map(x=>[Number(x.title.split(' ').pop()),x]));[0,1,99,100].forEach(v=>{pm.expect(got[v],`progress ${v}`).to.exist;pm.expect(got[v].progressPercentage).to.eql(v);['id','title','progressPercentage'].forEach(k=>pm.expect(got[v]).to.have.property(k));});});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-07 Empty Bearer",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer"
+              }
+            ],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/mentor/projects",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "TC-MP-07: expected 401. Current API returns 403.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected 401 for empty Bearer',()=>pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-08 Missing Bearer scheme",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/mentor/projects",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "TC-MP-08: expected 401. Current API returns 403.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected 401 without Bearer scheme',()=>pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-09 Malformed JWT",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer not-a-jwt"
+              }
+            ],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/mentor/projects",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "TC-MP-09: expected 401. Current API returns 500.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected 401 for malformed JWT',()=>pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-10 Expired JWT",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mp_expired_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/mentor/projects",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "TC-MP-10: set mp_expired_token to a valid HS384 JWT for Mentor 1 that is already expired. Expected 401; current API returns 500.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected 401 for expired JWT',()=>pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-11 Invalid JWT signature",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mp_bad_signature_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/mentor/projects",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "TC-MP-11: set mp_bad_signature_token to a well-formed JWT signed with a different key. Expected 401; current API returns 500.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected 401 for invalid signature',()=>pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-12a Login TALENT",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/auth/login",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Stores a valid TALENT token for MP-12.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"nguyenvana@student.uth.edu.vn\",\n  \"password\": \"123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login returns 200',()=>pm.response.to.have.status(200));pm.environment.set('token_talent',pm.response.json().data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-12b TALENT is rejected",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/mentor/projects",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "MP-12: expected 403. Current API returns 400 Access Denied.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_talent}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected 403 for non-MENTOR role',()=>pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-13a Login ENTERPRISE",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/auth/login",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Stores a valid ENTERPRISE token for MP-13.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"contact@techcorp.vn\",\n  \"password\": \"123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login returns 200',()=>pm.response.to.have.status(200));pm.environment.set('token_enterprise',pm.response.json().data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-13b ENTERPRISE is rejected",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/mentor/projects",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "MP-13: expected 403. Current API returns 400 Access Denied.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_enterprise}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected 403 for non-MENTOR role',()=>pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-14a Login LAB_ADMIN",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/auth/login",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Stores a valid LAB_ADMIN token for MP-14.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"labadmin1@labodc.com\",\n  \"password\": \"123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login returns 200',()=>pm.response.to.have.status(200));pm.environment.set('token_lab_admin',pm.response.json().data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-14b LAB_ADMIN is rejected",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/mentor/projects",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "MP-14: expected 403. Current API returns 400 Access Denied.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_lab_admin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected 403 for non-MENTOR role',()=>pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-15a Login SYSTEM_ADMIN",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/auth/login",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Stores a valid SYSTEM_ADMIN token for MP-15.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@labodc.com\",\n  \"password\": \"123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login returns 200',()=>pm.response.to.have.status(200));pm.environment.set('token_system_admin',pm.response.json().data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-15b SYSTEM_ADMIN is rejected",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/mentor/projects",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "MP-15: expected 403. Current API returns 400 Access Denied.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_system_admin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected 403 for non-MENTOR role',()=>pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-16a Register MENTOR without profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/auth/register",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Pre-request script creates a unique email. Run MP-16b next. Clean the disposable account with cleanup_postman_mentor_projects_fixtures.sql.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{mp_no_profile_email}}\",\n  \"password\": \"TempTest123!\",\n  \"confirmPassword\": \"TempTest123!\",\n  \"role\": \"MENTOR\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.set('mp_no_profile_email','qa-postman-mp-noprofile-'+pm.variables.replaceIn('{{$guid}}')+'@example.test');"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-16b MENTOR without profile returns 404",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/mentor/projects",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "TC-MP-16: expected 404 when a valid MENTOR user has no Mentor profile.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_mentor_no_profile}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Missing Mentor profile returns 404',()=>pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -80,36 +1084,371 @@
       "name": "2 - Mentor Invitations",
       "item": [
         {
-          "name": "MI-01 Get my pending invitations",
+          "name": "MI-01/02/05 Mentor 1: fixture, order, DTO defaults",
           "request": {
-            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{token}}", "type": "string" } ] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{base_url}}/api/mentor/invitations", "host": [ "{{base_url}}" ], "path": [ "api", "mentor", "invitations" ] },
-            "description": "Returns this mentor's PENDING invitations, newest receivedDate first. An empty data array is valid if there are no pending invitation fixtures."
+            "url": {
+              "raw": "{{mentor_base_url}}/api/mentor/invitations",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "invitations"
+              ]
+            },
+            "description": "Requires the QA-POSTMAN-MI fixtures from scripts/postman_mentor_invitations_fixtures.sql. Checks Mentor 1 sees both of its pending rows, newest first, all DTO fields, and normalization of fixture B."
           },
           "event": [
-            { "listen": "test", "script": { "type": "text/javascript", "exec": [
-              "pm.test('Returns 200', function () { pm.response.to.have.status(200); });",
-              "const body = pm.response.json();",
-              "pm.test('Response has success envelope and array data', function () { pm.expect(body.success).to.eql(true); pm.expect(body.data).to.be.an('array'); });",
-              "if (Array.isArray(body.data)) pm.test('Invitation item fields are present', function () { body.data.forEach(x => { ['id','projectName','groupName','studentCount','description','deadline','skills','receivedDate','priority'].forEach(k => pm.expect(x).to.have.property(k)); }); });"
-            ] } }
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Returns 200', function () { pm.response.to.have.status(200); });",
+                  "const body = pm.response.json(); const data = body.data || [];",
+                  "pm.test('Success envelope contains array', function () { pm.expect(body.success).to.eql(true); pm.expect(data).to.be.an('array'); });",
+                  "pm.test('Fixture A is visible', function () { pm.expect(data.some(x => x.groupName === 'QA-POSTMAN-MI-A')).to.eql(true); });",
+                  "const fixtures = data.filter(x => /^QA-POSTMAN-MI-[AB]$/.test(x.groupName));",
+                  "pm.test('Two fixtures sorted by receivedDate descending', function () { pm.expect(fixtures.length).to.eql(2); const dates=fixtures.map(x=>x.receivedDate); pm.expect(dates).to.eql([...dates].sort().reverse()); });",
+                  "pm.test('All DTO fields are present', function () { fixtures.forEach(x => ['id','projectName','groupName','studentCount','description','deadline','skills','receivedDate','priority'].forEach(k => pm.expect(x).to.have.property(k))); });",
+                  "const b=fixtures.find(x=>x.groupName==='QA-POSTMAN-MI-B');",
+                  "pm.test('Fixture B null/default values are normalized', function () { pm.expect(b.description).to.eql(''); pm.expect(b.skills).to.eql([]); pm.expect(b.priority).to.eql('medium'); pm.expect(b.deadline).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
           ],
           "response": []
         },
         {
-          "name": "MI-02 No token is rejected",
+          "name": "MI-06 No token is rejected (expected 401; current backend returns 403)",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{base_url}}/api/mentor/invitations", "host": [ "{{base_url}}" ], "path": [ "api", "mentor", "invitations" ] }
+            "url": {
+              "raw": "{{mentor_base_url}}/api/mentor/invitations",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "invitations"
+              ]
+            }
           },
-          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test('Returns 401 without a token', function () { pm.response.to.have.status(401); });" ] } } ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected 401 without a token', function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
           "response": []
+        },
+        {
+          "name": "MI-03a Login Mentor 3 (no pending fixtures)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/auth/login",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Stores token_no_pending; verify this account has no PENDING invitations.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"mentor.lehong@uth.edu.vn\",\n  \"password\": \"123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login returns 200',()=>pm.response.to.have.status(200)); const b=pm.response.json(); pm.environment.set('token_no_pending',b.data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MI-03 Mentor with no pending invitations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/mentor/invitations",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "invitations"
+              ]
+            },
+            "description": "Expected 200 and an empty data array for Mentor 3.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_no_pending}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Returns 200',()=>pm.response.to.have.status(200)); const b=pm.response.json(); pm.test('No pending invitations',()=>{pm.expect(b.success).to.eql(true);pm.expect(b.data).to.eql([]);});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MI-04a Login Mentor 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/auth/login",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Stores token_mentor_b for isolation check.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"mentor.tranminh@uth.edu.vn\",\n  \"password\": \"123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login returns 200',()=>pm.response.to.have.status(200)); const b=pm.response.json(); pm.environment.set('token_mentor_b',b.data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MI-04b Mentor 2 cannot see Mentor 1 fixtures",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/mentor/invitations",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "invitations"
+              ]
+            },
+            "description": "Requires SQL fixtures. Confirms Mentor 2 sees C only, never A or B.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_mentor_b}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Returns 200',()=>pm.response.to.have.status(200)); const b=pm.response.json(); const groups=(b.data||[]).map(x=>x.groupName); pm.test('Sees its C fixture only among QA fixtures',()=>{pm.expect(groups).to.include('QA-POSTMAN-MI-C');pm.expect(groups).to.not.include('QA-POSTMAN-MI-A');pm.expect(groups).to.not.include('QA-POSTMAN-MI-B');});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MI-16a Register disposable MENTOR without profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/auth/register",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Before sending, generate a unique email. This creates a disposable user without a mentors row. Account cleanup SQL is documented in this request.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{mi_no_profile_email}}\",\n  \"password\": \"TempTest123!\",\n  \"confirmPassword\": \"TempTest123!\",\n  \"role\": \"MENTOR\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.set('mi_no_profile_email','qa-mi-noprofile-'+pm.variables.replaceIn('{{$guid}}')+'@example.test');"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Registration returns 200',()=>pm.response.to.have.status(200)); const b=pm.response.json(); pm.expect(b.data.token).to.be.a('string'); pm.environment.set('mi_no_profile_token',b.data.token); pm.environment.set('mi_no_profile_email',b.data.email);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MI-16b Mentor role without profile returns 404",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{mentor_base_url}}/api/mentor/invitations",
+              "host": [
+                "{{mentor_base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "invitations"
+              ]
+            },
+            "description": "Run after MI-16a. Afterward, remove the disposable user in pgAdmin: DELETE FROM users u WHERE u.email = '<mi_no_profile_email>' AND NOT EXISTS (SELECT 1 FROM mentors m WHERE m.user_id=u.id);",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{mi_no_profile_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Missing Mentor profile returns 404',()=>pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
         }
       ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "mentor_base_url",
+      "value": "http://localhost:8089",
+      "type": "string"
     }
   ]
 }
