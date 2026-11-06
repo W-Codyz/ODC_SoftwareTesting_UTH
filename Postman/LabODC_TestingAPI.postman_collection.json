@@ -3,7 +3,7 @@
     "name": "LabODC Unified API Testing",
     "_postman_id": "14744281-1a3d-41d3-85bb-b080707bcda2",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Unified Postman collection for LabODC API Testing.\nMerged from all team members' collections.\n\nTest accounts (password: 123123):\n- SYSTEM_ADMIN: admin@labodc.com\n- LAB_ADMIN: labadmin2@labodc.com\n- ENTERPRISE: enterprise1@example.com\n- MENTOR: mentor1@labodc.com\n- TALENT: talent1@labodc.com"
+    "description": "Unified Postman collection for LabODC API Testing.\nMerged from all team members' collections.\nUpdated: includes EnterprisePortal, ProjectValidation, and variant endpoints.\n\nTest accounts (password: 123123):\n- SYSTEM_ADMIN: admin@labodc.com\n- LAB_ADMIN: labadmin2@labodc.com\n- ENTERPRISE: enterprise1@example.com / contact@techcorp.vn\n- MENTOR: mentor1@labodc.com\n- TALENT: talent1@labodc.com"
   },
   "auth": {
     "type": "bearer",
@@ -836,6 +836,146 @@
               }
             }
           ]
+        },
+        {
+          "name": "Get Pending Approvals",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dashboard/approvals",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard",
+                "approvals"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'labadmin2@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Revenue Chart",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dashboard/revenue",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard",
+                "revenue"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'labadmin2@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -1365,6 +1505,134 @@
               }
             }
           ]
+        },
+        {
+          "name": "Get All Expertise",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/mentors/expertise/all",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "mentors",
+                "expertise",
+                "all"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'labadmin2@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Mentor By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/mentors/{{mentor_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "mentors",
+                "{{mentor_id}}"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'labadmin2@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Response time is under 2000ms', function () { pm.expect(pm.response.responseTime).to.be.below(2000); });"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -1748,6 +2016,62 @@
                   "pm.test('Response time is under 2000ms', function () {",
                   "    pm.expect(pm.response.responseTime).to.be.below(2000);",
                   "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Talent By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lab-admin/talents/{{talent_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lab-admin",
+                "talents",
+                "{{talent_id}}"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'labadmin2@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Response time is under 2000ms', function () { pm.expect(pm.response.responseTime).to.be.below(2000); });"
                 ]
               }
             }
@@ -4834,6 +5158,652 @@
               }
             }
           ]
+        },
+        {
+          "name": "Create Controller Test Project",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'enterprise1@example.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var res = pm.response.json();",
+                  "var project = res.data || res;",
+                  "pm.test(\"Tạo project controller và lưu ID\", function () {",
+                  "    pm.expect(project).to.have.property(\"id\");",
+                  "    pm.collectionVariables.set(\"project_controller_test_id\", String(project.id));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman Controller Test {{project_test_suffix}}\",\n  \"description\": \"Test project created by the ProjectController Postman collection.\",\n  \"objectives\": [\"Verify ProjectController endpoints\"],\n  \"requirements\": \"Postman API test data\",\n  \"startDate\": \"{{project_start_date}}\",\n  \"endDate\": \"{{project_end_date}}\",\n  \"budget\": 10000000,\n  \"requiredTalents\": 3,\n  \"technologies\": [\"Java\", \"Postman\"],\n  \"requiredSkills\": [\"API testing\"],\n  \"enterpriseId\": {{enterprise_id}},\n  \"allowApplications\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/projects"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Projects For Management",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/projects/management"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'labadmin2@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Projects By Enterprise",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/projects/enterprise/{{enterprise_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'enterprise1@example.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get My Projects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/projects/my"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'enterprise1@example.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Approve Controller Test Project",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{base_url}}/api/projects/{{project_controller_test_id}}/approve"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'labadmin2@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Join Controller Test Project (TALENT)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{project_talent_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"motivationLetter\": \"Joining as a Postman API test participant.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/projects/{{project_controller_test_id}}/join"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'talent1@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Leave Controller Test Project (TALENT)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{project_talent_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/api/projects/{{project_controller_test_id}}/leave"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'talent1@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reject Controller Test Project",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Postman collection test rejection\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/projects/{{project_controller_test_id}}/reject"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'labadmin2@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Validate Controller Test Project",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{base_url}}/api/projects/{{project_controller_test_id}}/validate"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'labadmin2@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Project",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/projects/{{project_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "projects",
+                "{{project_id}}"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'labadmin2@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Response time is under 2000ms', function () { pm.expect(pm.response.responseTime).to.be.below(2000); });"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -6598,8 +7568,1888 @@
               }
             }
           ]
+        },
+        {
+          "name": "TC09.1 - GET - /tasks/{taskId}/submissions/{submissionId}/file",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'mentor1@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r\npm.test(\"Có header attachment\", () => {\r\n    pm.expect(pm.response.headers.get(\"Content-Disposition\") || \"\").to.include(\"attachment\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/tasks/14/submissions/1/file",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "tasks",
+                "14",
+                "submissions",
+                "1",
+                "file"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC15.1 - POST - /projects/{projectId}/progress",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'mentor1@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r",
+                  "pm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r",
+                  "pm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r",
+                  "pm.test(\"data = 50\", () => pm.expect(pm.response.json().data).to.eql(50));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"progress\": 50}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects/{{projectId}}/progress",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects",
+                "{{projectId}}",
+                "progress"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC23.1 - POST - /reports-thành công",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'mentor1@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r\npm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r\npm.test(\"data có id\", () => pm.expect(pm.response.json().data).to.have.property(\"id\"));\r\n\r\nconst d = pm.response.json().data;\r\nif (d && d.id) pm.environment.set(\"newReportId\", d.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "projectId",
+                  "value": "{{projectId}}",
+                  "type": "text"
+                },
+                {
+                  "key": "student",
+                  "value": "Nguyen Van A",
+                  "type": "text"
+                },
+                {
+                  "key": "studentId",
+                  "value": "\tSV001",
+                  "type": "text"
+                },
+                {
+                  "key": "reportName",
+                  "value": "Bao cao tuan 1",
+                  "type": "text"
+                },
+                {
+                  "key": "dueDate",
+                  "value": "2026-12-31",
+                  "type": "text"
+                },
+                {
+                  "key": "summary",
+                  "value": "Tom tat",
+                  "type": "text"
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": [
+                    "RJ3dVu6lB/bao_cao_test.txt"
+                  ]
+                },
+                {
+                  "key": "status",
+                  "value": "SUBMITTED",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/mentor/reports",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "reports"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC24.1 - GET - /reports/{id}/file",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'mentor1@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r\npm.test(\"Có header attachment\", () => {\r\n    pm.expect(pm.response.headers.get(\"Content-Disposition\") || \"\").to.include(\"attachment\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/reports/{{reportId}}/file",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "reports",
+                "{{reportId}}",
+                "file"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Approve Application (Nested Path)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects/{{project_id}}/applications/{{member_id}}/approve",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects",
+                "{{project_id}}",
+                "applications",
+                "{{member_id}}",
+                "approve"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'mentor1@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Response time is under 2000ms', function () { pm.expect(pm.response.responseTime).to.be.below(2000); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reject Application (Nested Path)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects/{{project_id}}/applications/{{member_id}}/reject",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects",
+                "{{project_id}}",
+                "applications",
+                "{{member_id}}",
+                "reject"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'mentor1@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Response time is under 2000ms', function () { pm.expect(pm.response.responseTime).to.be.below(2000); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Task (Nested Path)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects/{{project_id}}/tasks/{{task_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects",
+                "{{project_id}}",
+                "tasks",
+                "{{task_id}}"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'mentor1@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Response time is under 2000ms', function () { pm.expect(pm.response.responseTime).to.be.below(2000); });"
+                ]
+              }
+            }
+          ]
         }
       ]
+    },
+    {
+      "name": "10a - MentorProjects (DuyManh EP-BVA)",
+      "item": [
+        {
+          "name": "MP-00 Login Mentor 1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"mentor.nguyenquang@uth.edu.vn\",\n  \"password\": \"123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Run first in this folder; stores Mentor 1 token for MP-02/04/05."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login returns 200',()=>pm.response.to.have.status(200));pm.collectionVariables.set('token',pm.response.json().data.token);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "MP-02 Mentor with multiple projects",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "Uses the root Login MENTOR request (Mentor 1). Seed database currently returns project ids 1 and 3."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Returns 200',()=>pm.response.to.have.status(200)); const b=pm.response.json(); const a=b.data||[];",
+                  "pm.test('Success envelope contains array with at least two projects',()=>{pm.expect(b.success).to.eql(true);pm.expect(a).to.be.an('array').and.have.lengthOf.at.least(2);});",
+                  "pm.test('Project DTO fields are present',()=>a.forEach(x=>['id','title','progressPercentage'].forEach(k=>pm.expect(x).to.have.property(k))));"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "MP-06 No token (expected 401; current API returns 403)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected 401 without a token',()=>pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "MP-01a Login Mentor with one project",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Mentor 3 has exactly one assigned project in the current seed data.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"mentor.lehong@uth.edu.vn\",\n  \"password\": \"123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login returns 200', () => pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set('token_mentor_single', pm.response.json().data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-01b Mentor with one project",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "TC-MP-01: Mentor 3 currently has project id 2.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_mentor_single}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Returns exactly one project',()=>{pm.response.to.have.status(200);const b=pm.response.json();pm.expect(b.success).to.eql(true);pm.expect(b.data).to.have.lengthOf(1);pm.expect(b.data[0]).to.have.property('id');pm.expect(b.data[0]).to.have.property('title');pm.expect(b.data[0]).to.have.property('progressPercentage');});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-03a Login empty Mentor fixture",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Requires scripts/postman_mentor_projects_fixtures.sql; it creates a temporary Mentor profile with no projects.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"qa-postman-mp-empty@labodc.com\",\n  \"password\": \"123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login returns 200', () => pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set('token_mentor_empty', pm.response.json().data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-03b Mentor with no projects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "TC-MP-03: expected an empty array for the fixture Mentor.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_mentor_empty}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Returns empty project array',()=>{pm.response.to.have.status(200);const b=pm.response.json();pm.expect(b.success).to.eql(true);pm.expect(b.data).to.eql([]);});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-04 Project data is isolated by Mentor",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "TC-MP-04: uses Mentor 1 token. Current seed data assigns ids 1 and 3 to Mentor 1 and id 2 to Mentor 3.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Mentor 1 sees only own project ids',()=>{pm.response.to.have.status(200);const b=pm.response.json();const ids=b.data.map(x=>x.id);pm.expect(ids).to.include(1);pm.expect(ids).to.include(3);pm.expect(ids).to.not.include(2);});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-05 Progress boundaries 0, 1, 99, 100",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "TC-MP-05: run scripts/postman_mentor_projects_fixtures.sql first. Fixture projects use slugs qa-postman-mp-boundary-*.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('All four progress boundary fixtures are returned unchanged',()=>{pm.response.to.have.status(200);const a=pm.response.json().data;const f=a.filter(x=>x.title.startsWith('QA POSTMAN MP Boundary '));const got=Object.fromEntries(f.map(x=>[Number(x.title.split(' ').pop()),x]));[0,1,99,100].forEach(v=>{pm.expect(got[v],`progress ${v}`).to.exist;pm.expect(got[v].progressPercentage).to.eql(v);['id','title','progressPercentage'].forEach(k=>pm.expect(got[v]).to.have.property(k));});});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-07 Empty Bearer",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "TC-MP-07: expected 401. Current API returns 403.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected 401 for empty Bearer',()=>pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-08 Missing Bearer scheme",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "TC-MP-08: expected 401. Current API returns 403.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected 401 without Bearer scheme',()=>pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-09 Malformed JWT",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer not-a-jwt"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "TC-MP-09: expected 401. Current API returns 500.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected 401 for malformed JWT',()=>pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-10 Expired JWT",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mp_expired_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "TC-MP-10: set mp_expired_token to a valid HS384 JWT for Mentor 1 that is already expired. Expected 401; current API returns 500.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected 401 for expired JWT',()=>pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-11 Invalid JWT signature",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mp_bad_signature_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "TC-MP-11: set mp_bad_signature_token to a well-formed JWT signed with a different key. Expected 401; current API returns 500.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected 401 for invalid signature',()=>pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-12a Login TALENT",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Stores a valid TALENT token for MP-12.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"nguyenvana@student.uth.edu.vn\",\n  \"password\": \"123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login returns 200', () => pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set('token_talent', pm.response.json().data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-12b TALENT is rejected",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "MP-12: expected 403. Current API returns 400 Access Denied.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_talent}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected 403 for non-MENTOR role',()=>pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-13a Login ENTERPRISE",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Stores a valid ENTERPRISE token for MP-13.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"contact@techcorp.vn\",\n  \"password\": \"123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login returns 200', () => pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set('token_enterprise', pm.response.json().data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-13b ENTERPRISE is rejected",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "MP-13: expected 403. Current API returns 400 Access Denied.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_enterprise}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected 403 for non-MENTOR role',()=>pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-14a Login LAB_ADMIN",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Stores a valid LAB_ADMIN token for MP-14.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"labadmin1@labodc.com\",\n  \"password\": \"123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login returns 200', () => pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set('token_lab_admin', pm.response.json().data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-14b LAB_ADMIN is rejected",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "MP-14: expected 403. Current API returns 400 Access Denied.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_lab_admin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected 403 for non-MENTOR role',()=>pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-15a Login SYSTEM_ADMIN",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Stores a valid SYSTEM_ADMIN token for MP-15.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@labodc.com\",\n  \"password\": \"123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login returns 200', () => pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set('token_system_admin', pm.response.json().data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-15b SYSTEM_ADMIN is rejected",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "MP-15: expected 403. Current API returns 400 Access Denied.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_system_admin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected 403 for non-MENTOR role',()=>pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-16a Register MENTOR without profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Pre-request script creates a unique email. Run MP-16b next. Clean the disposable account with cleanup_postman_mentor_projects_fixtures.sql.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{mp_no_profile_email}}\",\n  \"password\": \"TempTest123!\",\n  \"confirmPassword\": \"TempTest123!\",\n  \"role\": \"MENTOR\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Registration returns 200', () => pm.response.to.have.status(200));",
+                  "",
+                  "const body = pm.response.json();",
+                  "if (body.data && body.data.token) {",
+                  "    pm.collectionVariables.set('token_mentor_no_profile', body.data.token);",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var email = 'qa-postman-mp-noprofile-' + pm.variables.replaceIn('{{$guid}}') + '@example.test';",
+                  "pm.collectionVariables.set('mp_no_profile_email', email);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MP-16b MENTOR without profile returns 404",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects"
+              ]
+            },
+            "description": "TC-MP-16: expected 404 when a valid MENTOR user has no Mentor profile.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_mentor_no_profile}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Missing Mentor profile returns 404',()=>pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Equivalence Partitioning + BVA test cases for GET /api/mentor/projects.\nCovers: multi-project mentor, single-project mentor, no-project mentor, data isolation, progress boundaries (0/1/99/100), auth negative cases (no token, empty bearer, malformed JWT, expired JWT, invalid signature, wrong roles: TALENT/ENTERPRISE/LAB_ADMIN/SYSTEM_ADMIN), and mentor without profile.\nSource: DuyManh - LabODC_API_Testing"
+    },
+    {
+      "name": "10b - MentorInvitations (DuyManh EP-BVA)",
+      "item": [
+        {
+          "name": "MI-01/02/05 Mentor 1: fixture, order, DTO defaults",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/invitations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "invitations"
+              ]
+            },
+            "description": "Requires the QA-POSTMAN-MI fixtures from scripts/postman_mentor_invitations_fixtures.sql. Checks Mentor 1 sees both of its pending rows, newest first, all DTO fields, and normalization of fixture B."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Returns 200', function () { pm.response.to.have.status(200); });",
+                  "const body = pm.response.json(); const data = body.data || [];",
+                  "pm.test('Success envelope contains array', function () { pm.expect(body.success).to.eql(true); pm.expect(data).to.be.an('array'); });",
+                  "pm.test('Fixture A is visible', function () { pm.expect(data.some(x => x.groupName === 'QA-POSTMAN-MI-A')).to.eql(true); });",
+                  "const fixtures = data.filter(x => /^QA-POSTMAN-MI-[AB]$/.test(x.groupName));",
+                  "pm.test('Two fixtures sorted by receivedDate descending', function () { pm.expect(fixtures.length).to.eql(2); const dates=fixtures.map(x=>x.receivedDate); pm.expect(dates).to.eql([...dates].sort().reverse()); });",
+                  "pm.test('All DTO fields are present', function () { fixtures.forEach(x => ['id','projectName','groupName','studentCount','description','deadline','skills','receivedDate','priority'].forEach(k => pm.expect(x).to.have.property(k))); });",
+                  "const b=fixtures.find(x=>x.groupName==='QA-POSTMAN-MI-B');",
+                  "pm.test('Fixture B null/default values are normalized', function () { pm.expect(b.description).to.eql(''); pm.expect(b.skills).to.eql([]); pm.expect(b.priority).to.eql('medium'); pm.expect(b.deadline).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "MI-06 No token is rejected (expected 401; current backend returns 403)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/invitations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "invitations"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected 401 without a token', function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "MI-03a Login Mentor 3 (no pending fixtures)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Stores token_no_pending; verify this account has no PENDING invitations.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"mentor.lehong@uth.edu.vn\",\n  \"password\": \"123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login returns 200',()=>pm.response.to.have.status(200)); const b=pm.response.json(); pm.collectionVariables.set('token_no_pending',b.data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MI-03 Mentor with no pending invitations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/invitations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "invitations"
+              ]
+            },
+            "description": "Expected 200 and an empty data array for Mentor 3.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_no_pending}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Returns 200',()=>pm.response.to.have.status(200)); const b=pm.response.json(); pm.test('No pending invitations',()=>{pm.expect(b.success).to.eql(true);pm.expect(b.data).to.eql([]);});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MI-04a Login Mentor 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Stores token_mentor_b for isolation check.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"mentor.tranminh@uth.edu.vn\",\n  \"password\": \"123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login returns 200',()=>pm.response.to.have.status(200)); const b=pm.response.json(); pm.collectionVariables.set('token_mentor_b',b.data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MI-04b Mentor 2 cannot see Mentor 1 fixtures",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/invitations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "invitations"
+              ]
+            },
+            "description": "Requires SQL fixtures. Confirms Mentor 2 sees C only, never A or B.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_mentor_b}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Returns 200',()=>pm.response.to.have.status(200)); const b=pm.response.json(); const groups=(b.data||[]).map(x=>x.groupName); pm.test('Sees its C fixture only among QA fixtures',()=>{pm.expect(groups).to.include('QA-POSTMAN-MI-C');pm.expect(groups).to.not.include('QA-POSTMAN-MI-A');pm.expect(groups).to.not.include('QA-POSTMAN-MI-B');});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MI-16a Register disposable MENTOR without profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Before sending, generate a unique email. This creates a disposable user without a mentors row. Account cleanup SQL is documented in this request.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{mi_no_profile_email}}\",\n  \"password\": \"TempTest123!\",\n  \"confirmPassword\": \"TempTest123!\",\n  \"role\": \"MENTOR\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var email = 'qa-mi-noprofile-' + pm.variables.replaceIn('{{$guid}}') + '@example.test';",
+                  "pm.collectionVariables.set('mi_no_profile_email', email);"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Registration returns 200', () => pm.response.to.have.status(200));",
+                  "",
+                  "const body = pm.response.json();",
+                  "if (body.data && body.data.token) {",
+                  "    pm.collectionVariables.set('mi_no_profile_token', body.data.token);",
+                  "}",
+                  "// Email already set in prerequest, no need to read from response"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "MI-16b Mentor role without profile returns 404",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/invitations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "invitations"
+              ]
+            },
+            "description": "Run after MI-16a. Afterward, remove the disposable user in pgAdmin: DELETE FROM users u WHERE u.email = '<mi_no_profile_email>' AND NOT EXISTS (SELECT 1 FROM mentors m WHERE m.user_id=u.id);",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{mi_no_profile_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Missing Mentor profile returns 404',()=>pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Equivalence Partitioning + BVA test cases for GET /api/mentor/invitations.\nCovers: fixture data + ordering + DTO, no-token auth, no pending invitations, data isolation between mentors, and mentor without profile.\nSource: DuyManh - LabODC_API_Testing"
     },
     {
       "name": "11 - TalentPortal",
@@ -7648,6 +10498,329 @@
               }
             }
           ]
+        },
+        {
+          "name": "TL-08 Post Certifications",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "",
+                "disabled": false
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/talent/certifications",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"AWS Cloud Practitioner\",\n  \"issuer\": \"Amazon Web Services\",\n  \"issueDate\": \"2024-01-01\",\n  \"expiryDate\": \"2027-01-01\",\n  \"credentialUrl\": \"https://aws.amazon.com/certification\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Auto-login as Talent user to get correct role token",
+                  "var base_url = pm.environment.get(\"base_url\");",
+                  "pm.sendRequest({",
+                  "    url: base_url + \"/api/auth/login\",",
+                  "    method: \"POST\",",
+                  "    header: { \"Content-Type\": \"application/json\" },",
+                  "    body: {",
+                  "        mode: \"raw\",",
+                  "        raw: JSON.stringify({",
+                  "            email: \"nguyenvana@student.uth.edu.vn\",",
+                  "            password: \"123123\"",
+                  "        })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) {",
+                  "            pm.environment.set(\"token\", token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200 or 201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
+                  "pm.test(\"Response success is true\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "pm.test(\"Certification data exists\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "pm.test(\"Certification name is not null\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.name).to.not.be.null;",
+                  "});",
+                  "pm.test(\"Response time is under 2000ms\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TL-09 Upload Avatar",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/talent/profile/avatar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": []
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "value": "",
+                  "type": "file",
+                  "description": "Avatar image file (jpg/png)"
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Auto-login as Talent user to get correct role token",
+                  "var base_url = pm.environment.get(\"base_url\");",
+                  "pm.sendRequest({",
+                  "    url: base_url + \"/api/auth/login\",",
+                  "    method: \"POST\",",
+                  "    header: { \"Content-Type\": \"application/json\" },",
+                  "    body: {",
+                  "        mode: \"raw\",",
+                  "        raw: JSON.stringify({",
+                  "            email: \"nguyenvana@student.uth.edu.vn\",",
+                  "            password: \"123123\"",
+                  "        })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) {",
+                  "            pm.environment.set(\"token\", token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Note: This endpoint requires a real file upload - cannot be fully automated",
+                  "pm.test(\"Upload Avatar endpoint exists (BLOCKED - requires file)\", function () {",
+                  "    // 500 is expected when no file is provided in automated run",
+                  "    pm.expect([200, 201, 400, 500]).to.include(pm.response.code);",
+                  "});",
+                  "pm.test(\"Response time is under 5000ms\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TL-10 Upload CV",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/talent/profile/cv",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": []
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "value": "",
+                  "type": "file",
+                  "description": "CV file (pdf/docx)"
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Auto-login as Talent user to get correct role token",
+                  "var base_url = pm.environment.get(\"base_url\");",
+                  "pm.sendRequest({",
+                  "    url: base_url + \"/api/auth/login\",",
+                  "    method: \"POST\",",
+                  "    header: { \"Content-Type\": \"application/json\" },",
+                  "    body: {",
+                  "        mode: \"raw\",",
+                  "        raw: JSON.stringify({",
+                  "            email: \"nguyenvana@student.uth.edu.vn\",",
+                  "            password: \"123123\"",
+                  "        })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) {",
+                  "            pm.environment.set(\"token\", token);",
+                  "        }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Note: This endpoint requires a real file upload - cannot be fully automated",
+                  "pm.test(\"Upload CV endpoint exists (BLOCKED - requires file)\", function () {",
+                  "    // 500 is expected when no file is provided in automated run",
+                  "    pm.expect([200, 201, 400, 500]).to.include(pm.response.code);",
+                  "});",
+                  "pm.test(\"Response time is under 5000ms\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Project Detail",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/talent/projects/{{project_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "talent",
+                "projects",
+                "{{project_id}}"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'talent1@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Response time is under 2000ms', function () { pm.expect(pm.response.responseTime).to.be.below(2000); });"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -8249,6 +11422,1796 @@
                 "{{report_id}}"
               ]
             }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'labadmin2@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "14 - EnterprisePortal",
+      "description": "Enterprise-facing portal endpoints. Requires ENTERPRISE token. Test account: contact@techcorp.vn / 123123",
+      "item": [
+        {
+          "name": "Get Dashboard Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/dashboard/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "dashboard",
+                "summary"
+              ]
+            },
+            "description": "Tá»•ng quan dashboard doanh nghiá»‡p"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'contact@techcorp.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Recent Projects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/dashboard/recent-projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "dashboard",
+                "recent-projects"
+              ]
+            },
+            "description": "Dá»± Ã¡n gáº§n Ä‘Ã¢y"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'contact@techcorp.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Projects Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/projects/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "projects",
+                "summary"
+              ]
+            },
+            "description": "Tá»•ng quan dá»± Ã¡n"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'contact@techcorp.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Projects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "projects"
+              ]
+            },
+            "description": "Danh sÃ¡ch dá»± Ã¡n"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'contact@techcorp.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Project",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\":  \"Updated project from Postman\",\r\n    \"description\":  \"Updated project description\"\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/projects/{{project_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "projects",
+                "{{project_id}}"
+              ]
+            },
+            "description": "Cáº­p nháº­t dá»± Ã¡n"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'contact@techcorp.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Assign Mentor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"mentorId\":  \"{{mentor_id}}\"\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/projects/{{project_id}}/assign-mentor",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "projects",
+                "{{project_id}}",
+                "assign-mentor"
+              ]
+            },
+            "description": "GÃ¡n mentor cho dá»± Ã¡n"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'contact@techcorp.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Start Project",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/projects/{{project_id}}/start",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "projects",
+                "{{project_id}}",
+                "start"
+              ]
+            },
+            "description": "Báº¯t Ä‘áº§u dá»± Ã¡n"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'contact@techcorp.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Project",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/projects/{{project_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "projects",
+                "{{project_id}}"
+              ]
+            },
+            "description": "XÃ³a dá»± Ã¡n"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'contact@techcorp.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Project Reports",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/reports/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "reports",
+                "projects"
+              ]
+            },
+            "description": "BÃ¡o cÃ¡o theo dá»± Ã¡n"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'contact@techcorp.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Mentors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/mentors",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "mentors"
+              ]
+            },
+            "description": "Danh sÃ¡ch mentor"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'contact@techcorp.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Proposals Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/proposals/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "proposals",
+                "summary"
+              ]
+            },
+            "description": "Tá»•ng quan Ä‘á» xuáº¥t"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'contact@techcorp.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Proposals",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/proposals",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "proposals"
+              ]
+            },
+            "description": "Danh sÃ¡ch Ä‘á» xuáº¥t"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'contact@techcorp.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Payments Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/payments/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "payments",
+                "summary"
+              ]
+            },
+            "description": "Tá»•ng quan thanh toÃ¡n"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'contact@techcorp.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/payments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "payments"
+              ]
+            },
+            "description": "Danh sÃ¡ch thanh toÃ¡n"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'contact@techcorp.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"projectId\":  \"{{project_id}}\",\r\n    \"amount\":  1000000,\r\n    \"note\":  \"Postman test payment\"\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/payments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "payments"
+              ]
+            },
+            "description": "Táº¡o thanh toÃ¡n má»›i"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'contact@techcorp.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Feedback",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/feedback",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "feedback"
+              ]
+            },
+            "description": "Danh sÃ¡ch feedback"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'contact@techcorp.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Send Feedback",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"projectId\":  \"{{project_id}}\",\r\n    \"rating\":  5,\r\n    \"comment\":  \"Postman test feedback\"\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/feedback",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "feedback"
+              ]
+            },
+            "description": "Gá»­i feedback"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'contact@techcorp.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Reports Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/enterprise/reports/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "enterprise",
+                "reports",
+                "summary"
+              ]
+            },
+            "description": "Tá»•ng quan bÃ¡o cÃ¡o"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'contact@techcorp.vn', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "15 - ProjectValidation",
+      "description": "Project validation workflow endpoints. Requires LAB_ADMIN token. Covers: list pending projects, view stats, approve/reject projects, assign mentors.",
+      "item": [
+        {
+          "name": "Get Validation Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/lab-admin/project-validation/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lab-admin",
+                "project-validation",
+                "stats"
+              ]
+            },
+            "description": "Thá»‘ng kÃª validation"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'labadmin2@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Projects Pending Validation",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/lab-admin/project-validation/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lab-admin",
+                "project-validation",
+                "projects"
+              ]
+            },
+            "description": "Danh sÃ¡ch dá»± Ã¡n chá» duyá»‡t"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'labadmin2@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Project Pending Validation By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/lab-admin/project-validation/projects/{{project_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lab-admin",
+                "project-validation",
+                "projects",
+                "{{project_id}}"
+              ]
+            },
+            "description": "Chi tiáº¿t dá»± Ã¡n chá» duyá»‡t"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'labadmin2@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Approve Project",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/lab-admin/project-validation/projects/{{project_id}}/approve",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lab-admin",
+                "project-validation",
+                "projects",
+                "{{project_id}}",
+                "approve"
+              ]
+            },
+            "description": "Duyá»‡t dá»± Ã¡n"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'labadmin2@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reject Project",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"reason\":  \"Postman validation rejection test\"\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/lab-admin/project-validation/projects/{{project_id}}/reject",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lab-admin",
+                "project-validation",
+                "projects",
+                "{{project_id}}",
+                "reject"
+              ]
+            },
+            "description": "Tá»« chá»‘i dá»± Ã¡n"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "pm.sendRequest({",
+                  "    url: base_url + '/api/auth/login',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ email: 'labadmin2@labodc.com', password: '123123' })",
+                  "    }",
+                  "}, function(err, res) {",
+                  "    if (!err && res.code === 200) {",
+                  "        var jsonData = res.json();",
+                  "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "    }",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response success is true', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Response data exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Assign Mentor To Project",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"mentorId\":  \"{{mentor_id}}\"\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/lab-admin/project-validation/projects/{{project_id}}/assign-mentor",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lab-admin",
+                "project-validation",
+                "projects",
+                "{{project_id}}",
+                "assign-mentor"
+              ]
+            },
+            "description": "GÃ¡n mentor cho dá»± Ã¡n"
           },
           "response": [],
           "event": [
