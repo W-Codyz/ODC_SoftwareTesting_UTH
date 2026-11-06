@@ -92,8 +92,8 @@
         "type": "text/javascript",
         "exec": [
           "// Generate dynamic test suffix for unique data",
-          "if (!pm.collectionVariables.get('test_suffix')) {",
-          "    pm.collectionVariables.set('test_suffix', '-test-' + Date.now());",
+          "if (!pm.environment.get('test_suffix')) {",
+          "    pm.environment.set('test_suffix', '-test-' + Date.now());",
           "}"
         ]
       }
@@ -163,8 +163,8 @@
                   "pm.test('Token received and saved', function () {",
                   "    var token = jsonData.token || (jsonData.data && jsonData.data.token);",
                   "    pm.expect(token).to.not.be.empty;",
-                  "    pm.collectionVariables.set('system_admin_token', token);",
-                  "    pm.collectionVariables.set('token', token);",
+                  "    pm.environment.set('system_admin_token', token);",
+                  "    pm.environment.set('token', token);",
                   "});",
                   "",
                   "pm.test('Response time is under 2000ms', function () {",
@@ -222,8 +222,8 @@
                   "pm.test('Token received and saved', function () {",
                   "    var token = jsonData.token || (jsonData.data && jsonData.data.token);",
                   "    pm.expect(token).to.not.be.empty;",
-                  "    pm.collectionVariables.set('lab_admin_token', token);",
-                  "    pm.collectionVariables.set('token', token);",
+                  "    pm.environment.set('lab_admin_token', token);",
+                  "    pm.environment.set('token', token);",
                   "});",
                   "",
                   "pm.test('Response time is under 2000ms', function () {",
@@ -281,8 +281,8 @@
                   "pm.test('Token received and saved', function () {",
                   "    var token = jsonData.token || (jsonData.data && jsonData.data.token);",
                   "    pm.expect(token).to.not.be.empty;",
-                  "    pm.collectionVariables.set('enterprise_token', token);",
-                  "    pm.collectionVariables.set('token', token);",
+                  "    pm.environment.set('enterprise_token', token);",
+                  "    pm.environment.set('token', token);",
                   "});",
                   "",
                   "pm.test('Response time is under 2000ms', function () {",
@@ -340,8 +340,8 @@
                   "pm.test('Token received and saved', function () {",
                   "    var token = jsonData.token || (jsonData.data && jsonData.data.token);",
                   "    pm.expect(token).to.not.be.empty;",
-                  "    pm.collectionVariables.set('mentor_token', token);",
-                  "    pm.collectionVariables.set('token', token);",
+                  "    pm.environment.set('mentor_token', token);",
+                  "    pm.environment.set('token', token);",
                   "});",
                   "",
                   "pm.test('Response time is under 2000ms', function () {",
@@ -399,8 +399,8 @@
                   "pm.test('Token received and saved', function () {",
                   "    var token = jsonData.token || (jsonData.data && jsonData.data.token);",
                   "    pm.expect(token).to.not.be.empty;",
-                  "    pm.collectionVariables.set('talent_token', token);",
-                  "    pm.collectionVariables.set('token', token);",
+                  "    pm.environment.set('talent_token', token);",
+                  "    pm.environment.set('token', token);",
                   "});",
                   "",
                   "pm.test('Response time is under 2000ms', function () {",
@@ -581,7 +581,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -594,7 +594,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -651,7 +651,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -664,7 +664,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -721,7 +721,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -734,7 +734,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -791,7 +791,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -804,7 +804,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -861,7 +861,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -874,7 +874,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -931,7 +931,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -944,7 +944,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -1007,7 +1007,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -1020,7 +1020,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -1078,7 +1078,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -1091,7 +1091,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -1149,7 +1149,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -1162,7 +1162,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -1220,7 +1220,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -1233,7 +1233,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -1304,7 +1304,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -1317,7 +1317,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -1389,7 +1389,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -1402,7 +1402,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -1460,7 +1460,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -1473,7 +1473,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -1532,7 +1532,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -1545,7 +1545,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -1603,7 +1603,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -1616,7 +1616,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -1664,7 +1664,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -1677,7 +1677,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -1735,7 +1735,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -1748,7 +1748,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -1819,7 +1819,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -1832,7 +1832,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -1904,7 +1904,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -1917,7 +1917,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -1975,7 +1975,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -1988,7 +1988,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -2046,7 +2046,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -2059,7 +2059,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -2107,7 +2107,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -2120,7 +2120,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -2178,7 +2178,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -2191,7 +2191,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -2249,7 +2249,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -2262,7 +2262,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -2333,7 +2333,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -2346,7 +2346,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -2418,7 +2418,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -2431,7 +2431,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -2490,7 +2490,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -2503,7 +2503,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -2561,7 +2561,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -2574,7 +2574,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -2636,7 +2636,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -2649,7 +2649,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -2706,7 +2706,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -2719,7 +2719,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -2777,7 +2777,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -2790,7 +2790,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -2861,7 +2861,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -2874,7 +2874,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -2931,7 +2931,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -2944,7 +2944,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -3001,7 +3001,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -3014,7 +3014,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -3078,7 +3078,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -3091,7 +3091,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -3149,7 +3149,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -3162,7 +3162,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -3221,7 +3221,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -3234,7 +3234,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -3308,7 +3308,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -3321,7 +3321,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -3395,7 +3395,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -3408,7 +3408,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -3481,7 +3481,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -3494,7 +3494,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -3553,7 +3553,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -3566,7 +3566,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -3643,7 +3643,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -3653,7 +3653,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});",
                   "",
@@ -3661,8 +3661,8 @@
                   "var now = new Date();",
                   "var start = new Date(now.getTime() + 7*24*60*60*1000);",
                   "var end = new Date(now.getTime() + 90*24*60*60*1000);",
-                  "pm.collectionVariables.set('project_start_date', start.toISOString().split('T')[0]);",
-                  "pm.collectionVariables.set('project_end_date', end.toISOString().split('T')[0]);"
+                  "pm.environment.set('project_start_date', start.toISOString().split('T')[0]);",
+                  "pm.environment.set('project_end_date', end.toISOString().split('T')[0]);"
                 ]
               }
             },
@@ -3677,7 +3677,7 @@
                   "});",
                   "pm.test('Project ID saved', function () {",
                   "    if (jsonData.data && jsonData.data.projectId) {",
-                  "        pm.collectionVariables.set('project_id', jsonData.data.projectId);",
+                  "        pm.environment.set('project_id', jsonData.data.projectId);",
                   "    }",
                   "    pm.expect(jsonData.data).to.not.be.null;",
                   "});",
@@ -3713,7 +3713,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -3723,7 +3723,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});",
                   "",
@@ -3731,8 +3731,8 @@
                   "var now = new Date();",
                   "var start = new Date(now.getTime() + 7*24*60*60*1000);",
                   "var end = new Date(now.getTime() + 90*24*60*60*1000);",
-                  "pm.collectionVariables.set('project_start_date', start.toISOString().split('T')[0]);",
-                  "pm.collectionVariables.set('project_end_date', end.toISOString().split('T')[0]);"
+                  "pm.environment.set('project_start_date', start.toISOString().split('T')[0]);",
+                  "pm.environment.set('project_end_date', end.toISOString().split('T')[0]);"
                 ]
               }
             },
@@ -3788,7 +3788,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -3798,7 +3798,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});",
                   "",
@@ -3806,8 +3806,8 @@
                   "var now = new Date();",
                   "var start = new Date(now.getTime() + 7*24*60*60*1000);",
                   "var end = new Date(now.getTime() + 90*24*60*60*1000);",
-                  "pm.collectionVariables.set('project_start_date', start.toISOString().split('T')[0]);",
-                  "pm.collectionVariables.set('project_end_date', end.toISOString().split('T')[0]);"
+                  "pm.environment.set('project_start_date', start.toISOString().split('T')[0]);",
+                  "pm.environment.set('project_end_date', end.toISOString().split('T')[0]);"
                 ]
               }
             },
@@ -3877,7 +3877,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -3887,7 +3887,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});",
                   "",
@@ -3895,8 +3895,8 @@
                   "var now = new Date();",
                   "var start = new Date(now.getTime() + 7*24*60*60*1000);",
                   "var end = new Date(now.getTime() + 90*24*60*60*1000);",
-                  "pm.collectionVariables.set('project_start_date', start.toISOString().split('T')[0]);",
-                  "pm.collectionVariables.set('project_end_date', end.toISOString().split('T')[0]);"
+                  "pm.environment.set('project_start_date', start.toISOString().split('T')[0]);",
+                  "pm.environment.set('project_end_date', end.toISOString().split('T')[0]);"
                 ]
               }
             },
@@ -3953,7 +3953,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -3963,7 +3963,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});",
                   "",
@@ -3971,8 +3971,8 @@
                   "var now = new Date();",
                   "var start = new Date(now.getTime() + 7*24*60*60*1000);",
                   "var end = new Date(now.getTime() + 90*24*60*60*1000);",
-                  "pm.collectionVariables.set('project_start_date', start.toISOString().split('T')[0]);",
-                  "pm.collectionVariables.set('project_end_date', end.toISOString().split('T')[0]);"
+                  "pm.environment.set('project_start_date', start.toISOString().split('T')[0]);",
+                  "pm.environment.set('project_end_date', end.toISOString().split('T')[0]);"
                 ]
               }
             },
@@ -4043,7 +4043,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -4053,7 +4053,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});",
                   "",
@@ -4061,8 +4061,8 @@
                   "var now = new Date();",
                   "var start = new Date(now.getTime() + 7*24*60*60*1000);",
                   "var end = new Date(now.getTime() + 90*24*60*60*1000);",
-                  "pm.collectionVariables.set('project_start_date', start.toISOString().split('T')[0]);",
-                  "pm.collectionVariables.set('project_end_date', end.toISOString().split('T')[0]);"
+                  "pm.environment.set('project_start_date', start.toISOString().split('T')[0]);",
+                  "pm.environment.set('project_end_date', end.toISOString().split('T')[0]);"
                 ]
               }
             },
@@ -4118,7 +4118,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -4128,7 +4128,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});",
                   "",
@@ -4136,8 +4136,8 @@
                   "var now = new Date();",
                   "var start = new Date(now.getTime() + 7*24*60*60*1000);",
                   "var end = new Date(now.getTime() + 90*24*60*60*1000);",
-                  "pm.collectionVariables.set('project_start_date', start.toISOString().split('T')[0]);",
-                  "pm.collectionVariables.set('project_end_date', end.toISOString().split('T')[0]);"
+                  "pm.environment.set('project_start_date', start.toISOString().split('T')[0]);",
+                  "pm.environment.set('project_end_date', end.toISOString().split('T')[0]);"
                 ]
               }
             },
@@ -4197,7 +4197,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -4210,7 +4210,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -4267,7 +4267,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -4280,7 +4280,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -4337,7 +4337,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -4350,7 +4350,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -4408,7 +4408,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -4421,7 +4421,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -4479,7 +4479,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -4492,7 +4492,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -4549,7 +4549,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -4562,7 +4562,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -4619,7 +4619,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -4632,7 +4632,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -4689,7 +4689,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -4702,7 +4702,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -4760,7 +4760,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -4773,7 +4773,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -4831,7 +4831,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -4844,7 +4844,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -4902,7 +4902,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -4915,7 +4915,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -4973,7 +4973,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -4986,7 +4986,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -5043,7 +5043,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -5056,7 +5056,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -5113,7 +5113,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -5126,7 +5126,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -5167,7 +5167,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -5180,7 +5180,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -5195,7 +5195,7 @@
                   "var project = res.data || res;",
                   "pm.test(\"Tạo project controller và lưu ID\", function () {",
                   "    pm.expect(project).to.have.property(\"id\");",
-                  "    pm.collectionVariables.set(\"project_controller_test_id\", String(project.id));",
+                  "    pm.environment.set(\"project_controller_test_id\", String(project.id));",
                   "});"
                 ]
               }
@@ -5236,7 +5236,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -5249,7 +5249,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -5296,7 +5296,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -5309,7 +5309,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -5356,7 +5356,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -5369,7 +5369,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -5416,7 +5416,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -5429,7 +5429,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -5500,7 +5500,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -5513,7 +5513,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -5570,7 +5570,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -5583,7 +5583,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -5644,7 +5644,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -5657,7 +5657,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -5704,7 +5704,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -5717,7 +5717,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -5774,7 +5774,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -5787,7 +5787,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -5835,7 +5835,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -5848,7 +5848,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -5905,7 +5905,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -5918,7 +5918,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -5975,7 +5975,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -5988,7 +5988,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -6047,7 +6047,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -6060,7 +6060,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -6119,7 +6119,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -6132,7 +6132,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -6189,7 +6189,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -6202,7 +6202,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -6261,7 +6261,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -6274,7 +6274,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -6333,7 +6333,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -6346,7 +6346,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -6405,7 +6405,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -6418,7 +6418,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -6473,7 +6473,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -6486,7 +6486,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -6545,7 +6545,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -6558,7 +6558,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -6617,7 +6617,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -6630,7 +6630,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -6703,7 +6703,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -6716,7 +6716,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -6731,7 +6731,7 @@
                   "pm.test('Task created', function () { pm.expect([200,201]).to.include(pm.response.code); });",
                   "pm.test('Task ID saved', function () {",
                   "    if (jsonData.data && (jsonData.data.taskId || jsonData.data.id)) {",
-                  "        pm.collectionVariables.set('task_id', jsonData.data.taskId || jsonData.data.id);",
+                  "        pm.environment.set('task_id', jsonData.data.taskId || jsonData.data.id);",
                   "    }",
                   "});",
                   "pm.test('Response time is under 2000ms', function () { pm.expect(pm.response.responseTime).to.be.below(2000); });"
@@ -6766,7 +6766,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -6779,7 +6779,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -6852,7 +6852,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -6865,7 +6865,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -6937,7 +6937,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -6950,7 +6950,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -7008,7 +7008,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -7021,7 +7021,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -7078,7 +7078,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -7091,7 +7091,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -7150,7 +7150,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -7163,7 +7163,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -7222,7 +7222,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -7235,7 +7235,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -7308,7 +7308,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -7321,7 +7321,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -7378,7 +7378,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -7391,7 +7391,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -7464,7 +7464,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -7477,7 +7477,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -7492,7 +7492,7 @@
                   "pm.test('Report created', function () { pm.expect([200,201]).to.include(pm.response.code); });",
                   "pm.test('Report ID saved', function () {",
                   "    if (jsonData.data && (jsonData.data.reportId || jsonData.data.id)) {",
-                  "        pm.collectionVariables.set('report_id', jsonData.data.reportId || jsonData.data.id);",
+                  "        pm.environment.set('report_id', jsonData.data.reportId || jsonData.data.id);",
                   "    }",
                   "});",
                   "pm.test('Response time is under 2000ms', function () { pm.expect(pm.response.responseTime).to.be.below(2000); });"
@@ -7527,7 +7527,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -7540,7 +7540,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -7577,7 +7577,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -7590,7 +7590,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -7635,7 +7635,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -7648,7 +7648,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -7705,7 +7705,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -7718,7 +7718,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -7806,7 +7806,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -7819,7 +7819,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -7882,7 +7882,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -7895,7 +7895,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -7941,7 +7941,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -7954,7 +7954,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -7999,7 +7999,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -8012,7 +8012,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -8073,7 +8073,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('Login returns 200',()=>pm.response.to.have.status(200));pm.collectionVariables.set('token',pm.response.json().data.token);"
+                  "pm.test('Login returns 200',()=>pm.response.to.have.status(200));pm.environment.set('token',pm.response.json().data.token);"
                 ]
               }
             }
@@ -8199,7 +8199,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Login returns 200', () => pm.response.to.have.status(200));",
-                  "pm.collectionVariables.set('token_mentor_single', pm.response.json().data.token);"
+                  "pm.environment.set('token_mentor_single', pm.response.json().data.token);"
                 ]
               }
             }
@@ -8289,7 +8289,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Login returns 200', () => pm.response.to.have.status(200));",
-                  "pm.collectionVariables.set('token_mentor_empty', pm.response.json().data.token);"
+                  "pm.environment.set('token_mentor_empty', pm.response.json().data.token);"
                 ]
               }
             }
@@ -8656,7 +8656,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Login returns 200', () => pm.response.to.have.status(200));",
-                  "pm.collectionVariables.set('token_talent', pm.response.json().data.token);"
+                  "pm.environment.set('token_talent', pm.response.json().data.token);"
                 ]
               }
             }
@@ -8746,7 +8746,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Login returns 200', () => pm.response.to.have.status(200));",
-                  "pm.collectionVariables.set('token_enterprise', pm.response.json().data.token);"
+                  "pm.environment.set('token_enterprise', pm.response.json().data.token);"
                 ]
               }
             }
@@ -8836,7 +8836,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Login returns 200', () => pm.response.to.have.status(200));",
-                  "pm.collectionVariables.set('token_lab_admin', pm.response.json().data.token);"
+                  "pm.environment.set('token_lab_admin', pm.response.json().data.token);"
                 ]
               }
             }
@@ -8926,7 +8926,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Login returns 200', () => pm.response.to.have.status(200));",
-                  "pm.collectionVariables.set('token_system_admin', pm.response.json().data.token);"
+                  "pm.environment.set('token_system_admin', pm.response.json().data.token);"
                 ]
               }
             }
@@ -9019,7 +9019,7 @@
                   "",
                   "const body = pm.response.json();",
                   "if (body.data && body.data.token) {",
-                  "    pm.collectionVariables.set('token_mentor_no_profile', body.data.token);",
+                  "    pm.environment.set('token_mentor_no_profile', body.data.token);",
                   "}"
                 ]
               }
@@ -9030,7 +9030,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "var email = 'qa-postman-mp-noprofile-' + pm.variables.replaceIn('{{$guid}}') + '@example.test';",
-                  "pm.collectionVariables.set('mp_no_profile_email', email);"
+                  "pm.environment.set('mp_no_profile_email', email);"
                 ]
               }
             }
@@ -9207,7 +9207,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('Login returns 200',()=>pm.response.to.have.status(200)); const b=pm.response.json(); pm.collectionVariables.set('token_no_pending',b.data.token);"
+                  "pm.test('Login returns 200',()=>pm.response.to.have.status(200)); const b=pm.response.json(); pm.environment.set('token_no_pending',b.data.token);"
                 ]
               }
             }
@@ -9296,7 +9296,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('Login returns 200',()=>pm.response.to.have.status(200)); const b=pm.response.json(); pm.collectionVariables.set('token_mentor_b',b.data.token);"
+                  "pm.test('Login returns 200',()=>pm.response.to.have.status(200)); const b=pm.response.json(); pm.environment.set('token_mentor_b',b.data.token);"
                 ]
               }
             }
@@ -9386,7 +9386,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "var email = 'qa-mi-noprofile-' + pm.variables.replaceIn('{{$guid}}') + '@example.test';",
-                  "pm.collectionVariables.set('mi_no_profile_email', email);"
+                  "pm.environment.set('mi_no_profile_email', email);"
                 ]
               }
             },
@@ -9399,7 +9399,7 @@
                   "",
                   "const body = pm.response.json();",
                   "if (body.data && body.data.token) {",
-                  "    pm.collectionVariables.set('mi_no_profile_token', body.data.token);",
+                  "    pm.environment.set('mi_no_profile_token', body.data.token);",
                   "}",
                   "// Email already set in prerequest, no need to read from response"
                 ]
@@ -9479,7 +9479,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -9492,7 +9492,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -9563,7 +9563,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -9576,7 +9576,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -9633,7 +9633,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -9646,7 +9646,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -9704,7 +9704,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -9717,7 +9717,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -9775,7 +9775,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -9788,7 +9788,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -9845,7 +9845,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -9858,7 +9858,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -9929,7 +9929,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -9942,7 +9942,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -10000,7 +10000,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -10013,7 +10013,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -10070,7 +10070,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -10083,7 +10083,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -10156,7 +10156,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -10169,7 +10169,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -10227,7 +10227,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -10240,7 +10240,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -10297,7 +10297,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -10310,7 +10310,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -10383,7 +10383,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -10396,7 +10396,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -10453,7 +10453,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -10466,7 +10466,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -10791,7 +10791,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -10804,7 +10804,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -10852,7 +10852,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -10865,7 +10865,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -10928,7 +10928,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -10941,7 +10941,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -10987,7 +10987,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -11000,7 +11000,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -11071,7 +11071,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -11084,7 +11084,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -11101,7 +11101,7 @@
                   "    var jsonData = pm.response.json();",
                   "    pm.expect(jsonData.data).to.not.be.null;",
                   "    if (jsonData.data && jsonData.data.reportId) {",
-                  "        pm.collectionVariables.set('report_id', jsonData.data.reportId);",
+                  "        pm.environment.set('report_id', jsonData.data.reportId);",
                   "    }",
                   "});",
                   "pm.test('Response time is under 2000ms', function () { pm.expect(pm.response.responseTime).to.be.below(2000); });"
@@ -11150,7 +11150,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -11163,7 +11163,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -11223,7 +11223,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -11236,7 +11236,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -11291,7 +11291,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -11304,7 +11304,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -11363,7 +11363,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -11376,7 +11376,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -11430,7 +11430,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -11443,7 +11443,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -11508,7 +11508,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -11521,7 +11521,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -11580,7 +11580,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -11593,7 +11593,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -11652,7 +11652,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -11665,7 +11665,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -11723,7 +11723,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -11736,7 +11736,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -11804,7 +11804,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -11817,7 +11817,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -11886,7 +11886,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -11899,7 +11899,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -11959,7 +11959,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -11972,7 +11972,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -12031,7 +12031,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -12044,7 +12044,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -12103,7 +12103,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -12116,7 +12116,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -12174,7 +12174,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -12187,7 +12187,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -12246,7 +12246,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -12259,7 +12259,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -12317,7 +12317,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -12330,7 +12330,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -12389,7 +12389,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -12402,7 +12402,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -12460,7 +12460,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -12473,7 +12473,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -12540,7 +12540,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -12553,7 +12553,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -12611,7 +12611,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -12624,7 +12624,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -12691,7 +12691,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -12704,7 +12704,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -12763,7 +12763,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -12776,7 +12776,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -12840,7 +12840,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -12853,7 +12853,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -12911,7 +12911,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -12924,7 +12924,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -12983,7 +12983,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -12996,7 +12996,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -13056,7 +13056,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -13069,7 +13069,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -13138,7 +13138,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -13151,7 +13151,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
@@ -13220,7 +13220,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var base_url = pm.collectionVariables.get('base_url') || pm.environment.get('base_url');",
+                  "var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');",
                   "pm.sendRequest({",
                   "    url: base_url + '/api/auth/login',",
                   "    method: 'POST',",
@@ -13233,7 +13233,7 @@
                   "    if (!err && res.code === 200) {",
                   "        var jsonData = res.json();",
                   "        var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "        if (token) { pm.collectionVariables.set('token', token); }",
+                  "        if (token) { pm.environment.set('token', token); }",
                   "    }",
                   "});"
                 ]
