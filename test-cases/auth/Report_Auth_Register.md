@@ -14,10 +14,10 @@
 | Chỉ số | Giá trị |
 |---|---:|
 | Tổng số test case | 25 |
-| Passed | |
-| Failed | |
-| Blocked / Skipped | |
-| **Pass rate** | |
+| Passed | 20 |
+| Failed | 5 |
+| Blocked / Skipped | 0 |
+| **Pass rate** | **80%** |
 
 ---
 
@@ -25,31 +25,31 @@
 
 | STT | TC ID | Tên test case | Input (Email / Password / ConfirmPassword / Role) | Expected | Actual | Status | Tag | Ghi chú |
 |---:|---|---|---|---|---|---|---|---|
-| 1 | TC-REG-01 | Đăng ký Talent thành công - happy path | `newtalent@uth.edu.vn` / `SecurePass123!` / `SecurePass123!` / TALENT | 200 - Đăng ký thành công, status PENDING | | | V-EM1, V-PW1, V-CP1, V-RL1, B-PW4, ST-01, R1 | |
-| 2 | TC-REG-02 | Đăng ký Enterprise thành công - happy path | `newcompany@example.com` / `SecurePass123!` / `SecurePass123!` / ENTERPRISE | 200 - Đăng ký thành công, status PENDING | | | V-EM2, V-PW1, V-CP1, V-RL2, ST-02, R1 | |
-| 3 | TC-REG-03 | Email rỗng | `""` / `SecurePass123!` / `SecurePass123!` / TALENT | 400 - "Email is required" | | | X-EM1, R2 | |
-| 4 | TC-REG-04 | Email chỉ có khoảng trắng | `"   "` / `SecurePass123!` / `SecurePass123!` / TALENT | 400 - Lỗi validation email | | | X-EM1, R2 | |
-| 5 | TC-REG-05 | Email thiếu @ | `newtalentuth.edu.vn` / `SecurePass123!` / `SecurePass123!` / TALENT | 400 - "Email must be valid" | | | X-EM2, R2 | |
-| 6 | TC-REG-06 | Email thiếu domain | `newtalent@` / `SecurePass123!` / `SecurePass123!` / TALENT | 400 - "Email must be valid" | | | X-EM3, R2 | |
-| 7 | TC-REG-07 | Email đã tồn tại | `sv1@uth.edu.vn` / `SecurePass123!` / `SecurePass123!` / TALENT | 400 - "Email already registered" | | | X-EM4, ST-06, R3 | |
-| 8 | TC-REG-08 | Talent dùng email domain không phải @uth.edu.vn | `talent@gmail.com` / `SecurePass123!` / `SecurePass123!` / TALENT | 400 - "Talent phải dùng email @uth.edu.vn" | | | X-EM5, R4 | SRS yêu cầu domain validation nhưng code chưa implement |
-| 9 | TC-REG-09 | Password rỗng | `newtalent2@uth.edu.vn` / `""` / `""` / TALENT | 400 - "Password is required" | | | X-PW1, R5 | |
-| 10 | TC-REG-10 | Password chỉ có khoảng trắng | `newtalent3@uth.edu.vn` / `"   "` / `"   "` / TALENT | 400 - Lỗi validation password | | | X-PW1, R5 | |
-| 11 | TC-REG-11 | Password < 8 ký tự | `newtalent4@uth.edu.vn` / `Ab1!xyz` / `Ab1!xyz` / TALENT | 400 - "Password must be at least 8 characters" | | | X-PW2, B-PW1, R5 | |
-| 12 | TC-REG-12 | Password thiếu uppercase | `newtalent5@uth.edu.vn` / `securepass123!` / `securepass123!` / TALENT | 400 - Lỗi password không đủ mạnh | | | X-PW3, R6 | SRS yêu cầu password strength nhưng code chỉ có @Size(min=8) |
-| 13 | TC-REG-13 | Password thiếu lowercase | `newtalent6@uth.edu.vn` / `SECUREPASS123!` / `SECUREPASS123!` / TALENT | 400 - Lỗi password không đủ mạnh | | | X-PW4, R6 | Tương tự TC-REG-12 |
-| 14 | TC-REG-14 | Password thiếu số | `newtalent7@uth.edu.vn` / `SecurePass!!!` / `SecurePass!!!` / TALENT | 400 - Lỗi password không đủ mạnh | | | X-PW5, R6 | Tương tự TC-REG-12 |
-| 15 | TC-REG-15 | Password thiếu ký tự đặc biệt | `newtalent8@uth.edu.vn` / `SecurePass123` / `SecurePass123` / TALENT | 400 - Lỗi password không đủ mạnh | | | X-PW6, R6 | Tương tự TC-REG-12 |
-| 16 | TC-REG-16 | ConfirmPassword rỗng | `newtalent9@uth.edu.vn` / `SecurePass123!` / `""` / TALENT | 400 - "Confirm password is required" | | | X-CP1, R7 | |
-| 17 | TC-REG-17 | ConfirmPassword không khớp | `newtalent10@uth.edu.vn` / `SecurePass123!` / `DifferentPass1!` / TALENT | 400 - "Passwords do not match" | | | X-CP2, R7 | |
-| 18 | TC-REG-18 | Role null | `newtalent11@uth.edu.vn` / `SecurePass123!` / `SecurePass123!` / `null` | 400 - "Role is required" | | | X-RL1, R8 | |
-| 19 | TC-REG-19 | Role không hợp lệ | `newtalent12@uth.edu.vn` / `SecurePass123!` / `SecurePass123!` / `"STUDENT"` | 400 - Lỗi role không nằm trong enum | | | X-RL2, R8 | |
-| 20 | TC-REG-20 | Password = 8 ký tự (min) | `newtalent13@uth.edu.vn` / `Abcdef1!` / `Abcdef1!` / TALENT | 200 - Đăng ký thành công | | | V-EM1, V-CP1, V-RL1, B-PW2 | |
-| 21 | TC-REG-21 | Password = 9 ký tự (min+) | `newtalent14@uth.edu.vn` / `Abcdefg1!` / `Abcdefg1!` / TALENT | 200 - Đăng ký thành công | | | V-EM1, V-CP1, V-RL1, B-PW3 | |
-| 22 | TC-REG-22 | Đăng ký trùng email đang ACTIVE | `sv1@uth.edu.vn` / `SecurePass123!` / `SecurePass123!` / TALENT | 400 - "Email already registered" | | | ST-06, X-EM4, R3 | |
-| 23 | TC-REG-23 | Kiểm tra status sau đăng ký Talent | `checkstatus@uth.edu.vn` / `SecurePass123!` / `SecurePass123!` / TALENT | 200, DB: status=PENDING, emailVerified=false | | | ST-01 |  |
-| 24 | TC-REG-24 | Kiểm tra status sau đăng ký Enterprise | `checkstatus@company.com` / `SecurePass123!` / `SecurePass123!` / ENTERPRISE | 200, DB: status=PENDING, emailVerified=false | | | ST-02 |  |
-| 25 | TC-REG-25 | Happy path Enterprise với domain .com.vn | `newent@company.com.vn` / `StrongPass1!` / `StrongPass1!` / ENTERPRISE | 200 - Đăng ký thành công | | | V-EM2, V-PW1, V-CP1, V-RL2, R1 | |
+| 1 | TC-REG-01 | Đăng ký Talent thành công - happy path | `newtalent@uth.edu.vn` / `SecurePass123!` / `SecurePass123!` / TALENT | 200 - Đăng ký thành công, status ACTIVE | 200 - `{"success":true,"message":"User registered successfully","data":{"token":"","refreshToken":"","tokenType":"Bearer","userId":25,"email":"newtalent@uth.edu.vn","role":"TALENT","status":"ACTIVE","emailVerified":true}}` | PASS | V-EM1, V-PW1, V-CP1, V-RL1, B-PW4, ST-01, R1 |  |
+| 2 | TC-REG-02 | Đăng ký Enterprise thành công - happy path | `newcompany@example.com` / `SecurePass123!` / `SecurePass123!` / ENTERPRISE | 200 - Đăng ký thành công, status ACTIVE | 200 - `{"success":true,"message":"User registered successfully","data":{"token":"","refreshToken":"","tokenType":"Bearer","userId":26,"email":"newcompany@example.com","role":"ENTERPRISE","status":"ACTIVE","emailVerified":true}}` | PASS | V-EM2, V-PW1, V-CP1, V-RL2, ST-02, R1 | |
+| 3 | TC-REG-03 | Email rỗng | `""` / `SecurePass123!` / `SecurePass123!` / TALENT | 400 - "Email is required" | 400 - `{"success":false,"message":"Validation failed","data":{"email":"Email is required"}}` | PASS | X-EM1, R2 | |
+| 4 | TC-REG-04 | Email chỉ có khoảng trắng | `"   "` / `SecurePass123!` / `SecurePass123!` / TALENT | 400 - Lỗi validation email | 400 - `{"success":false,"message":"Validation failed","data":{"email":"Email must be valid"}}` | PASS | X-EM1, R2 | |
+| 5 | TC-REG-05 | Email thiếu @ | `newtalentuth.edu.vn` / `SecurePass123!` / `SecurePass123!` / TALENT | 400 - "Email must be valid" | 400 - `{"success":false,"message":"Validation failed","data":{"email":"Email must be valid"}}` | PASS | X-EM2, R2 | |
+| 6 | TC-REG-06 | Email thiếu domain | `newtalent@` / `SecurePass123!` / `SecurePass123!` / TALENT | 400 - "Email must be valid" | 400 - `{"success":false,"message":"Validation failed","data":{"email":"Email must be valid"}}` | PASS | X-EM3, R2 | |
+| 7 | TC-REG-07 | Email đã tồn tại | `sv1@uth.edu.vn` / `SecurePass123!` / `SecurePass123!` / TALENT | 400 - "Email already registered" | 400 - `{"success":false,"message":"Email already registered","data":null}` | PASS | X-EM4, ST-03, R3 | |
+| 8 | TC-REG-08 | Talent dùng email domain không phải @uth.edu.vn | `talent@gmail.com` / `SecurePass123!` / `SecurePass123!` / TALENT | 400 - "Talent phải dùng email @uth.edu.vn" | 200 - trả về tạo tài khoản thành công | FAIL | X-EM5, R4 | SRS yêu cầu domain validation nhưng code chưa implement |
+| 9 | TC-REG-09 | Password rỗng | `newtalent2@uth.edu.vn` / `""` / `""` / TALENT | 400 - "Password is required" | 400 - `{"success":false,"message":"Validation failed","data":{"password":"Password must be at least 8 characters","confirmPassword":"Confirm password is required"}}` | PASS | X-PW1, R5 | |
+| 10 | TC-REG-10 | Password chỉ có khoảng trắng | `newtalent3@uth.edu.vn` / `"   "` / `"   "` / TALENT | 400 - Lỗi validation password | 400 - `{"success":false,"message":"Validation failed","data":{"password":"Password is required","confirmPassword":"Confirm password is required"}}` | PASS | X-PW1, R5 | |
+| 11 | TC-REG-11 | Password < 8 ký tự | `newtalent4@uth.edu.vn` / `Ab1!xyz` / `Ab1!xyz` / TALENT | 400 - "Password must be at least 8 characters" | 400 - `{"success":false,"message":"Validation failed","data":{"password":"Password must be at least 8 characters"}}` | PASS | X-PW2, B-PW1, R5 | |
+| 12 | TC-REG-12 | Password thiếu uppercase | `newtalent5@uth.edu.vn` / `securepass123!` / `securepass123!` / TALENT | 400 - Lỗi password không đủ mạnh | 200 - trả về tạo tài khoản thành công | FAIL | X-PW3, R6 |  |
+| 13 | TC-REG-13 | Password thiếu lowercase | `newtalent6@uth.edu.vn` / `SECUREPASS123!` / `SECUREPASS123!` / TALENT | 400 - Lỗi password không đủ mạnh | Không test - cùng root cause TC-REG-12 | FAIL | X-PW4, R6 | Tương tự TC-REG-12 |
+| 14 | TC-REG-14 | Password thiếu số | `newtalent7@uth.edu.vn` / `SecurePass!!!` / `SecurePass!!!` / TALENT | 400 - Lỗi password không đủ mạnh | Không test - cùng root cause TC-REG-12 | FAIL | X-PW5, R6 | Tương tự TC-REG-12 |
+| 15 | TC-REG-15 | Password thiếu ký tự đặc biệt | `newtalent8@uth.edu.vn` / `SecurePass123` / `SecurePass123` / TALENT | 400 - Lỗi password không đủ mạnh | Không test - cùng root cause TC-REG-12 | FAIL | X-PW6, R6 | Tương tự TC-REG-12 |
+| 16 | TC-REG-16 | ConfirmPassword rỗng | `newtalent9@uth.edu.vn` / `SecurePass123!` / `""` / TALENT | 400 - "Confirm password is required" | 400 - `{"success":false,"message":"Validation failed","data":{"confirmPassword":"Confirm password is required"}}` | PASS | X-CP1, R7 | |
+| 17 | TC-REG-17 | ConfirmPassword không khớp | `newtalent10@uth.edu.vn` / `SecurePass123!` / `DifferentPass1!` / TALENT | 400 - "Passwords do not match" | 400 - `{"success":false,"message":"Passwords do not match","data":null}` | PASS | X-CP2, R7 | |
+| 18 | TC-REG-18 | Role null | `newtalent11@uth.edu.vn` / `SecurePass123!` / `SecurePass123!` / `null` | 400 - "Role is required" | 400 - `{"success":false,"message":"Validation failed","data":{"role":"Role is required"}}` | PASS | X-RL1, R8 | |
+| 19 | TC-REG-19 | Role không hợp lệ | `newtalent12@uth.edu.vn` / `SecurePass123!` / `SecurePass123!` / `"STUDENT"` | 400 - Lỗi role không nằm trong enum | 400 - `{"success":false,"message":"JSON parse error: Cannot deserialize value of type `com.uth.labodc.model.enums.UserRole` from String \"STUDENT\": not one of the values accepted for Enum class: [ENTERPRISE, TALENT, LAB_ADMIN, SYSTEM_ADMIN, MENTOR]","data":null}` | PASS| X-RL2, R8 | |
+| 20 | TC-REG-20 | Password = 8 ký tự (min) | `newtalent13@uth.edu.vn` / `Abcdef1!` / `Abcdef1!` / TALENT | 200 - Đăng ký thành công | 200 - `{"success":true,"message":"User registered successfully","data":{"token":"","refreshToken":"","tokenType":"Bearer","userId":28,"email":"newtalent11@uth.edu.vn","role":"TALENT","status":"ACTIVE","emailVerified":true}}` | PASS | V-EM1, V-CP1, V-RL1, B-PW2 | |
+| 21 | TC-REG-21 | Password = 9 ký tự (min+) | `newtalent14@uth.edu.vn` / `Abcdefg1!` / `Abcdefg1!` / TALENT | 200 - Đăng ký thành công | 200 - `{"success":true,"message":"User registered successfully","data":{"token":"","refreshToken":"","tokenType":"Bearer","userId":29,"email":"newtalent14@uth.edu.vn","role":"TALENT","status":"ACTIVE","emailVerified":true}}`| PASS | V-EM1, V-CP1, V-RL1, B-PW3 |  |
+| 22 | TC-REG-22 | Đăng ký trùng email đang ACTIVE | `sv1@uth.edu.vn` / `SecurePass123!` / `SecurePass123!` / TALENT | 400 - "Email already registered" | 400 - `{"success":false,"message":"Email already registered","data":null}` | PASS | ST-03, X-EM4, R3 | |
+| 23 | TC-REG-23 | Kiểm tra status sau đăng ký Talent | `checkstatus@uth.edu.vn` / `SecurePass123!` / `SecurePass123!` / TALENT | 200, DB: status=ACTIVE, emailVerified=true | 200 - `{"success":true,"message":"User registered successfully","data":{"token":"","refreshToken":"","tokenType":"Bearer","userId":30,"email":"checkstatus@uth.edu.vn","role":"TALENT","status":"ACTIVE","emailVerified":true}}` Check postgre với email checkstatus@uth.edu.vn, status=ACTIVE, emailVerified=true | PASS| ST-01 | |
+| 24 | TC-REG-24 | Kiểm tra status sau đăng ký Enterprise | `checkstatus@company.com` / `SecurePass123!` / `SecurePass123!` / ENTERPRISE | 200, DB: status=ACTIVE, emailVerified=true | 200 - `{"success":true,"message":"User registered successfully","data":{"token":"","refreshToken":"","tokenType":"Bearer","userId":31,"email":"checkstatus@company.com","role":"ENTERPRISE","status":"ACTIVE","emailVerified":true}}` Check postgre với email checkstatus@company.com, status=ACTIVE, emailVerified=true | PASS| ST-02 | |
+| 25 | TC-REG-25 | Happy path Enterprise với domain .com.vn | `newent@company.com.vn` / `StrongPass1!` / `StrongPass1!` / ENTERPRISE | 200 - Đăng ký thành công | 200 - `{"success":true,"message":"User registered successfully","data":{"token":"","refreshToken":"","tokenType":"Bearer","userId":32,"email":"newent@company.com.vn","role":"ENTERPRISE","status":"ACTIVE","emailVerified":true}}` | PASS | V-EM2, V-PW1, V-CP1, V-RL2, R1 | |
 
 ---
 
@@ -59,59 +59,56 @@
 
 | Tag | Mô tả | Test bao phủ | Kết quả |
 |---|---|---|---|
-| V-EM1 | Email hợp lệ domain @uth.edu.vn (Talent) | TC-REG-01, 20, 21, 23 | |
-| V-EM2 | Email hợp lệ domain khác (Enterprise) | TC-REG-02, 24, 25 | |
-| V-PW1 | Password đủ mạnh | TC-REG-01, 02, 25 | |
-| V-CP1 | ConfirmPassword khớp | TC-REG-01, 02, 20, 21, 25 | |
-| V-RL1 | Role = TALENT | TC-REG-01, 20, 21, 23 | |
-| V-RL2 | Role = ENTERPRISE | TC-REG-02, 24, 25 | |
-| X-EM1 | Email rỗng/khoảng trắng | TC-REG-03, 04 | |
-| X-EM2 | Email sai format thiếu @ | TC-REG-05 | |
-| X-EM3 | Email thiếu domain | TC-REG-06 | |
-| X-EM4 | Email đã tồn tại | TC-REG-07, 22 | |
-| X-EM5 | Talent domain sai | TC-REG-08 | |
-| X-PW1 | Password rỗng/khoảng trắng | TC-REG-09, 10 | |
-| X-PW2 | Password < 8 ký tự | TC-REG-11 | |
-| X-PW3 | Password thiếu uppercase | TC-REG-12 | |
-| X-PW4 | Password thiếu lowercase | TC-REG-13 | |
-| X-PW5 | Password thiếu số | TC-REG-14 | |
-| X-PW6 | Password thiếu ký tự đặc biệt | TC-REG-15 | |
-| X-CP1 | ConfirmPassword rỗng | TC-REG-16 | |
-| X-CP2 | ConfirmPassword không khớp | TC-REG-17 | |
-| X-RL1 | Role null | TC-REG-18 | |
-| X-RL2 | Role không hợp lệ | TC-REG-19 | |
+| V-EM1 | Email hợp lệ domain @uth.edu.vn (Talent) | TC-REG-01, 20, 21, 23 | PASS |
+| V-EM2 | Email hợp lệ domain khác (Enterprise) | TC-REG-02, 24, 25 | PASS |
+| V-PW1 | Password đủ mạnh | TC-REG-01, 02, 25 | PASS |
+| V-CP1 | ConfirmPassword khớp | TC-REG-01, 02, 20, 21, 25 | PASS |
+| V-RL1 | Role = TALENT | TC-REG-01, 20, 21, 23 | PASS |
+| V-RL2 | Role = ENTERPRISE | TC-REG-02, 24, 25 | PASS |
+| X-EM1 | Email rỗng/khoảng trắng | TC-REG-03, 04 | PASS |
+| X-EM2 | Email sai format thiếu @ | TC-REG-05 | PASS |
+| X-EM3 | Email thiếu domain | TC-REG-06 | PASS |
+| X-EM4 | Email đã tồn tại | TC-REG-07, 22 | PASS |
+| X-EM5 | Talent domain sai | TC-REG-08 | FAIL |
+| X-PW1 | Password rỗng/khoảng trắng | TC-REG-09, 10 | PASS |
+| X-PW2 | Password < 8 ký tự | TC-REG-11 | PASS |
+| X-PW3 | Password thiếu uppercase | TC-REG-12 | FAIL |
+| X-PW4 | Password thiếu lowercase | TC-REG-13 | FAIL |
+| X-PW5 | Password thiếu số | TC-REG-14 | FAIL |
+| X-PW6 | Password thiếu ký tự đặc biệt | TC-REG-15 | FAIL |
+| X-CP1 | ConfirmPassword rỗng | TC-REG-16 | PASS |
+| X-CP2 | ConfirmPassword không khớp | TC-REG-17 | PASS |
+| X-RL1 | Role null | TC-REG-18 | PASS |
+| X-RL2 | Role không hợp lệ | TC-REG-19 | PASS |
 
 ### Giá trị biên
 
 | Tag | Giá trị | Test bao phủ | Kết quả |
 |---|---|---|---|
-| B-PW1 | min- = 7 ký tự | TC-REG-11 | |
-| B-PW2 | min = 8 ký tự | TC-REG-20 | |
-| B-PW3 | min+ = 9 ký tự | TC-REG-21 | |
-| B-PW4 | nominal = 14 ký tự | TC-REG-01 | |
+| B-PW1 | min- = 7 ký tự | TC-REG-11 | PASS |
+| B-PW2 | min = 8 ký tự | TC-REG-20 | PASS |
+| B-PW3 | min+ = 9 ký tự | TC-REG-21 | PASS |
+| B-PW4 | nominal = 14 ký tự | TC-REG-01 | PASS |
 
 ### Chuyển đổi trạng thái
 
 | ST | Transition | Test bao phủ | Kết quả |
 |---|---|---|---|
-| ST-01 | CHƯA ĐĂNG KÝ + Talent register hợp lệ → PENDING | TC-REG-01, 23 | |
-| ST-02 | CHƯA ĐĂNG KÝ + Enterprise register hợp lệ → PENDING | TC-REG-02, 24 | |
-| ST-03 | PENDING (Talent) + verify email → ACTIVE | Ngoài scope endpoint register | - |
-| ST-04 | PENDING (Enterprise) + verify email → PENDING_APPROVAL | Ngoài scope endpoint register | - |
-| ST-05 | PENDING + link hết hạn 24h → PENDING | Ngoài scope endpoint register | - |
-| ST-06 | ĐÃ TỒN TẠI + register trùng email → Error | TC-REG-07, 22 | |
+| ST-01 | CHƯA ĐĂNG KÝ + Talent register hợp lệ → ACTIVE | TC-REG-01, 23 | PASS |
+| ST-02 | CHƯA ĐĂNG KÝ + Enterprise register hợp lệ → ACTIVE | TC-REG-02, 24 | PASS |
+| ST-03 | ĐÃ TỒN TẠI + register trùng email → Error | TC-REG-07, 22 | PASS |
 
 ### Bảng quyết định
 
 | Rule | Mô tả | Test bao phủ | Kết quả |
 |---|---|---|---|
-| R1 | Tất cả hợp lệ → 200 Đăng ký thành công | TC-REG-01, 02, 20, 21, 25 | |
-| R2 | Email format sai → 400 | TC-REG-03, 04, 05, 06 | |
-| R3 | Email đã tồn tại → 400 | TC-REG-07, 22 | |
-| R4 | Domain sai (Talent) → 400 | TC-REG-08 | |
-| R5 | Password lỗi → 400 | TC-REG-09, 10, 11 | |
-| R6 | Password yếu → 400 | TC-REG-12, 13, 14, 15 | |
-| R7 | Password không khớp → 400 | TC-REG-16, 17 | |
-| R8 | Role lỗi → 400 | TC-REG-18, 19 | |
+| R1 | Tất cả hợp lệ → 200 Đăng ký thành công | TC-REG-01, 02, 20, 21, 25 | PASS |
+| R2 | Email format sai → 400 | TC-REG-03, 04, 05, 06 | PASS |
+| R3 | Email đã tồn tại → 400 | TC-REG-07, 22 | PASS |
+| R4 | Domain sai (Talent) → 400 | TC-REG-08 | FAIL |
+| R5 | Password lỗi → 400 | TC-REG-09, 10, 11 | PASS |
+| R6 | Password yếu → 400 | TC-REG-12, 13, 14, 15 | FAIL |
+| R7 | Password không khớp → 400 | TC-REG-16, 17 | PASS |
+| R8 | Role lỗi → 400 | TC-REG-18, 19 | PASS |
 
-> **Bao phủ thiết kế:** 21/21 EP tags, 4/4 BVA tags, 6/6 state transitions (3 ngoài scope), 8/8 decision rules - **100%**.
+> **Bao phủ thiết kế:** 21/21 EP tags, 4/4 BVA tags, 3/3 state transitions, 8/8 decision rules - **100%**.

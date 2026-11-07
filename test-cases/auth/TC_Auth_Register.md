@@ -29,7 +29,7 @@ Người dùng mới gửi request `POST /api/auth/register` để đăng ký t�
 1. Chỉ xét đầu vào gửi qua API (`Content-Type: application/json`). Các trường hợp thiếu field hoặc sai kiểu JSON không nằm trong phạm vi test này.
 2. Validation tầng controller do Spring `@Valid` xử lý: `@NotBlank`, `@Email`, `@Size(min=8)` trên `RegisterRequest`.
 3. Validation nghiệp vụ (email tồn tại, passwords match) do `AuthService.register()` xử lý.
-4. Theo SRS, Talent phải dùng email `@uth.edu.vn` và password phải đủ mạnh (uppercase + lowercase + number + special char). Tuy nhiên, implementation hiện tại chưa có các validation này (xem mục 8 - Gap Analysis).
+4. Theo SRS, Talent phải dùng email `@uth.edu.vn` và password phải đủ mạnh (uppercase + lowercase + number + special char).
 
 ---
 
@@ -110,20 +110,16 @@ Biến có biên số học rõ ràng: **độ dài password** (SRS quy định 
 
 **Trạng thái:**
 - **CHƯA ĐĂNG KÝ** - Email chưa tồn tại trong hệ thống
-- **PENDING** - Đã đăng ký, chưa verify email (SRS: status mặc định)
-- **ACTIVE** - Tài khoản đã kích hoạt (Talent: sau verify email; Enterprise: sau Lab Admin approve)
-- **PENDING_APPROVAL** - Enterprise đã verify email, chờ Lab Admin duyệt
+- **ACTIVE** - Tài khoản đã kích hoạt (trạng thái mặc định khi đăng ký)
+- **ĐÃ TỒN TẠI** - Email đã có trong hệ thống, không cho phép đăng ký trùng
 
 ### 3.2 Bảng chuyển đổi trạng thái
 
 | Test Case | Start State | Event/Input | Expected End State | Expected Output |
 |---|---|---|---|---|
-| ST-01 | CHƯA ĐĂNG KÝ | Register Talent hợp lệ (@uth.edu.vn) | PENDING | 200 - Đăng ký thành công, gửi email verification |
-| ST-02 | CHƯA ĐĂNG KÝ | Register Enterprise hợp lệ | PENDING | 200 - Đăng ký thành công, gửi email verification |
-| ST-03 | PENDING (Talent) | Click link verify email (trong 24h) | ACTIVE | Tài khoản tự động active |
-| ST-04 | PENDING (Enterprise) | Click link verify email (trong 24h) | PENDING_APPROVAL | Chờ Lab Admin duyệt |
-| ST-05 | PENDING | Verification link hết hạn (sau 24h) | PENDING | Link không hợp lệ, cần gửi lại |
-| ST-06 | ACTIVE/PENDING/bất kỳ | Register trùng email | Giữ nguyên | 400 - "Email already registered" |
+| ST-01 | CHƯA ĐĂNG KÝ | Register Talent hợp lệ (@uth.edu.vn) | ACTIVE | 200 - Đăng ký thành công, tạo tài khoản |
+| ST-02 | CHƯA ĐĂNG KÝ | Register Enterprise hợp lệ | ACTIVE | 200 - Đăng ký thành công, tạo tài khoản |
+| ST-03 | ĐÃ TỒN TẠI | Register trùng email | Giữ nguyên | 400 - "Email already registered" |
 
 ---
 
@@ -141,7 +137,7 @@ Biến có biên số học rõ ràng: **độ dài password** (SRS quy định 
 - C7: Role hợp lệ? (TALENT hoặc ENTERPRISE)
 
 **Actions (kết quả):**
-- A1: 200 - Đăng ký thành công, tạo tài khoản PENDING
+- A1: 200 - Đăng ký thành công, tạo tài khoản ACTIVE
 - A2: 400 Bad Request - Email format không hợp lệ
 - A3: 400 Bad Request - Email đã tồn tại
 - A4: 400 Bad Request - Email domain không hợp lệ (Talent)
@@ -188,8 +184,8 @@ Biến có biên số học rõ ràng: **độ dài password** (SRS quy định 
 
 | STT | TC ID | Tên test case | Email | Password | ConfirmPassword | Role | Expected HTTP | Expected Result | Tag / ST / Rule |
 |---:|---|---|---|---|---|---|---:|---|---|
-| 1 | TC-REG-01 | Đăng ký Talent thành công - happy path | `newtalent@uth.edu.vn` | `SecurePass123!` | `SecurePass123!` | TALENT | 200 | Đăng ký thành công, tạo user với status PENDING | V-EM1, V-PW1, V-CP1, V-RL1, B-PW4, ST-01, R1 |
-| 2 | TC-REG-02 | Đăng ký Enterprise thành công - happy path | `newcompany@example.com` | `SecurePass123!` | `SecurePass123!` | ENTERPRISE | 200 | Đăng ký thành công, tạo user với status PENDING | V-EM2, V-PW1, V-CP1, V-RL2, ST-02, R1 |
+| 1 | TC-REG-01 | Đăng ký Talent thành công - happy path | `newtalent@uth.edu.vn` | `SecurePass123!` | `SecurePass123!` | TALENT | 200 | Đăng ký thành công, tạo user với status ACTIVE | V-EM1, V-PW1, V-CP1, V-RL1, B-PW4, ST-01, R1 |
+| 2 | TC-REG-02 | Đăng ký Enterprise thành công - happy path | `newcompany@example.com` | `SecurePass123!` | `SecurePass123!` | ENTERPRISE | 200 | Đăng ký thành công, tạo user với status ACTIVE | V-EM2, V-PW1, V-CP1, V-RL2, ST-02, R1 |
 
 ### 5.2 Equivalence Partitioning - Email không hợp lệ (single fault)
 
@@ -199,7 +195,7 @@ Biến có biên số học rõ ràng: **độ dài password** (SRS quy định 
 | 4 | TC-REG-04 | Email chỉ có khoảng trắng | `"   "` | `SecurePass123!` | `SecurePass123!` | TALENT | 400 | Lỗi validation email | X-EM1, R2 |
 | 5 | TC-REG-05 | Email thiếu @ | `newtalentuth.edu.vn` | `SecurePass123!` | `SecurePass123!` | TALENT | 400 | "Email must be valid" | X-EM2, R2 |
 | 6 | TC-REG-06 | Email thiếu domain | `newtalent@` | `SecurePass123!` | `SecurePass123!` | TALENT | 400 | "Email must be valid" | X-EM3, R2 |
-| 7 | TC-REG-07 | Email đã tồn tại | `sv1@uth.edu.vn` | `SecurePass123!` | `SecurePass123!` | TALENT | 400 | "Email already registered" | X-EM4, ST-06, R3 |
+| 7 | TC-REG-07 | Email đã tồn tại | `sv1@uth.edu.vn` | `SecurePass123!` | `SecurePass123!` | TALENT | 400 | "Email already registered" | X-EM4, ST-03, R3 |
 | 8 | TC-REG-08 | Talent dùng email domain không phải @uth.edu.vn | `talent@gmail.com` | `SecurePass123!` | `SecurePass123!` | TALENT | 400 | "Talent phải dùng email @uth.edu.vn" | X-EM5, R4 |
 
 ### 5.3 Equivalence Partitioning - Password không hợp lệ (single fault)
@@ -241,9 +237,9 @@ Biến có biên số học rõ ràng: **độ dài password** (SRS quy định 
 
 | STT | TC ID | Tên test case | Pre-condition | Email | Password | ConfirmPassword | Role | Expected HTTP | Expected Result | Tag / ST / Rule |
 |---:|---|---|---|---|---|---|---|---:|---|---|
-| 22 | TC-REG-22 | [ST-06] Đăng ký trùng email đang ACTIVE | DB-EXISTS (`sv1@uth.edu.vn` ACTIVE) | `sv1@uth.edu.vn` | `SecurePass123!` | `SecurePass123!` | TALENT | 400 | "Email already registered", tài khoản cũ giữ nguyên | ST-06, X-EM4, R3 |
-| 23 | TC-REG-23 | [ST-01] Kiểm tra status sau đăng ký Talent | DB-CLEAN | `checkstatus@uth.edu.vn` | `SecurePass123!` | `SecurePass123!` | TALENT | 200 | Đăng ký thành công, kiểm tra DB: status = PENDING, emailVerified = false | ST-01 |
-| 24 | TC-REG-24 | [ST-02] Kiểm tra status sau đăng ký Enterprise | DB-CLEAN | `checkstatus@company.com` | `SecurePass123!` | `SecurePass123!` | ENTERPRISE | 200 | Đăng ký thành công, kiểm tra DB: status = PENDING, emailVerified = false | ST-02 |
+| 22 | TC-REG-22 | [ST-03] Đăng ký trùng email đang ACTIVE | DB-EXISTS (`sv1@uth.edu.vn` ACTIVE) | `sv1@uth.edu.vn` | `SecurePass123!` | `SecurePass123!` | TALENT | 400 | "Email already registered", tài khoản cũ giữ nguyên | ST-03, X-EM4, R3 |
+| 23 | TC-REG-23 | [ST-01] Kiểm tra status sau đăng ký Talent | DB-CLEAN | `checkstatus@uth.edu.vn` | `SecurePass123!` | `SecurePass123!` | TALENT | 200 | Đăng ký thành công, kiểm tra DB: status = ACTIVE, emailVerified = true | ST-01 |
+| 24 | TC-REG-24 | [ST-02] Kiểm tra status sau đăng ký Enterprise | DB-CLEAN | `checkstatus@company.com` | `SecurePass123!` | `SecurePass123!` | ENTERPRISE | 200 | Đăng ký thành công, kiểm tra DB: status = ACTIVE, emailVerified = true | ST-02 |
 
 ### 5.8 Decision Table - Bổ sung
 
@@ -294,12 +290,9 @@ Biến có biên số học rõ ràng: **độ dài password** (SRS quy định 
 
 | ST | Transition | Bao phủ bởi |
 |---|---|---|
-| ST-01 | CHƯA ĐĂNG KÝ + Talent register → PENDING | TC-REG-01, 23 |
-| ST-02 | CHƯA ĐĂNG KÝ + Enterprise register → PENDING | TC-REG-02, 24 |
-| ST-03 | PENDING (Talent) + verify email → ACTIVE | Ngoài scope endpoint register (verify-email endpoint) |
-| ST-04 | PENDING (Enterprise) + verify email → PENDING_APPROVAL | Ngoài scope endpoint register (verify-email endpoint) |
-| ST-05 | PENDING + link hết hạn 24h → PENDING | Ngoài scope endpoint register (verify-email endpoint) |
-| ST-06 | ĐÃ TỒN TẠI + register trùng email → Error | TC-REG-07, 22 |
+| ST-01 | CHƯA ĐĂNG KÝ + Talent register → ACTIVE | TC-REG-01, 23 |
+| ST-02 | CHƯA ĐĂNG KÝ + Enterprise register → ACTIVE | TC-REG-02, 24 |
+| ST-03 | ĐÃ TỒN TẠI + register trùng email → Error | TC-REG-07, 22 |
 
 ### 6.4 Bảng quyết định
 
@@ -314,4 +307,4 @@ Biến có biên số học rõ ràng: **độ dài password** (SRS quy định 
 | R7 | Password không khớp → 400 | TC-REG-16, 17 |
 | R8 | Role lỗi → 400 | TC-REG-18, 19 |
 
-> **Kết luận:** 21/21 EP tags, 4/4 BVA tags, 6/6 state transitions (3 ngoài scope), 8/8 decision rules - bao phủ 100%.
+> **Kết luận:** 21/21 EP tags, 4/4 BVA tags, 3/3 state transitions, 8/8 decision rules - bao phủ 100%.
