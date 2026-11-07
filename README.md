@@ -61,30 +61,17 @@ docker-compose ps
 > - Host: `localhost:5432` | Database: `labodc`
 > - Username: `root` | Password: `123123`
 >
-> **pgAdmin:** http://localhost:5050 — Email: `admin@labodc.com` / Password: `admin123`
+> **pgAdmin:** http://localhost:5050 - Email: `admin@labodc.com` / Password: `admin123`
 
 ### Execute / Khởi tạo lại Database
 
-**Cách 1 — Dùng `psql` trong container (khuyên dùng):**
-
-```bash
-# Mở psql bên trong container PostgreSQL
-docker exec -it labodc-postgres psql -U root -d labodc
-
-# Chạy file SQL từ bên trong psql
-\i /docker-entrypoint-initdb.d/schema.sql
-
-# Thoát psql
-\q
-```
-
-**Cách 2 — Chạy lệnh một dòng không cần vào psql:**
+**Cách 1 - Chạy lệnh một dòng không cần vào psql:**
 
 ```bash
 docker exec -i labodc-postgres psql -U root -d labodc < src/database/schema.sql
 ```
 
-**Cách 3 — Dùng pgAdmin (giao diện web):**
+**Cách 2 - Dùng pgAdmin (giao diện web):**
 
 1. Mở http://localhost:5050
 2. Đăng nhập: `admin@labodc.com` / `admin123`
@@ -147,7 +134,7 @@ Mở terminal tại thư mục `labodc-web-portal/`:
 cd labodc-web-portal
 ```
 
-**Lần đầu — cài dependencies:**
+**Lần đầu - cài dependencies:**
 
 ```bash
 npm install
@@ -252,7 +239,7 @@ npm install
 
 **Backend lỗi `JAVA_HOME not set`:**
 ```bash
-# Windows — thêm vào System Environment Variables:
+# Windows - thêm vào System Environment Variables:
 JAVA_HOME=C:\Program Files\Java\jdk-17
 PATH=%JAVA_HOME%\bin;%PATH%
 ```
