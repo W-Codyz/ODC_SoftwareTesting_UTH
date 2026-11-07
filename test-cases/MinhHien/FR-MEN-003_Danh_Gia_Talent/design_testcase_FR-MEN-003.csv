@@ -1,0 +1,17 @@
+﻿STT,TestCaseID,TenTestCase,VaiTro,talentId,evaluationPeriod,overallScore,CriteriaScores,ExpectedResult,KetQuaMongDoi,TagDuocBaoPhu
+1,TC-MEN003-01,Đánh giá tại điểm min (0.0),ASSIGNED_MENTOR,456,2026-02,0.0,Tất cả 0.0,TRUE,Hợp lệ: Tạo đánh giá mức 0,"V1,V2,V3,V4,V5,B1,B2,B6,B11"
+2,TC-MEN003-02,Đánh giá tại điểm max (10.0),ASSIGNED_MENTOR,456,2026-02,10.0,Tất cả 10.0,TRUE,Hợp lệ: Tạo đánh giá mức 10,"V1,V2,V3,V4,V5,B1,B2,B10,B12"
+3,TC-MEN003-03,Đánh giá tại điểm nominal (7.5),ASSIGNED_MENTOR,456,2026-02,7.5,Điểm 7.0 - 8.0,TRUE,Hợp lệ: Tạo đánh giá mức khá 7.5,"V1,V2,V3,V4,V5,B1,B2,B8"
+4,TC-MEN003-04,Đánh giá tại điểm min+ (0.1),ASSIGNED_MENTOR,456,2026-01,0.1,Tất cả 0.1,TRUE,Hợp lệ: Tạo đánh giá cận min 0.1,"V1,V2,V3,V4,V5,B1,B2,B4,B7"
+5,TC-MEN003-05,Đánh giá tại điểm max- (9.9),ASSIGNED_MENTOR,457,2026-12,9.9,Tất cả 9.9,TRUE,Hợp lệ: Tạo đánh giá cận max 9.9,"V1,V2,V3,V4,V5,B1,B3,B5,B9"
+6,TC-MEN003-06,overallScore ngay dưới min (-0.1),ASSIGNED_MENTOR,456,2026-02,-0.1,Điểm 7.0,FALSE,Không hợp lệ: overallScore=-0.1 < 0.0,X8
+7,TC-MEN003-07,overallScore ngay trên max (10.1),ASSIGNED_MENTOR,456,2026-02,10.1,Điểm 7.0,FALSE,Không hợp lệ: overallScore=10.1 > 10.0,X9
+8,TC-MEN003-08,overallScore không phải kiểu số,ASSIGNED_MENTOR,456,2026-02,tam_diem,Điểm 7.0,FALSE,Không hợp lệ: Sai kiểu dữ liệu điểm số,X10
+9,TC-MEN003-09,Tiêu chí codeQuality âm (-1.0),ASSIGNED_MENTOR,456,2026-02,8.0,codeQuality = -1,FALSE,Không hợp lệ: Điểm thành phần âm,X11
+10,TC-MEN003-10,Talent không tồn tại trong hệ thống,ASSIGNED_MENTOR,99999,2026-02,8.5,Điểm 8.0,FALSE,Không hợp lệ: Talent 99999 không tồn tại,X4
+11,TC-MEN003-11,Talent không thuộc dự án này,ASSIGNED_MENTOR,888,2026-02,8.5,Điểm 8.0,FALSE,Không hợp lệ: Talent không thuộc dự án,X5
+12,TC-MEN003-12,Đánh giá trùng kỳ (Unique constraint),ASSIGNED_MENTOR,456,2026-02,8.5,Điểm 8.0,FALSE,Không hợp lệ: Trùng kỳ đánh giá (dùng PUT),X7
+13,TC-MEN003-13,Sai định dạng kỳ đánh giá,ASSIGNED_MENTOR,456,2026/02,8.5,Điểm 8.0,FALSE,Không hợp lệ: Sai format YYYY-MM,X6
+14,TC-MEN003-14,User chưa đăng nhập gọi API,UNAUTHENTICATED,456,2026-02,8.5,Điểm 8.0,FALSE,Không hợp lệ: Chưa xác thực token 401,X1
+15,TC-MEN003-15,User không phải Mentor,TALENT_USER,456,2026-02,8.5,Điểm 8.0,FALSE,Không hợp lệ: Sai vai trò 403,X2
+16,TC-MEN003-16,Mentor khác không phụ trách dự án,OTHER_MENTOR,456,2026-02,8.5,Điểm 8.0,FALSE,Không hợp lệ: Không phụ trách dự án 403,X3

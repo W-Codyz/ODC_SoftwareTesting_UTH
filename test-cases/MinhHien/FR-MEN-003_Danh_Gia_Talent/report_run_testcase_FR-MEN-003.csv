@@ -1,0 +1,17 @@
+﻿STT,TestCaseID,TenTestCase,Input,Expected,Actual,Status,TagDuocBaoPhu,GhiChu,ThoiGianChay
+1,TC-MEN003-01,Đánh giá tại min (0.0),"MENTOR, Talent: 456, 2026-02, 0.0",TRUE,TRUE,PASS,"V1,V2,V3,V4,V5,B1,B2,B6,B11",Điểm sàn 0.0 hợp lệ,06/11/2026 22:16
+2,TC-MEN003-02,Đánh giá tại max (10.0),"MENTOR, Talent: 456, 2026-02, 10.0",TRUE,TRUE,PASS,"V1,V2,V3,V4,V5,B1,B2,B10,B12",Điểm trần 10.0,06/11/2026 22:16
+3,TC-MEN003-03,Đánh giá tại nominal (7.5),"MENTOR, Talent: 456, 2026-02, 7.5",TRUE,TRUE,PASS,"V1,V2,V3,V4,V5,B1,B2,B8",Điểm khá 7.5,06/11/2026 22:16
+4,TC-MEN003-04,Đánh giá tại min+ (0.1),"MENTOR, Talent: 456, 2026-01, 0.1",TRUE,TRUE,PASS,"V1,V2,V3,V4,V5,B1,B2,B4,B7",Điểm cận min 0.1,06/11/2026 22:16
+5,TC-MEN003-05,Đánh giá tại max- (9.9),"MENTOR, Talent: 457, 2026-12, 9.9",TRUE,TRUE,PASS,"V1,V2,V3,V4,V5,B1,B3,B5,B9",Điểm cận max 9.9,06/11/2026 22:16
+6,TC-MEN003-06,overallScore ngay dưới min (-0.1),Score: -0.1,FALSE,FALSE,PASS,X8,Chặn điểm âm,06/11/2026 22:16
+7,TC-MEN003-07,overallScore ngay trên max (10.1),Score: 10.1,FALSE,FALSE,PASS,X9,Chặn điểm > 10.0,06/11/2026 22:16
+8,TC-MEN003-08,overallScore không phải số,Score: 'tam_diem',FALSE,FALSE,PASS,X10,Chặn sai kiểu dữ liệu,06/11/2026 22:16
+9,TC-MEN003-09,Tiêu chí codeQuality âm (-1.0),codeQuality: -1.0,FALSE,FALSE,PASS,X11,Chặn điểm tiêu chí âm,06/11/2026 22:16
+10,TC-MEN003-10,Talent không tồn tại,Talent: 99999,FALSE,FALSE,PASS,X4,HTTP 404 Not Found,06/11/2026 22:16
+11,TC-MEN003-11,Talent không thuộc dự án,Talent: 888,FALSE,FALSE,PASS,X5,HTTP 400 Bad Request,06/11/2026 22:16
+12,TC-MEN003-12,Đánh giá trùng kỳ,Period: 2026-02,FALSE,FALSE,PASS,X7,HTTP 409 Conflict,06/11/2026 22:16
+13,TC-MEN003-13,Sai định dạng kỳ đánh giá,Period: 2026/02,FALSE,FALSE,PASS,X6,HTTP 400 Bad Request,06/11/2026 22:16
+14,TC-MEN003-14,User chưa đăng nhập,No Token,FALSE,FALSE,PASS,X1,HTTP 401 Unauthorized,06/11/2026 22:16
+15,TC-MEN003-15,User không phải Mentor,Role: TALENT,FALSE,FALSE,PASS,X2,HTTP 403 Forbidden,06/11/2026 22:16
+16,TC-MEN003-16,Mentor khác không phụ trách dự án,Role: OTHER_MENTOR,FALSE,FALSE,PASS,X3,HTTP 403 Forbidden,06/11/2026 22:16
