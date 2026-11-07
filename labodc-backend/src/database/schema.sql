@@ -1,8 +1,3 @@
--- =====================================================
--- LabODC UTH — Clean Database Schema
--- Chỉ gồm các table đang được sử dụng trong code
--- =====================================================
-
 -- Xoá nếu đã tồn tại (reset sạch)
 DROP SCHEMA IF EXISTS public CASCADE;
 CREATE SCHEMA public;
@@ -87,11 +82,15 @@ CREATE TABLE users (
     email_verified          BOOLEAN DEFAULT FALSE,
     email_verified_at       TIMESTAMP,
     verification_token      VARCHAR(255),
+    two_factor_enabled      BOOLEAN DEFAULT FALSE,
+    two_factor_secret       VARCHAR(255),
     phone                   VARCHAR(20),
     failed_login_attempts   INTEGER DEFAULT 0,
     locked_until            TIMESTAMP,
     last_login_at           TIMESTAMP,
+    last_login_ip           VARCHAR(45),
     avatar_url              VARCHAR(500),           -- lưu URL trực tiếp thay vì FK files
+    avatar_file_id          BIGINT,                 -- giữ để tương thích seed COPY
     timezone                VARCHAR(50) DEFAULT 'Asia/Ho_Chi_Minh',
     language                VARCHAR(10) DEFAULT 'vi',
     created_at              TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -128,6 +127,8 @@ CREATE TABLE enterprises (
     year_established        INTEGER,
     description             TEXT,
     logo_url                VARCHAR(500),           -- URL trực tiếp thay vì FK files
+    logo_file_id            BIGINT,                 -- giữ để tương thích seed COPY
+    banner_file_id          BIGINT,                 -- giữ để tương thích seed COPY
     status                  enterprise_status_enum NOT NULL DEFAULT 'PENDING',
     verified_at             TIMESTAMP,
     verified_by             BIGINT REFERENCES users(id) ON DELETE SET NULL,
@@ -240,6 +241,7 @@ CREATE TABLE talents (
     github_url              VARCHAR(500),
     linkedin_url            VARCHAR(500),
     cv_url                  VARCHAR(500),           -- URL trực tiếp thay vì FK files
+    cv_file_id              BIGINT,                 -- giữ để tương thích seed COPY
     career_goals            TEXT,
     preferred_technologies  JSONB,
     work_availability       VARCHAR(50),
@@ -426,15 +428,23 @@ CREATE TABLE mentor_invitations (
     project_id            BIGINT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
     mentor_id             BIGINT NOT NULL REFERENCES mentors(id) ON DELETE CASCADE,
     invited_by            BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    group_name            VARCHAR(255) NOT NULL,
+    student_count         INTEGER NOT NULL DEFAULT 0,
+    description           TEXT,
+    deadline              DATE,
+    skills                JSONB DEFAULT '[]',
+    received_date         DATE NOT NULL,
+    priority              VARCHAR(20) NOT NULL DEFAULT 'medium',
+    status                VARCHAR(20) NOT NULL DEFAULT 'PENDING',
     invitation_message    TEXT,
     compensation_amount   NUMERIC(15,2),
     expected_effort_hours INTEGER,
-    status                invitation_status_enum DEFAULT 'PENDING',
     response_message      TEXT,
     responded_at          TIMESTAMP,
     availability_info     JSONB,
     expires_at            TIMESTAMP NOT NULL,
-    created_at            TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX idx_mentor_invitations_mentor  ON mentor_invitations(mentor_id);
@@ -484,11 +494,21 @@ CREATE TABLE mentor_task_submissions (
 
 CREATE TABLE mentor_reports (
     id                BIGSERIAL PRIMARY KEY,
-    project_id        BIGINT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    project_id        BIGINT REFERENCES projects(id) ON DELETE CASCADE,
     mentor_id         BIGINT NOT NULL REFERENCES mentors(id) ON DELETE CASCADE,
-    report_type       report_type_enum NOT NULL,
-    reporting_period  VARCHAR(7) NOT NULL,
-    project_progress  JSONB NOT NULL,
+    student           VARCHAR(255) NOT NULL,
+    student_id        VARCHAR(255) NOT NULL,
+    report_name       VARCHAR(255) NOT NULL,
+    status            VARCHAR(50) NOT NULL DEFAULT 'pending',
+    submitted_date    DATE,
+    due_date          DATE NOT NULL,
+    score             DOUBLE PRECISION,
+    file_size         VARCHAR(50),
+    summary           TEXT,
+    file_path         VARCHAR(500),
+    report_type       report_type_enum,
+    reporting_period  VARCHAR(7),
+    project_progress  JSONB,
     tasks_completed   JSONB,
     tasks_upcoming    JSONB,
     team_performance  JSONB,
@@ -499,11 +519,9 @@ CREATE TABLE mentor_reports (
     budget_usage      JSONB,
     meetings_held     INTEGER,
     code_metrics      JSONB,
-    status            report_status_enum DEFAULT 'DRAFT',
     submitted_at      TIMESTAMP,
-    created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE (project_id, reporting_period)
+    created_at        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- =====================================================
@@ -733,11 +751,42 @@ CREATE TRIGGER trg_team_fund_distributions_updated_at BEFORE UPDATE ON team_fund
 -- SEED DATA (exported from production DB)
 -- ============================================================
 
+COPY public.users (id, email, password_hash, role, status, email_verified, email_verified_at, verification_token, two_factor_enabled, two_factor_secret, failed_login_attempts, locked_until, last_login_at, last_login_ip, avatar_file_id, phone, timezone, language, created_at, updated_at, deleted_at) FROM stdin;
+3	labadmin2@labodc.com	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	LAB_ADMIN	ACTIVE	t	2026-10-01 06:22:57.419033	\N	f	\N	0	\N	\N	\N	\N	+84901234569	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.419033	2026-10-01 06:22:57.419033	\N
+6	hello@digitalstartup.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	ENTERPRISE	ACTIVE	t	2026-10-01 06:22:57.420229	\N	f	\N	0	\N	\N	\N	\N	+84903333333	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.420229	2026-10-01 06:22:57.420229	\N
+7	enterprise4@example.com	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	ENTERPRISE	PENDING	f	\N	\N	f	\N	0	\N	\N	\N	\N	+84904444444	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.420229	2026-10-01 06:22:57.420229	\N
+9	tranthib@student.uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	TALENT	ACTIVE	t	2026-10-01 06:22:57.421273	\N	f	\N	0	\N	\N	\N	\N	+84905555552	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.421273	2026-10-01 06:22:57.421273	\N
+10	levanc@student.uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	TALENT	ACTIVE	t	2026-10-01 06:22:57.421273	\N	f	\N	0	\N	\N	\N	\N	+84905555553	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.421273	2026-10-01 06:22:57.421273	\N
+11	phamthid@student.uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	TALENT	ACTIVE	t	2026-10-01 06:22:57.421273	\N	f	\N	0	\N	\N	\N	\N	+84905555554	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.421273	2026-10-01 06:22:57.421273	\N
+12	hoangvane@student.uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	TALENT	ACTIVE	t	2026-10-01 06:22:57.421273	\N	f	\N	0	\N	\N	\N	\N	+84905555555	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.421273	2026-10-01 06:22:57.421273	\N
+13	vuthif@student.uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	TALENT	ACTIVE	t	2026-10-01 06:22:57.421273	\N	f	\N	0	\N	\N	\N	\N	+84905555556	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.421273	2026-10-01 06:22:57.421273	\N
+14	danvang@student.uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	TALENT	ACTIVE	t	2026-10-01 06:22:57.421273	\N	f	\N	0	\N	\N	\N	\N	+84905555557	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.421273	2026-10-01 06:22:57.421273	\N
+15	ngothih@student.uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	TALENT	ACTIVE	t	2026-10-01 06:22:57.421273	\N	f	\N	0	\N	\N	\N	\N	+84905555558	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.421273	2026-10-01 06:22:57.421273	\N
+16	buivani@student.uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	TALENT	ACTIVE	t	2026-10-01 06:22:57.421273	\N	f	\N	0	\N	\N	\N	\N	+84905555559	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.421273	2026-10-01 06:22:57.421273	\N
+17	dothik@student.uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	TALENT	PENDING	f	\N	\N	f	\N	0	\N	\N	\N	\N	+84905555560	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.421273	2026-10-01 06:22:57.421273	\N
+19	mentor.tranminh@uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	MENTOR	ACTIVE	t	2026-10-01 06:22:57.422411	\N	f	\N	0	\N	\N	\N	\N	+84906666662	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.422411	2026-10-01 06:22:57.422411	\N
+20	mentor.lehong@uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	MENTOR	ACTIVE	t	2026-10-01 06:22:57.422411	\N	f	\N	0	\N	\N	\N	\N	+84906666663	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.422411	2026-10-01 06:22:57.422411	\N
+21	mentor.phamthao@uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	MENTOR	ACTIVE	t	2026-10-01 06:22:57.422411	\N	f	\N	0	\N	\N	\N	\N	+84906666664	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.422411	2026-10-01 06:22:57.422411	\N
+1	admin@labodc.com	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	SYSTEM_ADMIN	ACTIVE	t	2026-10-01 06:22:57.416546	\N	f	\N	0	\N	2026-10-01 13:26:38.935257	\N	\N	+84901234567	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.416546	2026-10-01 13:26:38.604539	\N
+5	info@innovatesolutions.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	ENTERPRISE	ACTIVE	t	2026-10-01 06:22:57.420229	\N	f	\N	0	\N	2026-10-01 14:31:43.256033	\N	\N	+84902222222	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.420229	2026-10-01 14:31:42.968971	\N
+2	labadmin1@labodc.com	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	LAB_ADMIN	ACTIVE	t	2026-10-01 06:22:57.419033	\N	f	\N	0	\N	2026-10-01 14:33:21.46957	\N	\N	+84901234568	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.419033	2026-10-01 14:33:21.186539	\N
+18	mentor.nguyenquang@uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	MENTOR	ACTIVE	t	2026-10-01 06:22:57.422411	\N	f	\N	0	\N	2026-10-01 13:33:03.307197	\N	\N	+84906666661	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.422411	2026-10-01 13:33:03.016807	\N
+4	contact@techcorp.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	ENTERPRISE	ACTIVE	t	2026-10-01 06:22:57.420229	\N	f	\N	0	\N	2026-10-01 14:55:02.782092	\N	\N	+84901111111	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.420229	2026-10-01 14:55:02.49057	\N
+8	nguyenvana@student.uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	TALENT	ACTIVE	t	2026-10-01 06:22:57.421273	\N	f	\N	0	\N	2026-10-01 15:12:55.009904	\N	\N	+84905555551	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.421273	2026-10-01 15:12:54.699288	\N
+\.
+
 COPY public.enterprises (id, user_id, company_name, tax_code, business_license_number, address, city, district, ward, representative_name, representative_position, contact_email, contact_phone, website, industry, company_size, year_established, description, logo_file_id, banner_file_id, verified_at, verified_by, verification_note, rating_average, total_projects, successful_projects, created_at, updated_at, deleted_at, status) FROM stdin;
 4	4	Công ty contact	0000000004	\N	\N	\N	\N	\N	Đại diện contact	\N	contact@techcorp.vn	\N	\N	Information Technology	10-50	2020	Tài khoản doanh nghiệp	\N	\N	\N	\N	\N	0.00	0	0	2026-10-01 07:54:30.600558	2026-10-01 07:54:30.600558	\N	APPROVED
 5	5	Công ty info	0000000005	\N	\N	\N	\N	\N	Đại diện info	\N	info@innovatesolutions.vn	\N	\N	Information Technology	10-50	2020	Tài khoản doanh nghiệp	\N	\N	\N	\N	\N	0.00	0	0	2026-10-01 07:54:30.600558	2026-10-01 07:54:30.600558	\N	APPROVED
 6	6	Công ty hello	0000000006	\N	\N	\N	\N	\N	Đại diện hello	\N	hello@digitalstartup.vn	\N	\N	Information Technology	10-50	2020	Tài khoản doanh nghiệp	\N	\N	\N	\N	\N	0.00	0	0	2026-10-01 07:54:30.600558	2026-10-01 07:54:30.600558	\N	APPROVED
 7	7	Công ty enterprise4	0000000007	\N	\N	\N	\N	\N	Đại diện enterprise4	\N	enterprise4@example.com	\N	\N	Information Technology	10-50	2020	Tài khoản doanh nghiệp	\N	\N	\N	\N	\N	0.00	0	0	2026-10-01 07:54:30.600558	2026-10-01 07:54:30.600558	\N	APPROVED
+\.
+
+COPY public.mentors (id, user_id, full_name, title, bio, years_of_experience, current_position, current_company, specialization, industries, linkedin_url, github_url, personal_website, max_concurrent_projects, current_projects_count, hours_per_week_available, hourly_rate, preferred_payment_method, bank_account_info, rating_average, total_projects, total_students_mentored, available, created_at, updated_at, deleted_at) FROM stdin;
+1	18	Nguyen Quang Huy	Senior Backend Engineer	Experienced backend architect with 10+ years in enterprise system development. Specialized in building scalable microservices and cloud-native applications.	10	Senior Backend Engineer	FPT Software	\N	\N	https://linkedin.com/in/nguyenquanghuy	\N	\N	3	1	\N	500000.00	\N	\N	4.80	15	0	t	2025-10-01 06:22:57.433628	2026-10-01 06:22:57.433628	\N
+2	19	Tran Minh Tuan	Tech Lead	Full-stack developer and DevOps engineer with passion for mentoring young talents. Experienced in agile methodologies and modern development practices.	8	Tech Lead	VNG Corporation	\N	\N	https://linkedin.com/in/tranminhtuan	\N	\N	3	2	\N	450000.00	\N	\N	4.70	12	0	t	2025-12-05 06:22:57.433628	2026-10-01 06:22:57.433628	\N
+3	20	Le Hong Anh	Mobile Development Lead	Mobile development specialist with expertise in cross-platform frameworks. Published 20+ apps with millions of downloads.	7	Mobile Development Lead	Tiki	\N	\N	https://linkedin.com/in/lehonganh	\N	\N	2	2	\N	480000.00	\N	\N	4.90	10	0	f	2025-12-25 06:22:57.433628	2026-10-01 06:22:57.433628	\N
+4	21	Pham Thao Nguyen	Senior Frontend Developer	Frontend expert passionate about creating beautiful and performant user interfaces. Strong advocate for accessibility and user experience.	6	Senior Frontend Developer	Shopee	\N	\N	https://linkedin.com/in/phamthaonguyen	\N	\N	3	1	\N	420000.00	\N	\N	4.60	8	0	t	2026-02-03 06:22:57.433628	2026-10-01 06:22:57.433628	\N
 \.
 
 COPY public.mentor_expertise (id, mentor_id, skill_name, skill_category, proficiency_level, years_of_experience, can_teach, created_at) FROM stdin;
@@ -767,11 +816,17 @@ COPY public.mentor_expertise (id, mentor_id, skill_name, skill_category, profici
 24	4	Frontend Architecture	\N	EXPERT	5.0	t	2026-10-01 06:22:57.437324
 \.
 
-COPY public.mentors (id, user_id, full_name, title, bio, years_of_experience, current_position, current_company, specialization, industries, linkedin_url, github_url, personal_website, max_concurrent_projects, current_projects_count, hours_per_week_available, hourly_rate, preferred_payment_method, bank_account_info, rating_average, total_projects, total_students_mentored, available, created_at, updated_at, deleted_at) FROM stdin;
-1	18	Nguyen Quang Huy	Senior Backend Engineer	Experienced backend architect with 10+ years in enterprise system development. Specialized in building scalable microservices and cloud-native applications.	10	Senior Backend Engineer	FPT Software	\N	\N	https://linkedin.com/in/nguyenquanghuy	\N	\N	3	1	\N	500000.00	\N	\N	4.80	15	0	t	2025-10-01 06:22:57.433628	2026-10-01 06:22:57.433628	\N
-2	19	Tran Minh Tuan	Tech Lead	Full-stack developer and DevOps engineer with passion for mentoring young talents. Experienced in agile methodologies and modern development practices.	8	Tech Lead	VNG Corporation	\N	\N	https://linkedin.com/in/tranminhtuan	\N	\N	3	2	\N	450000.00	\N	\N	4.70	12	0	t	2025-12-05 06:22:57.433628	2026-10-01 06:22:57.433628	\N
-3	20	Le Hong Anh	Mobile Development Lead	Mobile development specialist with expertise in cross-platform frameworks. Published 20+ apps with millions of downloads.	7	Mobile Development Lead	Tiki	\N	\N	https://linkedin.com/in/lehonganh	\N	\N	2	2	\N	480000.00	\N	\N	4.90	10	0	f	2025-12-25 06:22:57.433628	2026-10-01 06:22:57.433628	\N
-4	21	Pham Thao Nguyen	Senior Frontend Developer	Frontend expert passionate about creating beautiful and performant user interfaces. Strong advocate for accessibility and user experience.	6	Senior Frontend Developer	Shopee	\N	\N	https://linkedin.com/in/phamthaonguyen	\N	\N	3	1	\N	420000.00	\N	\N	4.60	8	0	t	2026-02-03 06:22:57.433628	2026-10-01 06:22:57.433628	\N
+COPY public.talents (id, user_id, full_name, date_of_birth, gender, student_id, faculty, major, year_of_study, gpa, expected_graduation, address, city, emergency_contact, emergency_contact_name, bio, portfolio_url, github_url, linkedin_url, cv_file_id, career_goals, preferred_technologies, work_availability, hours_per_week, rating_average, total_projects, completed_projects, total_tasks_completed, available_for_projects, created_at, updated_at, deleted_at) FROM stdin;
+1	8	Nguyen Van A	2002-03-15	\N	2020600001	Computer Science	Software Engineering	3	3.45	2026-06-30	\N	\N	\N	\N	Passionate frontend developer with experience in React, Vue.js, and modern web technologies.	https://nguyenvana.dev	https://github.com/nguyenvana	https://linkedin.com/in/nguyenvana	\N	\N	\N	Full-time	40	4.50	3	2	0	t	2026-04-04 06:22:57.424352	2026-10-01 06:22:57.424352	\N
+2	9	Tran Thi B	2002-05-20	\N	2020600002	Computer Science	Software Engineering	3	3.67	2026-06-30	\N	\N	\N	\N	Full-stack developer skilled in MERN stack, Java Spring Boot, and database design.	https://tranthib.com	https://github.com/tranthib	https://linkedin.com/in/tranthib	\N	\N	\N	Full-time	40	4.70	4	3	0	t	2026-04-04 06:22:57.424352	2026-10-01 06:22:57.424352	\N
+3	10	Le Van C	2002-01-10	\N	2020600003	Computer Science	Software Engineering	3	3.52	2026-06-30	\N	\N	\N	\N	Backend specialist with strong knowledge in microservices, Docker, and cloud platforms.	\N	https://github.com/levanc	https://linkedin.com/in/levanc	\N	\N	\N	Full-time	40	4.30	2	2	0	t	2026-04-04 06:22:57.424352	2026-10-01 06:22:57.424352	\N
+4	11	Pham Thi D	2003-07-22	\N	2021600004	Computer Science	Software Engineering	2	3.78	2027-06-30	\N	\N	\N	\N	Mobile app developer proficient in Flutter and React Native with published apps on stores.	https://phamthid-portfolio.web.app	https://github.com/phamthid	https://linkedin.com/in/phamthid	\N	\N	\N	Part-time	20	4.80	3	2	0	t	2026-05-04 06:22:57.424352	2026-10-01 06:22:57.424352	\N
+5	12	Hoang Van E	2003-09-05	\N	2021600005	Computer Science	Information Systems	2	3.61	2027-06-30	\N	\N	\N	\N	Creative UI/UX designer with a keen eye for user-centered design and prototyping.	https://behance.net/hoangvane	https://github.com/hoangvane	https://linkedin.com/in/hoangvane	\N	\N	\N	Part-time	25	4.60	2	1	0	t	2026-05-04 06:22:57.424352	2026-10-01 06:22:57.424352	\N
+6	13	Vu Thi F	2003-11-18	\N	2021600006	Computer Science	Data Science	2	3.85	2027-06-30	\N	\N	\N	\N	Data enthusiast with skills in Python, R, machine learning, and data visualization.	https://vuthif-data.github.io	https://github.com/vuthif	https://linkedin.com/in/vuthif	\N	\N	\N	Full-time	40	4.90	2	2	0	f	2026-05-04 06:22:57.424352	2026-10-01 06:22:57.424352	\N
+7	14	Dan Van G	2002-04-30	\N	2020600007	Computer Science	Software Engineering	3	3.40	2026-06-30	\N	\N	\N	\N	DevOps practitioner experienced with CI/CD, Kubernetes, Terraform, and AWS.	\N	https://github.com/danvang	https://linkedin.com/in/danvang	\N	\N	\N	Full-time	35	4.20	2	1	0	t	2026-04-04 06:22:57.424352	2026-10-01 06:22:57.424352	\N
+8	15	Ngo Thi H	2003-06-12	\N	2021600008	Computer Science	Software Engineering	2	3.55	2027-06-30	\N	\N	\N	\N	Quality assurance specialist with experience in manual and automated testing.	\N	https://github.com/ngothih	https://linkedin.com/in/ngothih	\N	\N	\N	Part-time	20	4.40	1	1	0	t	2026-05-04 06:22:57.424352	2026-10-01 06:22:57.424352	\N
+9	16	Bui Van I	2003-02-28	\N	2021600009	Computer Science	Software Engineering	2	3.70	2027-06-30	\N	\N	\N	\N	Game developer passionate about Unity, C#, and creating engaging interactive experiences.	https://buivani.itch.io	https://github.com/buivani	https://linkedin.com/in/buivani	\N	\N	\N	Part-time	15	4.50	1	0	0	t	2026-06-03 06:22:57.424352	2026-10-01 06:22:57.424352	\N
+10	17	Do Thi K	2004-08-08	\N	2022600010	Computer Science	Software Engineering	1	3.20	2028-06-30	\N	\N	\N	\N	First-year student eager to learn and gain practical experience.	\N	https://github.com/dothik	\N	\N	\N	\N	Part-time	10	0.00	0	0	0	t	2026-09-01 06:22:57.424352	2026-10-01 06:22:57.424352	\N
 \.
 
 COPY public.talent_skills (id, talent_id, skill_name, skill_category, proficiency_level, years_of_experience, last_used_date, verified, verified_by, verified_at, created_at, updated_at) FROM stdin;
@@ -826,45 +881,8 @@ COPY public.talent_skills (id, talent_id, skill_name, skill_category, proficienc
 49	9	Blender	\N	BEGINNER	0.0	\N	f	\N	\N	2026-10-01 06:22:57.42879	2026-10-01 06:22:57.42879
 \.
 
-COPY public.talents (id, user_id, full_name, date_of_birth, gender, student_id, faculty, major, year_of_study, gpa, expected_graduation, address, city, emergency_contact, emergency_contact_name, bio, portfolio_url, github_url, linkedin_url, cv_file_id, career_goals, preferred_technologies, work_availability, hours_per_week, rating_average, total_projects, completed_projects, total_tasks_completed, available_for_projects, created_at, updated_at, deleted_at) FROM stdin;
-1	8	Nguyen Van A	2002-03-15	\N	2020600001	Computer Science	Software Engineering	3	3.45	2026-06-30	\N	\N	\N	\N	Passionate frontend developer with experience in React, Vue.js, and modern web technologies.	https://nguyenvana.dev	https://github.com/nguyenvana	https://linkedin.com/in/nguyenvana	\N	\N	\N	Full-time	40	4.50	3	2	0	t	2026-04-04 06:22:57.424352	2026-10-01 06:22:57.424352	\N
-2	9	Tran Thi B	2002-05-20	\N	2020600002	Computer Science	Software Engineering	3	3.67	2026-06-30	\N	\N	\N	\N	Full-stack developer skilled in MERN stack, Java Spring Boot, and database design.	https://tranthib.com	https://github.com/tranthib	https://linkedin.com/in/tranthib	\N	\N	\N	Full-time	40	4.70	4	3	0	t	2026-04-04 06:22:57.424352	2026-10-01 06:22:57.424352	\N
-3	10	Le Van C	2002-01-10	\N	2020600003	Computer Science	Software Engineering	3	3.52	2026-06-30	\N	\N	\N	\N	Backend specialist with strong knowledge in microservices, Docker, and cloud platforms.	\N	https://github.com/levanc	https://linkedin.com/in/levanc	\N	\N	\N	Full-time	40	4.30	2	2	0	t	2026-04-04 06:22:57.424352	2026-10-01 06:22:57.424352	\N
-4	11	Pham Thi D	2003-07-22	\N	2021600004	Computer Science	Software Engineering	2	3.78	2027-06-30	\N	\N	\N	\N	Mobile app developer proficient in Flutter and React Native with published apps on stores.	https://phamthid-portfolio.web.app	https://github.com/phamthid	https://linkedin.com/in/phamthid	\N	\N	\N	Part-time	20	4.80	3	2	0	t	2026-05-04 06:22:57.424352	2026-10-01 06:22:57.424352	\N
-5	12	Hoang Van E	2003-09-05	\N	2021600005	Computer Science	Information Systems	2	3.61	2027-06-30	\N	\N	\N	\N	Creative UI/UX designer with a keen eye for user-centered design and prototyping.	https://behance.net/hoangvane	https://github.com/hoangvane	https://linkedin.com/in/hoangvane	\N	\N	\N	Part-time	25	4.60	2	1	0	t	2026-05-04 06:22:57.424352	2026-10-01 06:22:57.424352	\N
-6	13	Vu Thi F	2003-11-18	\N	2021600006	Computer Science	Data Science	2	3.85	2027-06-30	\N	\N	\N	\N	Data enthusiast with skills in Python, R, machine learning, and data visualization.	https://vuthif-data.github.io	https://github.com/vuthif	https://linkedin.com/in/vuthif	\N	\N	\N	Full-time	40	4.90	2	2	0	f	2026-05-04 06:22:57.424352	2026-10-01 06:22:57.424352	\N
-7	14	Dan Van G	2002-04-30	\N	2020600007	Computer Science	Software Engineering	3	3.40	2026-06-30	\N	\N	\N	\N	DevOps practitioner experienced with CI/CD, Kubernetes, Terraform, and AWS.	\N	https://github.com/danvang	https://linkedin.com/in/danvang	\N	\N	\N	Full-time	35	4.20	2	1	0	t	2026-04-04 06:22:57.424352	2026-10-01 06:22:57.424352	\N
-8	15	Ngo Thi H	2003-06-12	\N	2021600008	Computer Science	Software Engineering	2	3.55	2027-06-30	\N	\N	\N	\N	Quality assurance specialist with experience in manual and automated testing.	\N	https://github.com/ngothih	https://linkedin.com/in/ngothih	\N	\N	\N	Part-time	20	4.40	1	1	0	t	2026-05-04 06:22:57.424352	2026-10-01 06:22:57.424352	\N
-9	16	Bui Van I	2003-02-28	\N	2021600009	Computer Science	Software Engineering	2	3.70	2027-06-30	\N	\N	\N	\N	Game developer passionate about Unity, C#, and creating engaging interactive experiences.	https://buivani.itch.io	https://github.com/buivani	https://linkedin.com/in/buivani	\N	\N	\N	Part-time	15	4.50	1	0	0	t	2026-06-03 06:22:57.424352	2026-10-01 06:22:57.424352	\N
-10	17	Do Thi K	2004-08-08	\N	2022600010	Computer Science	Software Engineering	1	3.20	2028-06-30	\N	\N	\N	\N	First-year student eager to learn and gain practical experience.	\N	https://github.com/dothik	\N	\N	\N	\N	Part-time	10	0.00	0	0	0	t	2026-09-01 06:22:57.424352	2026-10-01 06:22:57.424352	\N
-\.
-
 COPY public.transparency_reports (id, report_type, period, statistics, charts_data, publish_note, status, public_url, pdf_url, created_by, published_at, created_at) FROM stdin;
 1	MONTHLY	2026-01	{"mentors": {"total": 4, "active": 3, "averageRating": 4.7}, "talents": {"total": 10, "active": 8, "newTalents": 2, "averageRating": 4.5}, "projects": {"total": 5, "ongoing": 2, "cancelled": 0, "completed": 1, "newProjects": 1, "successRate": 20.0}, "financials": {"labRevenue": 16500000, "totalRevenue": 165000000, "teamDisbursed": 115500000, "mentorDisbursed": 33000000, "hybridFundRepaid": 0, "hybridFundAdvanced": 0}, "enterprises": {"total": 4, "active": 4, "verified": 4, "newEnterprises": 0}, "performance": {"onTimeDelivery": 78.3, "avgProjectCompletion": 85.5, "customerSatisfaction": 4.6}}	{"revenueByMonth": [{"month": "2025-12", "amount": 0}, {"month": "2026-01", "amount": 120000000}], "projectsByStatus": [{"count": 2, "status": "IN_PROGRESS"}, {"count": 1, "status": "RECRUITING"}, {"count": 1, "status": "VALIDATED"}, {"count": 1, "status": "PENDING_VALIDATION"}], "studentParticipation": [{"count": 4, "month": "2025-12"}, {"count": 8, "month": "2026-01"}], "enterpriseSatisfaction": [{"count": 1, "rating": 5}, {"count": 1, "rating": 4}]}	Monthly transparency report for January 2026 - Strong growth in student participation and project activity	PUBLISHED	https://labodc.uth.edu.vn/transparency/2026-01	https://labodc.uth.edu.vn/transparency/2026-01.pdf	2	2026-09-30 06:22:58.025583	2026-09-28 06:22:58.025583
 2	MONTHLY	2025-12	{"mentors": {"total": 4, "active": 2, "averageRating": 0.0}, "talents": {"total": 10, "active": 4, "newTalents": 0, "averageRating": 0.0}, "projects": {"total": 5, "ongoing": 1, "cancelled": 0, "completed": 0, "newProjects": 0, "successRate": 0.0}, "financials": {"labRevenue": 0, "totalRevenue": 0, "teamDisbursed": 0, "mentorDisbursed": 0, "hybridFundRepaid": 0, "hybridFundAdvanced": 0}, "enterprises": {"total": 4, "active": 4, "verified": 4, "newEnterprises": 0}, "performance": {"onTimeDelivery": 0.0, "avgProjectCompletion": 0.0, "customerSatisfaction": 0.0}}	{"revenueByMonth": [{"month": "2025-11", "amount": 45000000}, {"month": "2025-12", "amount": 0}], "projectsByStatus": [{"count": 1, "status": "IN_PROGRESS"}, {"count": 1, "status": "RECRUITING"}, {"count": 0, "status": "VALIDATED"}, {"count": 0, "status": "PENDING_VALIDATION"}], "studentParticipation": [{"count": 4, "month": "2025-11"}, {"count": 4, "month": "2025-12"}]}	Monthly transparency report for December 2025 - Project initiation phase	PUBLISHED	https://labodc.uth.edu.vn/transparency/2025-12	https://labodc.uth.edu.vn/transparency/2025-12.pdf	2	2026-08-30 06:22:58.025583	2026-08-28 06:22:58.025583
-\.
-
-COPY public.users (id, email, password_hash, role, status, email_verified, email_verified_at, verification_token, two_factor_enabled, two_factor_secret, failed_login_attempts, locked_until, last_login_at, last_login_ip, avatar_file_id, phone, timezone, language, created_at, updated_at, deleted_at) FROM stdin;
-3	labadmin2@labodc.com	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	LAB_ADMIN	ACTIVE	t	2026-10-01 06:22:57.419033	\N	f	\N	0	\N	\N	\N	\N	+84901234569	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.419033	2026-10-01 06:22:57.419033	\N
-6	hello@digitalstartup.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	ENTERPRISE	ACTIVE	t	2026-10-01 06:22:57.420229	\N	f	\N	0	\N	\N	\N	\N	+84903333333	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.420229	2026-10-01 06:22:57.420229	\N
-7	enterprise4@example.com	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	ENTERPRISE	PENDING	f	\N	\N	f	\N	0	\N	\N	\N	\N	+84904444444	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.420229	2026-10-01 06:22:57.420229	\N
-9	tranthib@student.uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	TALENT	ACTIVE	t	2026-10-01 06:22:57.421273	\N	f	\N	0	\N	\N	\N	\N	+84905555552	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.421273	2026-10-01 06:22:57.421273	\N
-10	levanc@student.uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	TALENT	ACTIVE	t	2026-10-01 06:22:57.421273	\N	f	\N	0	\N	\N	\N	\N	+84905555553	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.421273	2026-10-01 06:22:57.421273	\N
-11	phamthid@student.uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	TALENT	ACTIVE	t	2026-10-01 06:22:57.421273	\N	f	\N	0	\N	\N	\N	\N	+84905555554	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.421273	2026-10-01 06:22:57.421273	\N
-12	hoangvane@student.uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	TALENT	ACTIVE	t	2026-10-01 06:22:57.421273	\N	f	\N	0	\N	\N	\N	\N	+84905555555	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.421273	2026-10-01 06:22:57.421273	\N
-13	vuthif@student.uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	TALENT	ACTIVE	t	2026-10-01 06:22:57.421273	\N	f	\N	0	\N	\N	\N	\N	+84905555556	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.421273	2026-10-01 06:22:57.421273	\N
-14	danvang@student.uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	TALENT	ACTIVE	t	2026-10-01 06:22:57.421273	\N	f	\N	0	\N	\N	\N	\N	+84905555557	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.421273	2026-10-01 06:22:57.421273	\N
-15	ngothih@student.uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	TALENT	ACTIVE	t	2026-10-01 06:22:57.421273	\N	f	\N	0	\N	\N	\N	\N	+84905555558	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.421273	2026-10-01 06:22:57.421273	\N
-16	buivani@student.uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	TALENT	ACTIVE	t	2026-10-01 06:22:57.421273	\N	f	\N	0	\N	\N	\N	\N	+84905555559	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.421273	2026-10-01 06:22:57.421273	\N
-17	dothik@student.uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	TALENT	PENDING	f	\N	\N	f	\N	0	\N	\N	\N	\N	+84905555560	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.421273	2026-10-01 06:22:57.421273	\N
-19	mentor.tranminh@uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	MENTOR	ACTIVE	t	2026-10-01 06:22:57.422411	\N	f	\N	0	\N	\N	\N	\N	+84906666662	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.422411	2026-10-01 06:22:57.422411	\N
-20	mentor.lehong@uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	MENTOR	ACTIVE	t	2026-10-01 06:22:57.422411	\N	f	\N	0	\N	\N	\N	\N	+84906666663	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.422411	2026-10-01 06:22:57.422411	\N
-21	mentor.phamthao@uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	MENTOR	ACTIVE	t	2026-10-01 06:22:57.422411	\N	f	\N	0	\N	\N	\N	\N	+84906666664	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.422411	2026-10-01 06:22:57.422411	\N
-1	admin@labodc.com	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	SYSTEM_ADMIN	ACTIVE	t	2026-10-01 06:22:57.416546	\N	f	\N	0	\N	2026-10-01 13:26:38.935257	\N	\N	+84901234567	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.416546	2026-10-01 13:26:38.604539	\N
-5	info@innovatesolutions.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	ENTERPRISE	ACTIVE	t	2026-10-01 06:22:57.420229	\N	f	\N	0	\N	2026-10-01 14:31:43.256033	\N	\N	+84902222222	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.420229	2026-10-01 14:31:42.968971	\N
-2	labadmin1@labodc.com	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	LAB_ADMIN	ACTIVE	t	2026-10-01 06:22:57.419033	\N	f	\N	0	\N	2026-10-01 14:33:21.46957	\N	\N	+84901234568	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.419033	2026-10-01 14:33:21.186539	\N
-18	mentor.nguyenquang@uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	MENTOR	ACTIVE	t	2026-10-01 06:22:57.422411	\N	f	\N	0	\N	2026-10-01 13:33:03.307197	\N	\N	+84906666661	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.422411	2026-10-01 13:33:03.016807	\N
-4	contact@techcorp.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	ENTERPRISE	ACTIVE	t	2026-10-01 06:22:57.420229	\N	f	\N	0	\N	2026-10-01 14:55:02.782092	\N	\N	+84901111111	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.420229	2026-10-01 14:55:02.49057	\N
-8	nguyenvana@student.uth.edu.vn	$2a$12$8pC/5kx6500tN2HEkDaPLeVR3mg.RWvLDsLADL6lioo53laEWJhXu	TALENT	ACTIVE	t	2026-10-01 06:22:57.421273	\N	f	\N	0	\N	2026-10-01 15:12:55.009904	\N	\N	+84905555551	Asia/Ho_Chi_Minh	vi	2026-10-01 06:22:57.421273	2026-10-01 15:12:54.699288	\N
 \.
 
