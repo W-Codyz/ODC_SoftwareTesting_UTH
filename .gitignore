@@ -78,5 +78,9 @@ docker-compose.override.yml
 
 labodc-backend/rewrite.yml
 
-
 target/
+node_modules/
+
+# E2E Testing
+.nyc_output/
+coverage/   
