@@ -11,7 +11,7 @@
 | **Tên tiếng Anh** | LabOdc - A System for Managing Enterprise-Student Collaborations at UTH on Real-World Projects |
 | **Loại tài liệu** | Software Requirements Specification (SRS) |
 | **Phiên bản** | 1.3 |
-| **Ngày** | 31 tháng 10 năm 2026 |
+| **Ngày** | 05 tháng 11 năm 2026 |
 | **Người chuẩn bị** | Nhóm phát triển - Nhóm 6 |
 | **Tổ chức** | Đại học Giao thông Vận tải TP.HCM (UTH) |
 | **Trạng thái** | Bản nháp |
@@ -25,7 +25,8 @@
 | 1.0 | 17/01/2026 | Nhóm 6 | Tài liệu SRS ban đầu |
 | 1.1 | 22/10/2026 | Nhóm 6 | Cập nhật: đánh dấu PayOS, Hybrid Fund, Redis, ES, WebSocket, 2FA, GDPR là tham khảo/tương lai; điều chỉnh NFR phù hợp scope 5 tuần |
 | 1.2 | 31/10/2026 | Đình Phát | FR-AUTH-001: bổ sung email case-sensitive vào Business Rules và Input; làm rõ ràng buộc min 8 ký tự chỉ áp dụng tại đăng ký (FR-AUTH-002), không áp dụng tại login |
-| 1.3 | 07/11/2026 | Đình Phát | FR-AUTH-002: cập nhật theo demo mode hiện tại (status=ACTIVE, emailVerified=true); thêm actor Mentor; thống nhất input 4 fields chung (email, password, confirmPassword, role); bổ sung bảng Bug fix cần implement (domain validation, password strength) và Phát triển trong tương lai (email verification, status flow, extended input) |
+| 1.3 | 05/11/2026 | Đình Phát | FR-TL-001: đánh dấu chưa triển khai, ghi nhận gap so với implementation thực tế (xác nhận qua LABODC-83); giữ thiết kế gốc làm baseline cho phase tương lai |
+| 1.4 | 07/11/2026 | Đình Phát | FR-AUTH-002: cập nhật theo demo mode hiện tại (status=ACTIVE, emailVerified=true); thêm actor Mentor; thống nhất input 4 fields chung (email, password, confirmPassword, role); bổ sung bảng Bug fix cần implement (domain validation, password strength) và Phát triển trong tương lai (email verification, status flow, extended input) |
 
 ---
 
@@ -1062,6 +1063,8 @@ CREATE TABLE project_members (
 **ID:** FR-TL-001  
 **Tên:** Manage Fund Distribution  
 **Mô tả:** Trưởng nhóm phân phối 70% quỹ cho các thành viên trong nhóm.
+
+>  Chưa triển khai Endpoint Talent Leader (`/api/talent-leader/...`) chưa tồn tại trong implementation hiện tại. Các gap đã xác nhận qua test run (LABODC-83): (1) endpoint không tồn tại, chỉ có Lab Admin endpoint; (2) implementation dùng `amount` thay vì `percentage`; (3) không có bước Mentor approval - status được set trực tiếp là `DISBURSED`; (4) thiếu validation tổng = 100%, mỗi member ≥ 5%, và `reason` bắt buộc. Phần này giữ nguyên thiết kế gốc làm cơ sở cho phase phát triển tiếp theo.
 
 **API Endpoints:**
 ```
