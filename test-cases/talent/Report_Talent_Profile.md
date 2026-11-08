@@ -18,7 +18,7 @@
 | Passed | 6 |
 | Failed | 11 |
 | Blocked / Skipped | 0 |
-| **Pass rate** | **17/17 = 100%** |
+| **Pass rate** | **6/17 = 35,3%** |
 
 ---
 
