@@ -26,6 +26,7 @@
 | 1.1 | 22/10/2026 | Nhóm 6 | Cập nhật: đánh dấu PayOS, Hybrid Fund, Redis, ES, WebSocket, 2FA, GDPR là tham khảo/tương lai; điều chỉnh NFR phù hợp scope 5 tuần |
 | 1.2 | 31/10/2026 | Đình Phát | FR-AUTH-001: bổ sung email case-sensitive vào Business Rules và Input; làm rõ ràng buộc min 8 ký tự chỉ áp dụng tại đăng ký (FR-AUTH-002), không áp dụng tại login |
 | 1.3 | 05/11/2026 | Đình Phát | FR-TL-001: đánh dấu chưa triển khai, ghi nhận gap so với implementation thực tế (xác nhận qua LABODC-83); giữ thiết kế gốc làm baseline cho phase tương lai |
+| 1.4 | 07/11/2026 | Đình Phát | FR-AUTH-002: cập nhật theo demo mode hiện tại (status=ACTIVE, emailVerified=true); thêm actor Mentor; thống nhất input 4 fields chung (email, password, confirmPassword, role); bổ sung bảng Bug fix cần implement (domain validation, password strength) và Phát triển trong tương lai (email verification, status flow, extended input) |
 
 ---
 
@@ -284,66 +285,75 @@ LabOdc là một hệ thống độc lập được phát triển đặc biệt 
 
 #### FR-AUTH-002: Đăng ký
 
-**ID:** FR-AUTH-002  
-**Tên:** User Registration  
+**ID:** FR-AUTH-002
+**Tên:** User Registration
 **Mô tả:** Người dùng mới đăng ký tài khoản.
 
-**Input (Enterprise):**
+> **Lưu ý phiên bản:** Phiên bản hiện tại hoạt động ở **chế độ demo** - tài khoản tự động active khi đăng ký, chưa có email verification. Xem mục "Phát triển trong tương lai" bên dưới.
+
+**Actor:** Enterprise, Talent, Mentor
+
+**Input (chung cho tất cả role):**
 ```json
 {
-  "email": "company@example.com",
+  "email": "user@example.com",
   "password": "SecurePass123!",
-  "companyName": "ABC Technology",
-  "taxCode": "0123456789",
-  "address": "123 Nguyen Hue, Q1, HCM",
-  "representative": "Nguyen Van B",
-  "phone": "0901234567",
-  "industry": "Information Technology"
+  "confirmPassword": "SecurePass123!",
+  "role": "TALENT"
 }
 ```
 
-**Input (Talent):**
-```json
-{
-  "email": "student@uth.edu.vn",
-  "password": "SecurePass123!",
-  "fullName": "Tran Thi C",
-  "studentId": "2021600001",
-  "faculty": "Information Technology",
-  "yearOfStudy": 3,
-  "phone": "0901234567"
-}
-```
+> **Ghi chú:** Thông tin profile chi tiết (fullName, studentId, faculty, companyName, taxCode,...) được thu thập sau khi đăng ký thông qua các endpoint quản lý hồ sơ tương ứng (`PUT /api/talent/profile`, `PUT /api/enterprise/profile`).
 
 **Processing:**
-1. Validate input fields
-2. Kiểm tra email đã tồn tại chưa
+1. Validate input fields (`@NotBlank`, `@Email`, `@Size(min=8)`, `@NotNull`)
+2. Kiểm tra email đã tồn tại chưa (`existsByEmail`)
 3. Validate email domain:
-   - Talent: PHẢI là @uth.edu.vn
-   - Enterprise: Bất kỳ domain hợp lệ
-4. Hash password (bcrypt, cost=10)
-5. Tạo verification token (UUID)
-6. Lưu user vào database (status=PENDING)
-7. Gửi email verification
+   - Talent: PHẢI là @uth.edu.vn *(chưa implement - xem bug fix bên dưới)*
+   - Enterprise, Mentor: Bất kỳ domain hợp lệ
+4. Validate password strength: uppercase + lowercase + số + ký tự đặc biệt *(chưa implement - xem bug fix bên dưới)*
+5. Kiểm tra confirmPassword khớp với password
+6. Hash password (bcrypt, cost=10)
+7. Lưu user vào database:
+   - **Hiện tại (demo mode):** status=ACTIVE, emailVerified=true
+   - **Mục tiêu (sau khi implement email verification):** status=PENDING, emailVerified=false
 8. Return success message
 
-**Output:**
+**Output (hiện tại - demo mode):**
 ```json
 {
   "success": true,
-  "message": "Đăng ký thành công. Vui lòng kiểm tra email để xác thực tài khoản.",
+  "message": "Registration successful",
   "data": {
     "userId": 456,
-    "email": "student@uth.edu.vn"
+    "email": "user@example.com",
+    "role": "TALENT",
+    "status": "ACTIVE"
   }
 }
 ```
 
 **Business Rules:**
-- Enterprise account cần Lab Admin approve
-- Talent account tự động active sau email verification
-- Password requirements: min 8 chars, uppercase, lowercase, number, special char
-- Email verification link expire sau 24h
+- Password requirements: min 8 ký tự, có uppercase + lowercase + số + ký tự đặc biệt *(password strength chưa implement, hiện chỉ validate min 8 ký tự)*
+- Talent CHỈ được đăng ký bằng email domain @uth.edu.vn *(domain validation chưa implement)*
+- Enterprise và Mentor chấp nhận bất kỳ email domain hợp lệ
+- Email đăng ký phân biệt hoa/thường (case-sensitive)
+- Mỗi email chỉ đăng ký được một tài khoản
+
+**Bug fix cần implement:**
+
+| # | Mô tả | Jira |
+|---|---|---|
+| 1 | Thêm domain validation: Talent phải dùng email @uth.edu.vn | (tạo task) |
+| 2 | Thêm password strength validation: uppercase + lowercase + số + ký tự đặc biệt | (tạo task) |
+
+**Phát triển trong tương lai:**
+
+| # | Tính năng | Mô tả |
+|---|---|---|
+| 1 | Email verification | Tạo verification token (UUID), gửi email verification. Link expire sau 24h. |
+| 2 | Status flow đầy đủ | Đăng ký xong status=PENDING. Talent: tự động ACTIVE sau email verify. Enterprise: PENDING_APPROVAL sau email verify, cần Lab Admin approve. |
+| 3 | Input fields mở rộng | Thu thập thông tin profile ngay khi đăng ký (Talent: fullName, studentId, faculty, yearOfStudy, phone. Enterprise: companyName, taxCode, address, representative, phone, industry). |
 
 **Database Schema:**
 ```sql
@@ -352,7 +362,8 @@ CREATE TABLE users (
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(50) NOT NULL,
-    status VARCHAR(20) DEFAULT 'PENDING',
+    status VARCHAR(20) DEFAULT 'ACTIVE',  -- Demo mode: ACTIVE. Mục tiêu: 'PENDING'
+    email_verified BOOLEAN DEFAULT TRUE,  -- Demo mode: TRUE. Mục tiêu: FALSE
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -387,7 +398,6 @@ CREATE TABLE talents (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
-
 ---
 
 #### FR-AUTH-003: Quên mật khẩu

@@ -10,7 +10,10 @@ Hệ thống kết nối sinh viên, mentor và doanh nghiệp trong môi trư�
 ODC_SoftwareTesting_UTH/
 ├── labodc-backend/      # API Server (Spring Boot)
 ├── labodc-web-portal/   # Web App (React + Vite)
-└── docs/                # Tài liệu dự án
+├── docs/                # Tài liệu dự án
+├── Postman/             # Collection và env Postman
+├── codecept-report/     # Báo cáo test CodeceptJS
+└── test-cases/          # Design testcase và report testcase
 ```
 
 ---
@@ -24,15 +27,6 @@ ODC_SoftwareTesting_UTH/
 | Node.js | 18+ | https://nodejs.org |
 | Docker Desktop | 24+ | https://www.docker.com/products/docker-desktop |
 
-Kiểm tra môi trường:
-
-```bash
-java -version      # >= 17
-mvn -version
-node -version      # >= 18
-npm -version
-docker -version
-```
 
 ---
 
@@ -61,30 +55,17 @@ docker-compose ps
 > - Host: `localhost:5432` | Database: `labodc`
 > - Username: `root` | Password: `123123`
 >
-> **pgAdmin:** http://localhost:5050 — Email: `admin@labodc.com` / Password: `admin123`
+> **pgAdmin:** http://localhost:5050 - Email: `admin@labodc.com` / Password: `admin123`
 
 ### Execute / Khởi tạo lại Database
 
-**Cách 1 — Dùng `psql` trong container (khuyên dùng):**
-
-```bash
-# Mở psql bên trong container PostgreSQL
-docker exec -it labodc-postgres psql -U root -d labodc
-
-# Chạy file SQL từ bên trong psql
-\i /docker-entrypoint-initdb.d/schema.sql
-
-# Thoát psql
-\q
-```
-
-**Cách 2 — Chạy lệnh một dòng không cần vào psql:**
+**Cách 1 - Chạy lệnh một dòng không cần vào psql:**
 
 ```bash
 docker exec -i labodc-postgres psql -U root -d labodc < src/database/schema.sql
 ```
 
-**Cách 3 — Dùng pgAdmin (giao diện web):**
+**Cách 2 - Dùng pgAdmin (giao diện web):**
 
 1. Mở http://localhost:5050
 2. Đăng nhập: `admin@labodc.com` / `admin123`
@@ -95,20 +76,6 @@ docker exec -i labodc-postgres psql -U root -d labodc < src/database/schema.sql
 
 > **Lưu ý:** Các file SQL chỉ tự động chạy lần đầu khi container được tạo mới. Nếu container đã tồn tại (chỉ bị stop), cần dùng một trong ba cách trên để chạy lại.
 
-Dừng database:
-
-```bash
-docker-compose down
-```
-
-Reset toàn bộ data về trạng thái ban đầu:
-
-```bash
-docker-compose down -v   # xóa volume (toàn bộ data)
-docker-compose up -d     # tạo lại container, SQL tự chạy lại từ đầu
-```
-
----
 
 ## 2. Khởi động Backend (Spring Boot)
 
@@ -121,21 +88,15 @@ mvn spring-boot:run
 
 Server khởi động tại: **http://localhost:8080**
 
-Kiểm tra server đang chạy, mở trình duyệt hoặc dùng curl:
-
-```bash
-curl http://localhost:8080/api/auth/health
-```
-
 ### Tài khoản mặc định
 
 | Role | Email | Password |
 |------|-------|----------|
-| System Admin | `admin@labodc.com` | `admin123` |
-| Lab Admin | `labadmin1@labodc.com` | `admin123` |
-| Enterprise | `contact@techcorp.vn` | `admin123` |
-| Mentor | `mentor.nguyenquang@uth.edu.vn` | `admin123` |
-| Talent | `nguyenvana@student.uth.edu.vn` | `admin123` |
+| System Admin | `admin@labodc.com` | `123123` |
+| Lab Admin | `labadmin1@labodc.com` | `123123` |
+| Enterprise | `contact@techcorp.vn` | `123123` |
+| Mentor | `mentor.nguyenquang@uth.edu.vn` | `123123` |
+| Talent | `nguyenvana@student.uth.edu.vn` | `123123` |
 
 ---
 
@@ -147,7 +108,7 @@ Mở terminal tại thư mục `labodc-web-portal/`:
 cd labodc-web-portal
 ```
 
-**Lần đầu — cài dependencies:**
+**Lần đầu - cài dependencies:**
 
 ```bash
 npm install
@@ -163,96 +124,117 @@ Web app khởi động tại: **http://localhost:3000**
 
 Mở trình duyệt và truy cập http://localhost:3000, đăng nhập bằng một trong các tài khoản ở bảng trên.
 
-**Build production (tùy chọn):**
-
-```bash
-npm run build
-npm run preview   # xem bản build tại http://localhost:4173
-```
-
----
-
-## 4. Chạy Tests
-
-### Backend Tests
-
-```bash
-cd labodc-backend
-
-# Chạy tất cả unit tests
-mvn test
-
-# Chạy một test class cụ thể
-mvn test -Dtest=TenClassTest
-
-# Chạy tests và sinh báo cáo HTML
-mvn test surefire-report:report
-# Xem báo cáo tại: target/site/surefire-report.html
-```
-
-### Frontend Tests
-
-```bash
-cd labodc-web-portal
-
-# Chạy tất cả tests
-npm test
-
-# Chạy ở chế độ watch (tự động re-run khi thay đổi code)
-npm run test -- --watch
-
-# Chạy với coverage report
-npm run test -- --coverage
-# Xem báo cáo tại: coverage/index.html
-```
-
----
 
 ## Thứ tự khởi động đúng
 
 ```
-1. Docker Desktop       →  phải đang chạy
-2. docker-compose up    →  khởi động PostgreSQL
-3. mvn spring-boot:run  →  Backend kết nối DB tại :8080
-4. npm run dev          →  Web App gọi API tại :3000
+1. Chạy PostgreSQL trong Docker
+2. Chạy mvn spring-boot:run tại labodc-backend/
+3. Chạy npm run dev tại labodc-web-portal/
 ```
+## Hướng dẫn E2E Testing với CodeceptJS
 
----
+### Cài đặt
 
-## Xử lý lỗi thường gặp
+Từ thư mục gốc repo, chạy lần lượt:
 
-**`Connection refused` khi Backend kết nối DB:**
-- Kiểm tra Docker đang chạy: `docker-compose ps`
-- Đợi 15-20 giây sau `docker-compose up` để PostgreSQL khởi động xong
-
-**`Port 8080 already in use`:**
-```bash
-# Windows
-netstat -ano | findstr :8080
-taskkill /PID <pid> /F
-```
-
-**`Port 5432 already in use` (PostgreSQL port bị chiếm):**
-```bash
-# Đổi port trong docker-compose.yml: "5433:5432"
-# Cập nhật application.properties: jdbc:postgresql://localhost:5433/labodc
-```
-
-**`Port 3000 already in use`:**
-```bash
-# Vite tự động thử port 3001, 3002... hoặc đổi trong vite.config.ts:
-# server: { port: 3001 }
-```
-
-**`npm install` lỗi:**
-```bash
-npm cache clean --force
+```powershell
+npm install
+cd labodc-web-portal
 npm install
 ```
 
-**Backend lỗi `JAVA_HOME not set`:**
-```bash
-# Windows — thêm vào System Environment Variables:
-JAVA_HOME=C:\Program Files\Java\jdk-17
-PATH=%JAVA_HOME%\bin;%PATH%
+Nếu chưa có trình duyệt Chromium cho Playwright:
+
+```powershell
+npx playwright install chromium
 ```
+
+## Khởi động hệ thống trước khi test
+Cần khởi động cả 3 thành phần: Database, Backend, Frontend trước khi chạy test. Hướng dẫn ở trên (phần [Thứ tự khởi động đúng](#thứ-tự-khởi-động-đúng)).
+
+## Các lệnh chạy test
+
+### Chạy một file test cụ thể
+
+```powershell
+npx codeceptjs run --steps e2e-tests/auth/login_test.js #thay "auth/login_test.js" thành đường dẫn và tên file cần chạy
+```
+
+### Chạy một Scenario cụ thể (theo tên)
+
+```powershell
+npx codeceptjs run --steps --grep "Đăng nhập thành công" #thay "Đăng nhập thành công" tên Scenario cần chạy
+```
+
+### Tạo báo cáo coverage cho một file test (quan trọng, bắt buộc chạy)
+
+```powershell
+npm run test:e2e:report:file -- e2e-tests/auth/login_test.js #thay "auth/login_test.js" thành đường dẫn và tên file cần chạy
+```
+
+Lệnh này sẽ tự động:
+1. Chạy tất cả Scenario trong file test đó một lần
+2. Tạo báo cáo coverage riêng cho từng Scenario
+3. Tạo báo cáo tổng hợp cho cả module
+
+Kết quả nằm trong `codecept-report/`.
+
+## Cách viết test
+
+### Cấu trúc file test
+
+Mỗi file test phải có:
+- `Feature('Mã module - Tên module')` - tên Feature lấy từ bảng phân công
+- `Scenario('ID testcase - Mô tả test case', ...)` - mỗi Scenario là một test case
+
+Ví dụ:
+
+```javascript
+Feature('FR-AUTH-001 - Đăng nhập');
+
+Scenario('TC-LOGIN-01 - Login thành công với tất cả hợp lệ', ({ I }) => {
+  I.amOnPage('/login');
+  I.fillField('Tên đăng nhập', 'admin@labodc.com');
+  I.fillField('Mật khẩu', 'admin123');
+  I.click('Đăng nhập');
+  I.waitInUrl('/admin/dashboard', 30);
+  I.see('Dashboard');
+});
+
+Scenario('TC-LOGIN-09 - sai mật khẩu', ({ I }) => {
+  I.amOnPage('/login');
+  I.fillField('Tên đăng nhập', 'admin@labodc.com');
+  I.fillField('Mật khẩu', 'wrongpassword');
+  I.click('Đăng nhập');
+  I.waitForText('Invalid email or password', 5);
+  I.see('Invalid email or password');
+});
+```
+
+### Các lệnh CodeceptJS thường dùng
+Xem chi tiết ở : https://codecept.io/quickstart/
+
+## Quy trình làm việc với E2E
+1. Viết test case trong thư mục `e2e-tests/`.
+2. Chạy test và tạo báo cáo coverage:
+
+```powershell
+npm run test:e2e:report:file -- e2e-tests/ten-module/ten_file_test.js
+```
+3. Kiểm tra báo cáo trong `codecept-report/`, mở file `index.html` để xem.
+
+## Xem báo cáo coverage
+
+Mở file `index.html` trong các thư mục con của `codecept-report/`:
+
+- **Báo cáo tổng hợp module:** `codecept-report/TenFeature/report_TenFeature/index.html`
+- **Báo cáo từng Scenario:** `codecept-report/TenFeature/TenScenario/index.html`
+
+Trong báo cáo:
+- **Statements** - Phần trăm câu lệnh đã được thực thi (đây là chỉ số chính)
+- **Branches** - Phần trăm nhánh if/else đã được đi qua
+- **Functions** - Phần trăm hàm đã được gọi
+- **Lines** - Phần trăm dòng code đã được chạy
+
+Click vào từng file/thư mục để xem chi tiết: dòng màu xanh là đã chạy qua, dòng màu đỏ là chưa chạy.
