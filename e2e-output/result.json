@@ -1,0 +1,287 @@
+{
+  "hasFailed": false,
+  "stats": {
+    "passes": 3,
+    "failures": 0,
+    "tests": 3,
+    "pending": 0,
+    "failedHooks": 0,
+    "start": "2026-11-08T07:10:09.436Z",
+    "end": "2026-11-08T07:10:18.152Z",
+    "duration": 8716
+  },
+  "duration": 8735,
+  "tests": [
+    {
+      "opts": {
+        "conditionalRetries": 3,
+        "stepRetryPriority": 50
+      },
+      "tags": [],
+      "uid": "ty99WV+HpgoR9dHxekzaAwSa+epA0VCtW3VSdr2liV",
+      "retries": -1,
+      "title": "TC-LOGIN-01 - Login thành công - nominal",
+      "state": "passed",
+      "notes": [],
+      "meta": {
+        "browser": "chromium",
+        "browserVersion": "158.0.8127.18",
+        "windowSize": "1280x720"
+      },
+      "artifacts": [],
+      "duration": 2799,
+      "parent": {
+        "title": "FR-AUTH-001 - Đăng nhập",
+        "file": "D:\\Mobile\\ODC_SoftwareTesting_UTH\\e2e-tests\\auth\\login_test.js"
+      },
+      "steps": [
+        {
+          "opts": {},
+          "title": "amOnPage",
+          "args": [
+            "/login"
+          ],
+          "status": "success",
+          "startTime": 1794121809915,
+          "endTime": 1794121811361,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "fillField",
+          "args": [
+            "Tên đăng nhập",
+            "admin@labodc.com"
+          ],
+          "status": "success",
+          "startTime": 1794121811362,
+          "endTime": 1794121811966,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "fillField",
+          "args": [
+            "Mật khẩu",
+            "123123"
+          ],
+          "status": "success",
+          "startTime": 1794121811967,
+          "endTime": 1794121812277,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "click",
+          "args": [
+            "Đăng nhập"
+          ],
+          "status": "success",
+          "startTime": 1794121812277,
+          "endTime": 1794121812447,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "waitForText",
+          "args": [
+            "Đăng nhập thành công!",
+            "5"
+          ],
+          "status": "success",
+          "startTime": 1794121812448,
+          "endTime": 1794121812698,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "see",
+          "args": [
+            "Đăng nhập thành công!"
+          ],
+          "status": "success",
+          "startTime": 1794121812698,
+          "endTime": 1794121812703,
+          "parent": {}
+        }
+      ]
+    },
+    {
+      "opts": {
+        "conditionalRetries": 3,
+        "stepRetryPriority": 50
+      },
+      "tags": [],
+      "uid": "KcMee6wCovdGHDOk0n2X8JKlLR0ZeWHcHuFxzr0PIW",
+      "retries": -1,
+      "title": "TC-LOGIN-09 - sai mật khẩu",
+      "state": "passed",
+      "notes": [],
+      "meta": {
+        "browser": "chromium",
+        "browserVersion": "158.0.8127.18",
+        "windowSize": "1280x720"
+      },
+      "artifacts": [],
+      "duration": 2879,
+      "parent": {
+        "title": "FR-AUTH-001 - Đăng nhập",
+        "file": "D:\\Mobile\\ODC_SoftwareTesting_UTH\\e2e-tests\\auth\\login_test.js"
+      },
+      "steps": [
+        {
+          "opts": {},
+          "title": "amOnPage",
+          "args": [
+            "/login"
+          ],
+          "status": "success",
+          "startTime": 1794121813027,
+          "endTime": 1794121814335,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "fillField",
+          "args": [
+            "Tên đăng nhập",
+            "admin@labodc.com"
+          ],
+          "status": "success",
+          "startTime": 1794121814335,
+          "endTime": 1794121814966,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "fillField",
+          "args": [
+            "Mật khẩu",
+            "wrongpassword"
+          ],
+          "status": "success",
+          "startTime": 1794121814969,
+          "endTime": 1794121815497,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "click",
+          "args": [
+            "Đăng nhập"
+          ],
+          "status": "success",
+          "startTime": 1794121815497,
+          "endTime": 1794121815664,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "waitForText",
+          "args": [
+            "Invalid email or password",
+            "5"
+          ],
+          "status": "success",
+          "startTime": 1794121815665,
+          "endTime": 1794121815898,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "see",
+          "args": [
+            "Invalid email or password"
+          ],
+          "status": "success",
+          "startTime": 1794121815898,
+          "endTime": 1794121815901,
+          "parent": {}
+        }
+      ]
+    },
+    {
+      "opts": {
+        "conditionalRetries": 3,
+        "stepRetryPriority": 50
+      },
+      "tags": [],
+      "uid": "W7yiZ8aoLq4xpccao42wJKmrPNxbi7k72RQC_6ETiW",
+      "retries": -1,
+      "title": "TC-LOGIN-04 - để trống tên đăng nhập",
+      "state": "passed",
+      "notes": [],
+      "meta": {
+        "browser": "chromium",
+        "browserVersion": "158.0.8127.18",
+        "windowSize": "1280x720"
+      },
+      "artifacts": [],
+      "duration": 1819,
+      "parent": {
+        "title": "FR-AUTH-001 - Đăng nhập",
+        "file": "D:\\Mobile\\ODC_SoftwareTesting_UTH\\e2e-tests\\auth\\login_test.js"
+      },
+      "steps": [
+        {
+          "opts": {},
+          "title": "amOnPage",
+          "args": [
+            "/login"
+          ],
+          "status": "success",
+          "startTime": 1794121816208,
+          "endTime": 1794121817553,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "fillField",
+          "args": [
+            "Mật khẩu",
+            "123123"
+          ],
+          "status": "success",
+          "startTime": 1794121817553,
+          "endTime": 1794121817877,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "click",
+          "args": [
+            "Đăng nhập"
+          ],
+          "status": "success",
+          "startTime": 1794121817877,
+          "endTime": 1794121818018,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "waitForText",
+          "args": [
+            "Vui lòng nhập tên đăng nhập!",
+            "5"
+          ],
+          "status": "success",
+          "startTime": 1794121818019,
+          "endTime": 1794121818023,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "see",
+          "args": [
+            "Vui lòng nhập tên đăng nhập!"
+          ],
+          "status": "success",
+          "startTime": 1794121818023,
+          "endTime": 1794121818025,
+          "parent": {}
+        }
+      ]
+    }
+  ],
+  "failures": []
+}
