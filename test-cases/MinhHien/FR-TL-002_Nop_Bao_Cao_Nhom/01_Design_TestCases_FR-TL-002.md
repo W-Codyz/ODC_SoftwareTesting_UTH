@@ -1,5 +1,5 @@
 # THIẾT KẾ TEST CASE HỘP ĐEN (BLACK-BOX TEST DESIGN)
-## MODULE: FR-TL-002 — NỘP BÁO CÁO NHÓM (SUBMIT TEAM REPORT)
+## MODULE: FR-TL-002 - NỘP BÁO CÁO NHÓM (SUBMIT TEAM REPORT)
 
 > **Người thực hiện:** Nguyễn Minh Hiển  
 > **Dự án:** ODC Software Testing (LabODC)  
@@ -35,7 +35,7 @@ Chức năng cho phép **Trưởng nhóm sinh viên (Talent Leader)** nộp báo
 ---
 
 ### II. BẢNG THIẾT KẾ TEST CASE (DESIGN TEST CASES)
-*(Áp dụng Phân hoạch tương đương & Standard BVA 4n + 1 — Format thi Giữa kỳ)*
+*(Áp dụng Phân hoạch tương đương & Standard BVA 4n + 1 )*
 
 | STT | TestCaseID | Tên Test Case | Vai trò gọi API | reportType | reportingPeriod | overallProgress | tasksCompleted | Expected Result | Kết Quả Mong Đợi Chi Tiết | Tag Được Bao Phủ |
 | :---: | :---: | :--- | :--- | :--- | :--- | :---: | :--- | :---: | :--- | :--- |

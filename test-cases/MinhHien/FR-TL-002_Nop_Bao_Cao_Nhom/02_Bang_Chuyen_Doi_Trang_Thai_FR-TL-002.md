@@ -1,5 +1,5 @@
 # BẢNG CHUYỂN ĐỔI TRẠNG THÁI (STATE TRANSITION TABLE)
-## MODULE: FR-TL-002 — NỘP BÁO CÁO NHÓM (SUBMIT TEAM REPORT)
+## MODULE: FR-TL-002 - NỘP BÁO CÁO NHÓM (SUBMIT TEAM REPORT)
 
 > **Người thực hiện:** Nguyễn Minh Hiển  
 > **Dự án:** ODC Software Testing (LabODC)  

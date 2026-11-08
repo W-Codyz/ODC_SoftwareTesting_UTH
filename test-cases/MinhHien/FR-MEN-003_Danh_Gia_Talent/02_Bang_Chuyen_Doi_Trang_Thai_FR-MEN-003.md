@@ -1,5 +1,5 @@
 # BẢNG CHUYỂN ĐỔI TRẠNG THÁI (STATE TRANSITION TABLE)
-## MODULE: FR-MEN-003 — ĐÁNH GIÁ TALENT (EVALUATE TALENTS)
+## MODULE: FR-MEN-003 - ĐÁNH GIÁ TALENT (EVALUATE TALENTS)
 
 > **Người thực hiện:** Nguyễn Minh Hiển  
 > **Dự án:** ODC Software Testing (LabODC)  

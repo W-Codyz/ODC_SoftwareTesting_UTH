@@ -1,5 +1,5 @@
 # THIẾT KẾ TEST CASE HỘP ĐEN (BLACK-BOX TEST DESIGN)
-## MODULE: FR-MEN-003 — ĐÁNH GIÁ TALENT (EVALUATE TALENTS)
+## MODULE: FR-MEN-003 - ĐÁNH GIÁ TALENT (EVALUATE TALENTS)
 
 > **Người thực hiện:** Nguyễn Minh Hiển  
 > **Dự án:** ODC Software Testing (LabODC)  
@@ -34,7 +34,7 @@ Chức năng cho phép **Người hướng dẫn (Mentor)** thực hiện đánh
 ---
 
 ### II. BẢNG THIẾT KẾ TEST CASE (DESIGN TEST CASES)
-*(Áp dụng Phân hoạch tương đương & Standard BVA — Format thi Giữa kỳ)*
+*(Áp dụng Phân hoạch tương đương & Standard BVA )*
 
 | STT | TestCaseID | Tên Test Case | Vai trò gọi API | talentId | evaluationPeriod | overallScore | Criteria Scores | Expected Result | Kết Quả Mong Đợi Chi Tiết | Tag Được Bao Phủ |
 | :---: | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :--- | :--- |

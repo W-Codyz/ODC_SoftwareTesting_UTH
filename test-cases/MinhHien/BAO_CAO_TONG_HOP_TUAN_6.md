@@ -6,7 +6,7 @@
 > 1. `FR-TL-002: Nộp Báo cáo Nhóm (Submit Team Report)`
 > 2. `FR-MEN-003: Đánh giá Talent (Evaluate Talents)`
 > **Yêu cầu hoàn thành:**
-> - [x] Black-box Test Cases Design (Chuẩn format thi giữa kỳ: Phân hoạch tương đương EP + Phân tích giá trị biên BVA)
+> - [x] Black-box Test Cases Design (Áp dụng Phân hoạch tương đương EP + Phân tích giá trị biên BVA)
 > - [x] Bảng chuyển đổi trạng thái (State Transition Table & Diagram - Chuẩn Slide Chương IV)
 > - [x] Bảng quyết định (Decision Table - Đầy đủ & Rút gọn - Chuẩn Slide Chương IV)
 > - [x] Test Execution Report (Kết quả kiểm thử Postman API / Localhost)
@@ -36,7 +36,7 @@ test-cases/MinhHien/
 
 ---
 
-## PHẦN 1: TÓM TẮT MODULE FR-TL-002 — NỘP BÁO CÁO NHÓM
+## PHẦN 1: TÓM TẮT MODULE FR-TL-002: NỘP BÁO CÁO NHÓM
 
 * **Tác nhân:** Trưởng nhóm sinh viên (`TALENT_LEADER`).
 * **Endpoint chính:** `POST /api/talent-leader/projects/{projectId}/reports`
@@ -47,7 +47,7 @@ test-cases/MinhHien/
 
 ---
 
-## PHẦN 2: TÓM TẮT MODULE FR-MEN-003 — ĐÁNH GIÁ TALENT
+## PHẦN 2: TÓM TẮT MODULE FR-MEN-003: ĐÁNH GIÁ TALENT
 
 * **Tác nhân:** Người hướng dẫn (`ASSIGNED_MENTOR`).
 * **Endpoint chính:** `POST /api/mentor/projects/{projectId}/evaluations`
@@ -61,6 +61,6 @@ test-cases/MinhHien/
 ## KẾT LUẬN & ĐÁNH GIÁ
 Toàn bộ các tài liệu kiểm thử đã tuân thủ 100% chuẩn quy định:
 - Đầy đủ format bảng phân hoạch tương đương (Tag V, X) và phân tích giá trị biên (Tag B) theo Slide Chương IV trang 32.
-- Đầy đủ format bảng test case và báo cáo thực thi dạng CSV / Markdown như đề thi giữa kỳ của trường.
+- Đầy đủ format bảng test case và báo cáo thực thi dạng CSV / Markdown chuẩn quy cách kiểm thử phần mềm.
 - Đầy đủ sơ đồ và bảng chuyển đổi trạng thái (Slide 36 - 40).
 - Đầy đủ bảng quyết định phân tích logic nghiệp vụ (Slide 41 - 46).

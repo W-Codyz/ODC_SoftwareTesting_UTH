@@ -1,5 +1,5 @@
 # BÁO CÁO THỰC THI KIỂM THỬ (TEST EXECUTION REPORT)
-## MODULE: FR-TL-002 — NỘP BÁO CÁO NHÓM (SUBMIT TEAM REPORT)
+## MODULE: FR-TL-002 - NỘP BÁO CÁO NHÓM (SUBMIT TEAM REPORT)
 
 > **Người kiểm thử:** Nguyễn Minh Hiển  
 > **Môi trường:** Postman API Testing / Localhost (`http://localhost:8080`)  
@@ -9,7 +9,7 @@
 
 ---
 
-### BẢNG BÁO CÁO KẾT QUẢ TEST CHI TIẾT (FORMAT THI GIỮA KỲ)
+### BẢNG BÁO CÁO KẾT QUẢ TEST CHI TIẾT 
 
 | STT | TestCaseID | Tên Test Case | Input Parameters | Expected Result | Actual Result | Status | Tag Được Bao Phủ | Ghi Chú |
 | :---: | :---: | :--- | :--- | :---: | :---: | :---: | :--- | :--- |
