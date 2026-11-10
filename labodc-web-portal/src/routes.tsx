@@ -24,6 +24,7 @@ const BrowseProjects = lazy(() => import('@/pages/talent/ProjectsBrowse'));
 const MyProjects = lazy(() => import('@/pages/talent/MyProjects'));
 const Tasks = lazy(() => import('@/pages/talent/Tasks'));
 const Profile = lazy(() => import('@/pages/talent/TalentProfile'));
+const TalentLeaderDashboard = lazy(() => import('@/pages/talent/TalentLeaderDashboard'));
 
 // Mentor pages
 const MentorDashboard = lazy(() => import('@/pages/mentor/Dashboard'));
@@ -113,6 +114,8 @@ const AppRoutes: React.FC = () => {
           <Route path="my-projects" element={<MyProjects />} />
           <Route path="tasks" element={<Tasks />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="leader/:projectId" element={<TalentLeaderDashboard />} />
+          <Route path="leader" element={<TalentLeaderDashboard />} />
         </Route>
 
         {/* Mentor Routes */}

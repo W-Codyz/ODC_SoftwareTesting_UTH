@@ -129,6 +129,16 @@ const MyProjects: React.FC = () => {
                       Nhiệm vụ
                     </Button>
                   ),
+                  (project.memberRole === 'LEADER' || project.memberStatus === 'ACTIVE') && (
+                    <Button
+                      key="leader"
+                      type="link"
+                      size="small"
+                      onClick={() => navigate(`/talent/leader/${project.id}`)}
+                    >
+                      Báo cáo nhóm
+                    </Button>
+                  ),
                 ].filter(Boolean)}
               >
                 <div style={{ marginBottom: '8px' }}>
