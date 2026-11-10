@@ -10,8 +10,8 @@
 | **Tên dự án** | LabOdc - Hệ thống quản lý kết nối doanh nghiệp với sinh viên UTH trong dự án thực tế |
 | **Tên tiếng Anh** | LabOdc - A System for Managing Enterprise-Student Collaborations at UTH on Real-World Projects |
 | **Loại tài liệu** | Software Requirements Specification (SRS) |
-| **Phiên bản** | 1.3 |
-| **Ngày** | 05 tháng 11 năm 2026 |
+| **Phiên bản** | 1.5 |
+| **Ngày cập nhật** | 10 tháng 11 năm 2026 |
 | **Người chuẩn bị** | Nhóm phát triển - Nhóm 6 |
 | **Tổ chức** | Đại học Giao thông Vận tải TP.HCM (UTH) |
 | **Trạng thái** | Bản nháp |
@@ -27,6 +27,7 @@
 | 1.2 | 31/10/2026 | Đình Phát | FR-AUTH-001: bổ sung email case-sensitive vào Business Rules và Input; làm rõ ràng buộc min 8 ký tự chỉ áp dụng tại đăng ký (FR-AUTH-002), không áp dụng tại login |
 | 1.3 | 05/11/2026 | Đình Phát | FR-TL-001: đánh dấu chưa triển khai, ghi nhận gap so với implementation thực tế (xác nhận qua LABODC-83); giữ thiết kế gốc làm baseline cho phase tương lai |
 | 1.4 | 07/11/2026 | Đình Phát | FR-AUTH-002: cập nhật theo demo mode hiện tại (status=ACTIVE, emailVerified=true); thêm actor Mentor; thống nhất input 4 fields chung (email, password, confirmPassword, role); bổ sung bảng Bug fix cần implement (domain validation, password strength) và Phát triển trong tương lai (email verification, status flow, extended input) |
+| 1.5 | 10/11/2026 | Đình Phát | FR-TAL-001: bổ sung và chuẩn hóa validation cho phone, portfolio URL, skill, số năm kinh nghiệm, Avatar và CV; đồng bộ giới hạn, định dạng file, mã lỗi và baseline kiểm thử |
 
 ---
 
@@ -893,6 +894,21 @@ Request:
 }
 ```
 
+**Validation Rules:**
+
+- `phone`:
+  - Must contain exactly 10 digits and start with `0`.
+  - Regex: `^0[0-9]{9}$`.
+  - Examples of valid values: `0901234567`, `0281234567`.
+  - A value with fewer/more than 10 digits, non-digit characters, or without
+    the leading `0` is invalid.
+- `portfolioUrl`:
+  - Optional.
+  - When provided, must start with `http://` or `https://`.
+  - Must not contain whitespace and must not exceed 500 characters.
+- If any value is invalid, the API returns `400 Bad Request` and does not
+  update the profile.
+
 **POST /api/talent/skills**
 
 Request:
@@ -916,6 +932,33 @@ Response:
   }
 }
 ```
+
+**Skill Validation Rules:**
+
+- `name` is required, must contain 1-100 characters, and must be unique
+  within the talent profile.
+- `level` must be one of `Beginner`, `Intermediate`, or `Advanced`.
+- `yearsOfExperience` must be a number from `0.0` to `50.0`, inclusive, with
+  at most one digit after the decimal point.
+- Negative values and values greater than `50.0` are invalid.
+- If any value is invalid, the API returns `400 Bad Request` and does not
+  create the skill.
+
+**POST /api/talent/profile/avatar**
+
+- Allowed file extensions: `.jpg`, `.jpeg`, `.png`.
+- Maximum file size: 5 MB.
+- The extension and MIME type must both identify an image.
+- An invalid extension, MIME type, or file larger than 5 MB returns
+  `400 Bad Request`.
+
+**POST /api/talent/profile/cv**
+
+- Allowed file extensions: `.pdf`, `.doc`, `.docx`.
+- Maximum file size: 20 MB.
+- The extension and MIME type must both identify an allowed document type.
+- An invalid extension, MIME type, or file larger than 20 MB returns
+  `400 Bad Request`.
 
 **Database Schema:**
 ```sql
@@ -4198,7 +4241,7 @@ LabOdc Team
 - Cannot contain: username, common passwords
 
 **Phone:**
-- Format: Vietnamese phone (0[0-9]{9,10})
+- Format: Vietnamese phone, exactly 10 digits (`^0[0-9]{9}$`)
 - Examples: 0901234567, 0281234567
 
 **Tax Code:**
