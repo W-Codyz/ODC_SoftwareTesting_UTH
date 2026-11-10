@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">15.78% </span>
+                <span class="strong">42.1% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>3/19</span>
+                <span class='fraction'>8/19</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">25% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/4</span>
+                <span class='fraction'>1/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">33.33% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/6</span>
+                <span class='fraction'>2/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">17.64% </span>
+                <span class="strong">41.17% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>3/17</span>
+                <span class='fraction'>7/17</span>
             </div>
         
             
@@ -145,16 +145,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">13x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">13x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-yes">32x</span>
+<span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -220,12 +220,12 @@ const { Content } = Layout;
 &nbsp;
 const MOBILE_BREAKPOINT = 768;
 &nbsp;
-const <span class="fstat-no" title="function not covered" >MainLayout: React.FC = () =&gt; {</span>
-  const dispatch = <span class="cstat-no" title="statement not covered" >useAppDispatch();</span>
-  const sidebarCollapsed = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >useAppSelector((s</span>tate) =&gt; <span class="cstat-no" title="statement not covered" >state.ui.sidebarCollapsed)</span>;</span>
-  const [isMobile, setIsMobile] = <span class="cstat-no" title="statement not covered" >useState(window.innerWidth &lt; MOBILE_BREAKPOINT);</span>
+const MainLayout: React.FC = () =&gt; {
+  const dispatch = useAppDispatch();
+  const sidebarCollapsed = useAppSelector((state) =&gt; state.ui.sidebarCollapsed);
+  const [isMobile, setIsMobile] = useState(window.innerWidth &lt; MOBILE_BREAKPOINT);
 &nbsp;
-<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >  useEffect(() =&gt; {</span></span>
+<span class="fstat-no" title="function not covered" >  useEffect(() =&gt; {</span>
     const <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >handleResize = () =&gt; {</span></span>
       const mobile = <span class="cstat-no" title="statement not covered" >window.innerWidth &lt; MOBILE_BREAKPOINT;</span>
 <span class="cstat-no" title="statement not covered" >      setIsMobile(mobile);</span>
@@ -247,7 +247,7 @@ const <span class="fstat-no" title="function not covered" >MainLayout: React.FC 
       &lt;Header /&gt;
       &lt;Layout className={styles.body}&gt;
         {/* Backdrop — mobile only, closes sidebar on tap */}
-        {isMobile &amp;&amp; !sidebarCollapsed &amp;&amp; (
+        {isMobile &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >!sidebarCollapsed &amp;&amp; (</span>
           &lt;div
             className={styles.overlay}
 <span class="fstat-no" title="function not covered" >            onClick={() =&gt; <span class="cstat-no" title="statement not covered" >d</span>ispatch(setSidebarCollapsed(true))}</span>
@@ -283,7 +283,7 @@ export default MainLayout;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-11-08T07:10:20.351Z
+                at 2026-11-09T09:37:11.403Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>
