@@ -2899,6 +2899,204 @@
           ]
         }
       ]
+    },
+    {
+      "name": "FR-TL-002 - Nộp Báo cáo Nhóm",
+      "item": [
+        {
+          "name": "TC-TL002-01 Submit Team Report (Nominal)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reportType\": \"MONTHLY\",\n  \"reportingPeriod\": \"2026-02\",\n  \"overallProgress\": 50,\n  \"tasksCompleted\": [\n    {\n      \"taskId\": 101,\n      \"taskName\": \"Thi\\u1ebft k\\u1ebf database schema\",\n      \"completedBy\": \"Nguyen Van A\",\n      \"completedDate\": \"2026-02-15\"\n    }\n  ],\n  \"tasksInProgress\": [\n    {\n      \"taskId\": 102,\n      \"taskName\": \"X\\u00e2y d\\u1ef1ng API Backend\",\n      \"assignedTo\": \"Tran Thi B\",\n      \"expectedCompletion\": \"2026-03-01\",\n      \"currentProgress\": 60\n    }\n  ],\n  \"issues\": [\n    {\n      \"severity\": \"MEDIUM\",\n      \"description\": \"API b\\u00ean th\\u1ee9 ba ph\\u1ea3n h\\u1ed3i ch\\u1eadm\",\n      \"impact\": \"T\\u1ea3i ch\\u1eadm\",\n      \"proposedSolution\": \"Th\\u00eam b\\u1ed9 nh\\u1edb cache\"\n    }\n  ],\n  \"nextMonthPlan\": [\n    \"Ho\\u00e0n thi\\u1ec7n t\\u00ednh n\\u0103ng x\\u00e1c th\\u1ef1c v\\u00e0 t\\u00edch h\\u1ee3p UI\"\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/talent-leader/projects/{{project_id}}/reports",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "talent-leader",
+                "projects",
+                "{{project_id}}",
+                "reports"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-TL002-02 Get Team Reports",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/talent-leader/projects/{{project_id}}/reports",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "talent-leader",
+                "projects",
+                "{{project_id}}",
+                "reports"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-TL002-06 overallProgress Out of Range (-1)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reportType\": \"MONTHLY\",\n  \"reportingPeriod\": \"2026-02\",\n  \"overallProgress\": -1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/talent-leader/projects/{{project_id}}/reports",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "talent-leader",
+                "projects",
+                "{{project_id}}",
+                "reports"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "FR-MEN-003 - Đánh giá Talent",
+      "item": [
+        {
+          "name": "TC-MEN003-01 Submit Evaluation (Nominal)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"talentId\": 456,\n  \"evaluationPeriod\": \"2026-02\",\n  \"overallScore\": 8.5,\n  \"technicalSkills\": {\n    \"score\": 9.0,\n    \"comment\": \"K\\u1ef9 n\\u0103ng code r\\u1ea5t t\\u1ed1t, s\\u1ea1ch s\\u1ebd v\\u00e0 \\u0111\\u00fang convention.\"\n  },\n  \"problemSolving\": {\n    \"score\": 8.5,\n    \"comment\": \"Gi\\u1ea3i quy\\u1ebft b\\u00e0i to\\u00e1n \\u0111\\u1ed9c l\\u1eadp t\\u1ed1t.\"\n  },\n  \"teamwork\": {\n    \"score\": 8.0,\n    \"comment\": \"H\\u1ee3p t\\u00e1c t\\u1ed1t v\\u1edbi c\\u00e1c th\\u00e0nh vi\\u00ean trong nh\\u00f3m.\"\n  },\n  \"communication\": {\n    \"score\": 8.5,\n    \"comment\": \"Giao ti\\u1ebfp r\\u00f5 r\\u00e0ng, b\\u00e1o c\\u00e1o \\u0111\\u00fang h\\u1ea1n.\"\n  },\n  \"codeQuality\": {\n    \"score\": 9.0,\n    \"comment\": \"Code ch\\u1ea5t l\\u01b0\\u1ee3ng cao, vi\\u1ebft unit test \\u0111\\u1ea7y \\u0111\\u1ee7.\"\n  },\n  \"punctuality\": {\n    \"score\": 9.5,\n    \"comment\": \"\\u0110i\\u1ec3m chuy\\u00ean c\\u1ea7n v\\u00e0 tham gia h\\u1ecdp 100%.\"\n  },\n  \"strengths\": [\n    \"N\\u1eafm ch\\u1eafc ki\\u1ebfn th\\u1ee9c n\\u1ec1n t\\u1ea3ng\",\n    \"Ch\\u1ee7 \\u0111\\u1ed9ng h\\u1ecdc h\\u1ecfi\"\n  ],\n  \"weaknesses\": [\n    \"C\\u1ea7n t\\u0103ng t\\u1ed1c \\u0111\\u1ed9 ho\\u00e0n th\\u00e0nh task ph\\u1ee9c t\\u1ea1p\"\n  ],\n  \"recommendations\": \"Ti\\u1ebfp t\\u1ee5c ph\\u00e1t huy trong giai \\u0111o\\u1ea1n ti\\u1ebfp theo\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects/{{project_id}}/evaluations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects",
+                "{{project_id}}",
+                "evaluations"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-MEN003-02 Get Project Evaluations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects/{{project_id}}/evaluations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects",
+                "{{project_id}}",
+                "evaluations"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-MEN003-06 Score Out of Range (10.5)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"talentId\": 456,\n  \"evaluationPeriod\": \"2026-02\",\n  \"overallScore\": 10.5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/mentor/projects/{{project_id}}/evaluations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "mentor",
+                "projects",
+                "{{project_id}}",
+                "evaluations"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "auth": {
