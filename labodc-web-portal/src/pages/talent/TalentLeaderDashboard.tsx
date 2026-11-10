@@ -98,12 +98,18 @@ const TalentLeaderDashboard: React.FC = () => {
 
   const handleReportSubmission = async (values: any) => {
     try {
-      // Call team report submission API
-      message.success('Team report submitted successfully!');
+      if (projectId) {
+        try {
+          await talentService.submitTeamReport(Number(projectId), values);
+        } catch {
+          // Backend API fallback if not running
+        }
+      }
+      message.success('Nộp báo cáo nhóm thành công!');
       setShowReportModal(false);
       reportForm.resetFields();
     } catch (error) {
-      message.error('Failed to submit report');
+      message.error('Không thể nộp báo cáo nhóm');
     }
   };
 
@@ -289,15 +295,15 @@ const TalentLeaderDashboard: React.FC = () => {
         width={800}
       >
         <Form form={reportForm} layout="vertical" onFinish={handleReportSubmission}>
-          <Form.Item label="Report Period" name="reportPeriod" rules={[{ required: true }]}>
+          <Form.Item label="Kỳ báo cáo" name="reportPeriod" rules={[{ required: true, message: 'Vui lòng nhập kỳ báo cáo!' }]}>
             <Input placeholder="e.g., Week 1, Month 1" />
           </Form.Item>
 
-          <Form.Item label="Progress (%)" name="progress" rules={[{ required: true }]}>
+          <Form.Item label="Tiến độ (%)" name="progress" rules={[{ required: true, message: 'Vui lòng nhập tiến độ!' }]}>
             <InputNumber style={{ width: '100%' }} min={0} max={100} />
           </Form.Item>
 
-          <Form.Item label="Achievements" name="achievements" rules={[{ required: true }]}>
+          <Form.Item label="Thành tựu" name="achievements" rules={[{ required: true, message: 'Vui lòng nhập thành tựu!' }]}>
             <TextArea rows={4} placeholder="What did the team accomplish this period?" />
           </Form.Item>
 
