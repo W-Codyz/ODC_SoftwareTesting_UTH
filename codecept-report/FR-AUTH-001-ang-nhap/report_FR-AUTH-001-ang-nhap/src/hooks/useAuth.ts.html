@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">5.55% </span>
+                <span class="strong">55.55% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>1/18</span>
+                <span class='fraction'>10/18</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">40% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>2/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">5.88% </span>
+                <span class="strong">52.94% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>1/17</span>
+                <span class='fraction'>9/17</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -114,25 +114,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">48x</span>
+<span class="cline-any cline-yes">48x</span>
+<span class="cline-any cline-yes">48x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">96x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">48x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -141,7 +132,16 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">48x</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">48x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">48x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -158,14 +158,14 @@ import { useNavigate } from 'react-router-dom';
 import { App } from 'antd';
 import { TUserRole } from '@/types/user.types';
 &nbsp;
-export const <span class="fstat-no" title="function not covered" >useAuth = () =&gt; {</span>
-  const dispatch = <span class="cstat-no" title="statement not covered" >useAppDispatch();</span>
-  const navigate = <span class="cstat-no" title="statement not covered" >useNavigate();</span>
-  const { message } = <span class="cstat-no" title="statement not covered" >App.useApp();</span>
+export const useAuth = () =&gt; {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { message } = App.useApp();
   
-  const { user, isAuthenticated, loading, error } = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >useAppSelector((s</span>tate) =&gt; <span class="cstat-no" title="statement not covered" >state.auth)</span>;</span>
+  const { user, isAuthenticated, loading, error } = useAppSelector((state) =&gt; state.auth);
 &nbsp;
-  const handleLogout = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >async () =&gt; {</span></span>
+  const handleLogout = <span class="fstat-no" title="function not covered" >async () =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    try {</span>
 <span class="cstat-no" title="statement not covered" >      await dispatch(logout()).unwrap();</span>
 <span class="cstat-no" title="statement not covered" >      message.success('Đăng xuất thành công!');</span>
@@ -177,15 +177,15 @@ export const <span class="fstat-no" title="function not covered" >useAuth = () =
     }
   };
 &nbsp;
-  const <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >hasRole = (r</span>ole: TUserRole): boolean =&gt; {</span>
+  const <span class="fstat-no" title="function not covered" >hasRole = (r</span>ole: TUserRole): boolean =&gt; {
 <span class="cstat-no" title="statement not covered" >    return user?.role === role;</span>
   };
 &nbsp;
-  const <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >hasAnyRole = (r</span>oles: TUserRole[]): boolean =&gt; {</span>
+  const <span class="fstat-no" title="function not covered" >hasAnyRole = (r</span>oles: TUserRole[]): boolean =&gt; {
 <span class="cstat-no" title="statement not covered" >    return user ? roles.includes(user.role as TUserRole) : false;</span>
   };
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return {</span>
+  return {
     user,
     isAuthenticated,
     loading,
@@ -202,7 +202,7 @@ export const <span class="fstat-no" title="function not covered" >useAuth = () =
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-11-08T07:10:20.351Z
+                at 2026-11-09T09:37:11.403Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
