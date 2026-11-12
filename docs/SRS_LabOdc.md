@@ -2023,14 +2023,16 @@ Bạn có muốn tôi tiếp tục với Module Lab Administrator và System Adm
 
 **API Endpoints:**
 ```
-GET    /api/lab-admin/enterprises/pending
+GET    /api/lab-admin/enterprises
 GET    /api/lab-admin/enterprises/{id}
-POST   /api/lab-admin/enterprises/{id}/approve
-POST   /api/lab-admin/enterprises/{id}/reject
-POST   /api/lab-admin/enterprises/{id}/request-info
+POST   /api/lab-admin/enterprises/{id}/verify
+DELETE /api/lab-admin/enterprises/{id}?reason={reason}
 ```
 
-**GET /api/lab-admin/enterprises/pending**
+**GET /api/lab-admin/enterprises**
+
+Lấy danh sách doanh nghiệp có phân trang. Kết quả có thể chứa nhiều trạng thái;
+client sử dụng trường `status` để nhận biết doanh nghiệp `PENDING`.
 
 Response:
 ```json
@@ -2064,14 +2066,9 @@ Response:
 }
 ```
 
-**POST /api/lab-admin/enterprises/{id}/approve**
+**POST /api/lab-admin/enterprises/{id}/verify**
 
-Request:
-```json
-{
-  "note": "Doanh nghiệp hợp lệ, đã verify mã số thuế và giấy phép kinh doanh"
-}
-```
+Request: Không có request body.
 
 **Validation Rules:**
 
@@ -2102,15 +2099,9 @@ Response:
 }
 ```
 
-**POST /api/lab-admin/enterprises/{id}/reject**
+**DELETE /api/lab-admin/enterprises/{id}?reason={reason}**
 
-Request:
-```json
-{
-  "reason": "Mã số thuế không hợp lệ hoặc đã bị thu hồi",
-  "details": "Sau khi kiểm tra trên hệ thống thuế quốc gia, mã số 0123456789 không tồn tại."
-}
-```
+Request: Truyền lý do từ chối bằng query parameter `reason`.
 
 **Validation Rules:**
 
@@ -2140,7 +2131,7 @@ Response:
 }
 ```
 
-**POST /api/lab-admin/enterprises/{id}/request-info**
+**POST /api/lab-admin/enterprises/{id}/request-info (chưa có trong backend)**
 
 Request:
 ```json
