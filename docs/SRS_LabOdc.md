@@ -10,8 +10,8 @@
 | **Tên dự án** | LabOdc - Hệ thống quản lý kết nối doanh nghiệp với sinh viên UTH trong dự án thực tế |
 | **Tên tiếng Anh** | LabOdc - A System for Managing Enterprise-Student Collaborations at UTH on Real-World Projects |
 | **Loại tài liệu** | Software Requirements Specification (SRS) |
-| **Phiên bản** | 1.5 |
-| **Ngày cập nhật** | 10 tháng 11 năm 2026 |
+| **Phiên bản** | 1.6 |
+| **Ngày cập nhật** | 12 tháng 11 năm 2026 |
 | **Người chuẩn bị** | Nhóm phát triển - Nhóm 6 |
 | **Tổ chức** | Đại học Giao thông Vận tải TP.HCM (UTH) |
 | **Trạng thái** | Bản nháp |
@@ -28,6 +28,7 @@
 | 1.3 | 05/11/2026 | Đình Phát | FR-TL-001: đánh dấu chưa triển khai, ghi nhận gap so với implementation thực tế (xác nhận qua LABODC-83); giữ thiết kế gốc làm baseline cho phase tương lai |
 | 1.4 | 07/11/2026 | Đình Phát | FR-AUTH-002: cập nhật theo demo mode hiện tại (status=ACTIVE, emailVerified=true); thêm actor Mentor; thống nhất input 4 fields chung (email, password, confirmPassword, role); bổ sung bảng Bug fix cần implement (domain validation, password strength) và Phát triển trong tương lai (email verification, status flow, extended input) |
 | 1.5 | 10/11/2026 | Đình Phát | FR-TAL-001: bổ sung và chuẩn hóa validation cho phone, portfolio URL, skill, số năm kinh nghiệm, Avatar và CV; đồng bộ giới hạn, định dạng file, mã lỗi và baseline kiểm thử |
+| 1.6 | 12/11/2026 | Nguyễn Thành Nhân | FR-LAB-001: bổ sung ràng buộc enterprise phải tồn tại và ở trạng thái `PENDING`, MST chỉ gồm 10–13 chữ số và không trùng, `reason` bắt buộc dài 1–500 ký tự, `note` tùy chọn tối đa 500 ký tự; đồng bộ API với backend |
 
 ---
 
@@ -2023,16 +2024,16 @@ Bạn có muốn tôi tiếp tục với Module Lab Administrator và System Adm
 
 **API Endpoints:**
 ```
-GET    /api/lab-admin/enterprises
+GET    /api/lab-admin/enterprise/pending
 GET    /api/lab-admin/enterprises/{id}
 POST   /api/lab-admin/enterprises/{id}/verify
 DELETE /api/lab-admin/enterprises/{id}?reason={reason}
 ```
 
-**GET /api/lab-admin/enterprises**
+**GET /api/lab-admin/enterprise/pending**
 
-Lấy danh sách doanh nghiệp có phân trang. Kết quả có thể chứa nhiều trạng thái;
-client sử dụng trường `status` để nhận biết doanh nghiệp `PENDING`.
+Lấy danh sách các doanh nghiệp đang ở trạng thái `PENDING` để Lab Admin
+thực hiện xác thực. API chỉ trả về các doanh nghiệp có `status = PENDING`.
 
 Response:
 ```json
