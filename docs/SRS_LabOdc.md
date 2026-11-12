@@ -2073,6 +2073,12 @@ Request:
 }
 ```
 
+**Validation Rules:**
+
+- `enterpriseId` phải tồn tại và enterprise phải ở trạng thái `PENDING`.
+- `taxCode` của enterprise phải được verify, chỉ gồm chữ số, dài từ 10 đến 13 chữ số và không trùng với enterprise khác.
+- `note` là optional, độ dài tối đa 500 ký tự.
+
 **Processing:**
 1. Validate enterprise exists và status=PENDING
 2. Update enterprise status=APPROVED
@@ -2106,6 +2112,21 @@ Request:
 }
 ```
 
+**Validation Rules:**
+
+- `enterpriseId` phải tồn tại và enterprise phải ở trạng thái `PENDING`.
+- `taxCode` của enterprise phải được verify, chỉ gồm chữ số, dài từ 10 đến 13 chữ số và không trùng với enterprise khác.
+- `reason` là bắt buộc, độ dài từ 1 đến 500 ký tự.
+- `details` là optional; nếu có, phải là nội dung mô tả chi tiết lý do từ chối.
+
+**Processing:**
+
+1. Validate enterprise exists và status=PENDING
+2. Update enterprise status=REJECTED
+3. Gửi email notification đến enterprise
+4. Log rejection action
+5. Return confirmation
+
 Response:
 ```json
 {
@@ -2119,11 +2140,52 @@ Response:
 }
 ```
 
+**POST /api/lab-admin/enterprises/{id}/request-info**
+
+Request:
+```json
+{
+  "note": "Vui lòng bổ sung bản sao giấy phép đăng ký kinh doanh."
+}
+```
+
+**Validation Rules:**
+
+- `enterpriseId` phải tồn tại và enterprise phải ở trạng thái `PENDING`.
+- `note` là bắt buộc, độ dài tối đa 500 ký tự.
+
+**Processing:**
+1. Validate enterprise exists và status=PENDING
+2. Update enterprise validation action=INFO_REQUESTED
+3. Gửi email notification đến enterprise
+4. Log request-info action
+5. Return confirmation
+
+Response:
+```json
+{
+  "success": true,
+  "message": "Đã yêu cầu doanh nghiệp bổ sung thông tin",
+  "data": {
+    "enterpriseId": 123,
+    "status": "INFO_REQUESTED",
+    "requestedAt": "2026-01-11T09:30:00Z"
+  }
+}
+```
+
 **Business Rules:**
+
 - Mỗi enterprise chỉ được approve 1 lần
-- Phải verify mã số thuế (có thể integrate API thuế)
 - Email notification trong vòng 5 phút
 - Log tất cả actions để audit
+
+**Error Handling:**
+
+- `400 Bad Request`: Dữ liệu request hoặc dữ liệu xác thực mã số thuế không hợp lệ.
+- `403 Forbidden`: Người dùng không có quyền `LAB_ADMIN` hoặc `SYSTEM_ADMIN`.
+- `404 Not Found`: Enterprise không tồn tại.
+- `409 Conflict`: Enterprise không ở trạng thái `PENDING` hoặc đã được approve trước đó.
 
 **Database Schema:**
 ```sql
