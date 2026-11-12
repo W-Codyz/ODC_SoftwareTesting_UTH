@@ -14,10 +14,10 @@
 | Chỉ số | Giá trị |
 |---|---:|
 | Tổng số test case | 36 |
-| Passed | 18 |
-| Failed | 18 |
+| Passed | 21 |
+| Failed | 15 |
 | Blocked / Skipped | 0 |
-| **Pass rate** | **50%** |
+| **Pass rate** | **58%** |
 
 ---
 
@@ -46,9 +46,9 @@
 | 19 | TC-ENT-19 | RequiredTalents null | requiredTalents=(null) | 400 - Validation error | 400 Bad Request - Lỗi Database: "null value in column 'number_of_students' violates not-null constraint" | FAIL | X-RT1, ST-03, R7 | |
 | 20 | TC-ENT-20 | RequiredTalents = 0 (dưới min) | requiredTalents=`0` | 400 - Validation error (min 1) | 400 Bad Request - Lỗi Database: "violates check constraint 'check_students'" | FAIL | X-RT2, B-RT1, ST-03, R9 | |
 | 21 | TC-ENT-21 | RequiredTalents = -1 (âm) | requiredTalents=`-1` | 400 - Validation error (min 1) | 400 Bad Request - Lỗi Database: "violates check constraint 'check_students'" | FAIL | X-RT3, ST-03, R9 | |
-| 22 | TC-ENT-22 | RequiredTalents = 1 (min boundary) | requiredTalents=`1` | 200 - Tạo thành công | 400 Bad Request - Lỗi Database: "violates check constraint 'check_students'" | FAIL | V-RL1, V-NM1, V-DS1, B-RT2, ST-01, R1 | DB constraint: number_of_students >= 3, nên 1 có thể bị reject ở tầng DB |
-| 23 | TC-ENT-23 | RequiredTalents = 2 (min+) | requiredTalents=`2` | 200 - Tạo thành công | 400 Bad Request - Lỗi Database: "violates check constraint 'check_students'" | FAIL | V-RL1, B-RT3, ST-01, R1 | DB constraint: number_of_students >= 3, nên 2 có thể bị reject ở tầng DB |
-| 24 | TC-ENT-24 | StartDate = EndDate (cùng ngày) | startDate=`2027-03-01`, endDate=`2027-03-01` | 200 - Tạo thành công | 400 Bad Request - Lỗi Database: "violates check constraint 'check_dates'" | FAIL | V-RL1, V-SD2, B-DT1, ST-01, R1 | DB constraint: end_date > start_date (strict), nên bằng nhau có thể bị reject ở tầng DB |
+| 22 | TC-ENT-22 | RequiredTalents = 1 (min boundary) | requiredTalents=`1` | 200 - Tạo thành công | 200 ok - tạo thành công dự án (id 22) | PASS | V-RL1, V-NM1, V-DS1, B-RT2, ST-01, R1 |  |
+| 23 | TC-ENT-23 | RequiredTalents = 2 (min+) | requiredTalents=`2` | 200 - Tạo thành công | 200 OK - Tạo thành công dự án (id 23) | PASS | V-RL1, B-RT3, ST-01, R1 |  |
+| 24 | TC-ENT-24 | StartDate = EndDate (cùng ngày) | startDate=`2027-03-01`, endDate=`2027-03-01` | 200 - Tạo thành công | 200 OK- tạo thành công dự án | PASS | V-RL1, V-SD2, B-DT1, ST-01, R1 |  |
 | 25 | TC-ENT-25 | StartDate = EndDate - 1 ngày | startDate=`2027-02-28`, endDate=`2027-03-01` | 200 - Tạo thành công | 200 OK - Tạo thành công dự án (id=17) | PASS | V-RL1, B-DT2, ST-01, R1 | |
 | 26 | TC-ENT-26 | Budget = 0 | budget=`0` | 400 - Validation error (budget phải > 0) | 400 Bad Request - Lỗi Database: "violates check constraint 'check_budget'" | FAIL | V-RL1, X-BG3, B-BG1, ST-03 | SRS: budget > 0, code chưa có @Min, nhưng DB constraint: budget > 0 |
 | 27 | TC-ENT-27 | Budget = -1 (âm) | budget=`-1` | 400 - Validation error (budget phải > 0) | 400 Bad Request - Lỗi Database: "violates check constraint 'check_budget'" | FAIL | V-RL1, X-BG2, B-BG4, ST-03 | SRS: budget > 0, code chưa có @Min, nhưng DB constraint: budget > 0 |
@@ -75,7 +75,7 @@
 | V-NM1 | Name không rỗng | TC-ENT-01, 02, 22 | PASS |
 | V-DS1 | Description không rỗng | TC-ENT-01, 02, 22 | PASS |
 | V-SD1 | StartDate hợp lệ, trước endDate | TC-ENT-01, 02 | PASS |
-| V-SD2 | StartDate = EndDate (bằng nhau) | TC-ENT-24 | FAIL |
+| V-SD2 | StartDate = EndDate (bằng nhau) | TC-ENT-24 | PASS |
 | V-ED1 | EndDate hợp lệ, sau startDate | TC-ENT-01, 02 | PASS |
 | V-BG1 | Budget số dương | TC-ENT-01, 02 | PASS |
 | V-RT1 | RequiredTalents >= 1 | TC-ENT-01 | PASS |
@@ -114,14 +114,14 @@
 | Tag | Giá trị | Test bao phủ | Kết quả |
 |---|---|---|---|
 | B-RT1 | requiredTalents = 0 (min-) | TC-ENT-20 | FAIL |
-| B-RT2 | requiredTalents = 1 (min) | TC-ENT-22 | FAIL |
-| B-RT3 | requiredTalents = 2 (min+) | TC-ENT-23 | FAIL |
+| B-RT2 | requiredTalents = 1 (min) | TC-ENT-22 | PASS |
+| B-RT3 | requiredTalents = 2 (min+) | TC-ENT-23 | PASS |
 | B-RT4 | requiredTalents = 5 (nominal) | TC-ENT-02 | PASS |
 | B-BG1 | budget = 0 (zero) | TC-ENT-26 | FAIL |
 | B-BG2 | budget = 1 (min+) | TC-ENT-28 | PASS |
 | B-BG3 | budget = 10000000 (nominal) | TC-ENT-01 | PASS |
 | B-BG4 | budget = -1 (negative) | TC-ENT-27 | FAIL |
-| B-DT1 | startDate = endDate | TC-ENT-24 | FAIL |
+| B-DT1 | startDate = endDate | TC-ENT-24 | PASS |
 | B-DT2 | startDate = endDate - 1 ngày | TC-ENT-25 | PASS |
 | B-DT3 | startDate = endDate + 1 ngày | TC-ENT-16 | PASS |
 | B-DT4 | nominal (5 tháng) | TC-ENT-01 | PASS |
@@ -171,9 +171,6 @@
 | 11 | TC-ENT-19 | RequiredTalents null trả về DB error thô thay vì validation message 400 | Bug | Medium | Thiếu `@Valid` trong controller |
 | 12 | TC-ENT-20 | RequiredTalents=0 trả về DB constraint error thay vì validation error | Bug | Low | DB constraint `check_students (>= 3)` chặt hơn SRS — thiếu `@Min` annotation ở tầng code |
 | 13 | TC-ENT-21 | RequiredTalents=-1 trả về DB constraint error thay vì validation error | Bug | Low | Cùng root cause với TC-ENT-20 |
-| 14 | TC-ENT-22 | RequiredTalents=1 bị DB reject dù SRS quy định @Min(1) | Bug | Medium | DB constraint `number_of_students >= 3` không đồng bộ với SRS (`@Min(1)`) |
-| 15 | TC-ENT-23 | RequiredTalents=2 bị DB reject dù SRS quy định @Min(1) | Bug | Medium | Cùng root cause với TC-ENT-22 |
-| 16 | TC-ENT-24 | StartDate = EndDate bị DB reject dù SRS không cấm | Bug | Low | DB constraint `end_date > start_date` (strict) không đồng bộ với SRS |
-| 17 | TC-ENT-26 | Budget=0 trả về DB constraint error thay vì validation error | Bug | Low | Thiếu `@Min` annotation ở tầng code — DB constraint `budget > 0` bắt lỗi thay thế |
-| 18 | TC-ENT-27 | Budget=-1 trả về DB constraint error thay vì validation error | Bug | Low | Cùng root cause với TC-ENT-26 |
+| 14 | TC-ENT-26 | Budget=0 trả về DB constraint error thay vì validation error | Bug | Low | Thiếu `@Min` annotation ở tầng code — DB constraint `budget > 0` bắt lỗi thay thế |
+| 15 | TC-ENT-27 | Budget=-1 trả về DB constraint error thay vì validation error | Bug | Low | Cùng root cause với TC-ENT-26 |
 
