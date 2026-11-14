@@ -1,5 +1,4 @@
 package com.uth.labodc.service;
-
 import com.uth.labodc.dto.ApiResponse;
 import com.uth.labodc.dto.talent.*;
 import com.uth.labodc.model.entity.*;
@@ -26,6 +25,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TalentService {
     
+    private final UserRepository userRepository;
     private final TalentRepository talentRepository;
     private final TalentSkillRepository talentSkillRepository;
     private final TalentCertificationRepository talentCertificationRepository;
