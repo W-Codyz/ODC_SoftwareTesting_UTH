@@ -6,11 +6,11 @@
     "tests": 7,
     "pending": 0,
     "failedHooks": 0,
-    "start": "2026-11-13T10:45:52.423Z",
-    "end": "2026-11-13T10:46:30.748Z",
-    "duration": 38325
+    "start": "2026-11-14T04:15:33.312Z",
+    "end": "2026-11-14T04:16:11.197Z",
+    "duration": 37885
   },
-  "duration": 38354,
+  "duration": 37911,
   "tests": [
     {
       "opts": {
@@ -18,9 +18,9 @@
         "stepRetryPriority": 50
       },
       "tags": [],
-      "uid": "WXbwtNDPD61X5tXvX0oOWYQSmNQEQWF9r7aqm2KWl+",
+      "uid": "4tII9PRfdA4SYuqw5ptKfKXvUBZHWlQvQjSx8fox3A",
       "retries": -1,
-      "title": "TC-LP-01 - Đăng nhập Lab Admin và truy cập trang Quản lý Dự án",
+      "title": "TC-MR-01 - Dang nhap Mentor va truy cap trang Danh sach Bao cao",
       "state": "passed",
       "notes": [],
       "meta": {
@@ -29,10 +29,10 @@
         "windowSize": "1280x720"
       },
       "artifacts": [],
-      "duration": 3674,
+      "duration": 3863,
       "parent": {
-        "title": "FR-LAB-002 - Quản lý Dự án",
-        "file": "C:\\Hoctap\\kiem chung phan mem1\\ODC_SoftwareTesting_UTH\\e2e-tests\\lab-admin\\manage_project_test.js"
+        "title": "FR-MEN-004 - Nop Bao cao Mentor",
+        "file": "C:\\Hoctap\\kiem chung phan mem1\\ODC_SoftwareTesting_UTH\\e2e-tests\\mentor\\submit_report_test.js"
       },
       "steps": [
         {
@@ -42,8 +42,8 @@
             "/login"
           ],
           "status": "success",
-          "startTime": 1794566753101,
-          "endTime": 1794566754416,
+          "startTime": 1794629734631,
+          "endTime": 1794629735989,
           "parent": {}
         },
         {
@@ -51,11 +51,11 @@
           "title": "fillField",
           "args": [
             "Tên đăng nhập",
-            "admin@labodc.com"
+            "mentor.nguyenquang@uth.edu.vn"
           ],
           "status": "success",
-          "startTime": 1794566754417,
-          "endTime": 1794566755055,
+          "startTime": 1794629735991,
+          "endTime": 1794629736817,
           "parent": {}
         },
         {
@@ -66,8 +66,8 @@
             "123123"
           ],
           "status": "success",
-          "startTime": 1794566755056,
-          "endTime": 1794566755353,
+          "startTime": 1794629736818,
+          "endTime": 1794629737142,
           "parent": {}
         },
         {
@@ -77,8 +77,8 @@
             "Đăng nhập"
           ],
           "status": "success",
-          "startTime": 1794566755353,
-          "endTime": 1794566755501,
+          "startTime": 1794629737142,
+          "endTime": 1794629737296,
           "parent": {}
         },
         {
@@ -89,108 +89,97 @@
             "10"
           ],
           "status": "success",
-          "startTime": 1794566755501,
-          "endTime": 1794566755566,
+          "startTime": 1794629737296,
+          "endTime": 1794629737403,
           "parent": {}
         },
         {
           "opts": {},
           "title": "amOnPage",
           "args": [
-            "/admin/projects"
+            "/mentor/reports"
           ],
           "status": "success",
-          "startTime": 1794566755566,
-          "endTime": 1794566756624,
+          "startTime": 1794629737404,
+          "endTime": 1794629738326,
           "parent": {}
         },
         {
           "opts": {},
           "title": "waitForText",
           "args": [
-            "Quản lý Dự án",
+            "Báo cáo mentor",
             "10"
           ],
           "status": "success",
-          "startTime": 1794566756625,
-          "endTime": 1794566756631,
+          "startTime": 1794629738326,
+          "endTime": 1794629738333,
           "parent": {}
         },
         {
           "opts": {},
           "title": "see",
           "args": [
-            "Quản lý Dự án"
+            "Báo cáo mentor"
           ],
           "status": "success",
-          "startTime": 1794566756632,
-          "endTime": 1794566756635,
+          "startTime": 1794629738333,
+          "endTime": 1794629738338,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "see",
+          "args": [
+            "Danh sách báo cáo đã/đang nộp"
+          ],
+          "status": "success",
+          "startTime": 1794629738339,
+          "endTime": 1794629738341,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "see",
+          "args": [
+            "Nộp báo cáo"
+          ],
+          "status": "success",
+          "startTime": 1794629738342,
+          "endTime": 1794629738345,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "see",
+          "args": [
+            "Làm mới"
+          ],
+          "status": "success",
+          "startTime": 1794629738346,
+          "endTime": 1794629738348,
           "parent": {}
         },
         {
           "opts": {},
           "title": "seeElement",
           "args": [
-            "input[placeholder=\"Tìm kiếm theo tên dự án...\"]"
+            ".ant-table"
           ],
           "status": "success",
-          "startTime": 1794566756636,
-          "endTime": 1794566756641,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "see",
-          "args": [
-            "Dự án"
-          ],
-          "status": "success",
-          "startTime": 1794566756641,
-          "endTime": 1794566756644,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "see",
-          "args": [
-            "Doanh nghiệp"
-          ],
-          "status": "success",
-          "startTime": 1794566756644,
-          "endTime": 1794566756646,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "see",
-          "args": [
-            "Trạng thái"
-          ],
-          "status": "success",
-          "startTime": 1794566756646,
-          "endTime": 1794566756648,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "see",
-          "args": [
-            "Xác thực"
-          ],
-          "status": "success",
-          "startTime": 1794566756648,
-          "endTime": 1794566756650,
+          "startTime": 1794629738348,
+          "endTime": 1794629738352,
           "parent": {}
         },
         {
           "opts": {},
           "title": "saveScreenshot",
           "args": [
-            "TC-LP-01_Đăng nhập Lab Admin và truy cập trang Quản lý Dự án.png"
+            "TC-MR-01_Đăng nhập Mentor và truy cập trang Danh sách Báo cáo.png"
           ],
           "status": "success",
-          "startTime": 1794566756651,
-          "endTime": 1794566756761,
+          "startTime": 1794629738353,
+          "endTime": 1794629738483,
           "parent": {}
         }
       ]
@@ -201,9 +190,9 @@
         "stepRetryPriority": 50
       },
       "tags": [],
-      "uid": "uxDyAfvEs0PWRwnDe2N_Cp7v9vN0_m6Ejk43DRVE+X",
+      "uid": "RokoBg_QeuVb07xlgUC6LnvFittWkzrBqbabatuUzO",
       "retries": -1,
-      "title": "TC-LP-02 - Tìm kiếm dự án theo tên dự án",
+      "title": "TC-MR-02 - Chuyen sang trang Nop Bao cao moi tu trang Danh sach",
       "state": "passed",
       "notes": [],
       "meta": {
@@ -212,10 +201,10 @@
         "windowSize": "1280x720"
       },
       "artifacts": [],
-      "duration": 5167,
+      "duration": 3861,
       "parent": {
-        "title": "FR-LAB-002 - Quản lý Dự án",
-        "file": "C:\\Hoctap\\kiem chung phan mem1\\ODC_SoftwareTesting_UTH\\e2e-tests\\lab-admin\\manage_project_test.js"
+        "title": "FR-MEN-004 - Nop Bao cao Mentor",
+        "file": "C:\\Hoctap\\kiem chung phan mem1\\ODC_SoftwareTesting_UTH\\e2e-tests\\mentor\\submit_report_test.js"
       },
       "steps": [
         {
@@ -225,8 +214,8 @@
             "/login"
           ],
           "status": "success",
-          "startTime": 1794566757380,
-          "endTime": 1794566758708,
+          "startTime": 1794629739071,
+          "endTime": 1794629740355,
           "parent": {}
         },
         {
@@ -234,11 +223,11 @@
           "title": "fillField",
           "args": [
             "Tên đăng nhập",
-            "admin@labodc.com"
+            "mentor.nguyenquang@uth.edu.vn"
           ],
           "status": "success",
-          "startTime": 1794566758708,
-          "endTime": 1794566759298,
+          "startTime": 1794629740356,
+          "endTime": 1794629741163,
           "parent": {}
         },
         {
@@ -249,8 +238,8 @@
             "123123"
           ],
           "status": "success",
-          "startTime": 1794566759298,
-          "endTime": 1794566759608,
+          "startTime": 1794629741163,
+          "endTime": 1794629741428,
           "parent": {}
         },
         {
@@ -260,8 +249,8 @@
             "Đăng nhập"
           ],
           "status": "success",
-          "startTime": 1794566759608,
-          "endTime": 1794566759763,
+          "startTime": 1794629741429,
+          "endTime": 1794629741579,
           "parent": {}
         },
         {
@@ -272,43 +261,320 @@
             "10"
           ],
           "status": "success",
-          "startTime": 1794566759763,
-          "endTime": 1794566759828,
+          "startTime": 1794629741579,
+          "endTime": 1794629741651,
           "parent": {}
         },
         {
           "opts": {},
           "title": "amOnPage",
           "args": [
-            "/admin/projects"
+            "/mentor/reports"
           ],
           "status": "success",
-          "startTime": 1794566759828,
-          "endTime": 1794566760920,
+          "startTime": 1794629741651,
+          "endTime": 1794629742567,
           "parent": {}
         },
         {
           "opts": {},
           "title": "waitForText",
           "args": [
-            "Quản lý Dự án",
+            "Báo cáo mentor",
             "10"
           ],
           "status": "success",
-          "startTime": 1794566760921,
-          "endTime": 1794566760925,
+          "startTime": 1794629742568,
+          "endTime": 1794629742573,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "click",
+          "args": [
+            "Nộp báo cáo"
+          ],
+          "status": "success",
+          "startTime": 1794629742574,
+          "endTime": 1794629742707,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "waitInUrl",
+          "args": [
+            "/mentor/reports/new",
+            "10"
+          ],
+          "status": "success",
+          "startTime": 1794629742708,
+          "endTime": 1794629742774,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "waitForText",
+          "args": [
+            "Nộp báo cáo sinh viên",
+            "10"
+          ],
+          "status": "success",
+          "startTime": 1794629742774,
+          "endTime": 1794629742806,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "see",
+          "args": [
+            "Thông tin báo cáo"
+          ],
+          "status": "success",
+          "startTime": 1794629742807,
+          "endTime": 1794629742811,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "see",
+          "args": [
+            "Nội dung báo cáo"
+          ],
+          "status": "success",
+          "startTime": 1794629742811,
+          "endTime": 1794629742819,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "seeElement",
+          "args": [
+            "#projectId"
+          ],
+          "status": "success",
+          "startTime": 1794629742819,
+          "endTime": 1794629742824,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "seeElement",
+          "args": [
+            "#studentId"
+          ],
+          "status": "success",
+          "startTime": 1794629742825,
+          "endTime": 1794629742828,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "seeElement",
+          "args": [
+            "#student"
+          ],
+          "status": "success",
+          "startTime": 1794629742828,
+          "endTime": 1794629742832,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "seeElement",
+          "args": [
+            "#reportName"
+          ],
+          "status": "success",
+          "startTime": 1794629742833,
+          "endTime": 1794629742837,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "saveScreenshot",
+          "args": [
+            "TC-MR-02_Chuyển sang trang Nộp Báo cáo mới từ trang Danh sách.png"
+          ],
+          "status": "success",
+          "startTime": 1794629742837,
+          "endTime": 1794629742927,
+          "parent": {}
+        }
+      ]
+    },
+    {
+      "opts": {
+        "conditionalRetries": 3,
+        "stepRetryPriority": 50
+      },
+      "tags": [],
+      "uid": "dIBluCRwIKr+IyWWP6tkPw8HmVQfocb5HW6qKFduIA",
+      "retries": -1,
+      "title": "TC-MR-03 - Nop bao cao thanh cong day du thong tin (Nominal)",
+      "state": "passed",
+      "notes": [],
+      "meta": {
+        "browser": "chromium",
+        "browserVersion": "158.0.8127.18",
+        "windowSize": "1280x720"
+      },
+      "artifacts": [],
+      "duration": 7445,
+      "parent": {
+        "title": "FR-MEN-004 - Nop Bao cao Mentor",
+        "file": "C:\\Hoctap\\kiem chung phan mem1\\ODC_SoftwareTesting_UTH\\e2e-tests\\mentor\\submit_report_test.js"
+      },
+      "steps": [
+        {
+          "opts": {},
+          "title": "amOnPage",
+          "args": [
+            "/login"
+          ],
+          "status": "success",
+          "startTime": 1794629743577,
+          "endTime": 1794629744848,
           "parent": {}
         },
         {
           "opts": {},
           "title": "fillField",
           "args": [
-            "input[placeholder=\"Tìm kiếm theo tên dự án...\"]",
-            "Website"
+            "Tên đăng nhập",
+            "mentor.nguyenquang@uth.edu.vn"
           ],
           "status": "success",
-          "startTime": 1794566760925,
-          "endTime": 1794566761322,
+          "startTime": 1794629744849,
+          "endTime": 1794629745738,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "fillField",
+          "args": [
+            "Mật khẩu",
+            "123123"
+          ],
+          "status": "success",
+          "startTime": 1794629745738,
+          "endTime": 1794629746049,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "click",
+          "args": [
+            "Đăng nhập"
+          ],
+          "status": "success",
+          "startTime": 1794629746049,
+          "endTime": 1794629746190,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "waitForText",
+          "args": [
+            "Đăng nhập thành công!",
+            "10"
+          ],
+          "status": "success",
+          "startTime": 1794629746190,
+          "endTime": 1794629746279,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "amOnPage",
+          "args": [
+            "/mentor/reports/new"
+          ],
+          "status": "success",
+          "startTime": 1794629746279,
+          "endTime": 1794629747297,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "waitForText",
+          "args": [
+            "Nộp báo cáo sinh viên",
+            "10"
+          ],
+          "status": "success",
+          "startTime": 1794629747298,
+          "endTime": 1794629747301,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "fillField",
+          "args": [
+            "#projectId",
+            "4"
+          ],
+          "status": "success",
+          "startTime": 1794629747302,
+          "endTime": 1794629747470,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "fillField",
+          "args": [
+            "#studentId",
+            "SV001"
+          ],
+          "status": "success",
+          "startTime": 1794629747471,
+          "endTime": 1794629747737,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "fillField",
+          "args": [
+            "#student",
+            "Nguyen Van A"
+          ],
+          "status": "success",
+          "startTime": 1794629747737,
+          "endTime": 1794629748158,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "fillField",
+          "args": [
+            "#reportName",
+            "Báo cáo tiến độ tuần 1"
+          ],
+          "status": "success",
+          "startTime": 1794629748159,
+          "endTime": 1794629748845,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "click",
+          "args": [
+            "#dueDate"
+          ],
+          "status": "success",
+          "startTime": 1794629748846,
+          "endTime": 1794629749016,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "fillField",
+          "args": [
+            "#dueDate",
+            "31/12/2026"
+          ],
+          "status": "success",
+          "startTime": 1794629749017,
+          "endTime": 1794629749421,
           "parent": {}
         },
         {
@@ -318,41 +584,65 @@
             "Enter"
           ],
           "status": "success",
-          "startTime": 1794566761322,
-          "endTime": 1794566761431,
+          "startTime": 1794629749422,
+          "endTime": 1794629749546,
           "parent": {}
         },
         {
           "opts": {},
-          "title": "wait",
+          "title": "fillField",
           "args": [
-            "1"
+            "#summary",
+            "Sinh viên hoàn thành tốt công việc tuần 1, đúng tiến độ."
           ],
           "status": "success",
-          "startTime": 1794566761431,
-          "endTime": 1794566762437,
+          "startTime": 1794629749546,
+          "endTime": 1794629750746,
           "parent": {}
         },
         {
           "opts": {},
-          "title": "seeElement",
+          "title": "click",
           "args": [
-            ".ant-table"
+            "Gửi báo cáo"
           ],
           "status": "success",
-          "startTime": 1794566762437,
-          "endTime": 1794566762441,
+          "startTime": 1794629750747,
+          "endTime": 1794629750917,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "waitForText",
+          "args": [
+            "Đã gửi báo cáo thành công!",
+            "10"
+          ],
+          "status": "success",
+          "startTime": 1794629750918,
+          "endTime": 1794629750930,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "see",
+          "args": [
+            "Đã gửi báo cáo thành công!"
+          ],
+          "status": "success",
+          "startTime": 1794629750931,
+          "endTime": 1794629750933,
           "parent": {}
         },
         {
           "opts": {},
           "title": "saveScreenshot",
           "args": [
-            "TC-LP-02_Tìm kiếm dự án theo tên dự án.png"
+            "TC-MR-03_Nộp báo cáo thành công đầy đủ thông tin (Nominal).png"
           ],
           "status": "success",
-          "startTime": 1794566762441,
-          "endTime": 1794566762541,
+          "startTime": 1794629750933,
+          "endTime": 1794629751016,
           "parent": {}
         }
       ]
@@ -363,9 +653,9 @@
         "stepRetryPriority": 50
       },
       "tags": [],
-      "uid": "fUb6wiXhHPXTUQ9JjVsNONevJuwow+YEsO0bXIKef1",
+      "uid": "ftZf4M3bQU3YZw1zUwNQfjM0pHzUBWAGGV3v5Zs7Uj",
       "retries": -1,
-      "title": "TC-LP-03 - Lọc dự án theo trạng thái xác thực (Chờ duyệt)",
+      "title": "TC-MR-04 - Validate bat buoc khi de trong cac truong",
       "state": "passed",
       "notes": [],
       "meta": {
@@ -374,10 +664,10 @@
         "windowSize": "1280x720"
       },
       "artifacts": [],
-      "duration": 6041,
+      "duration": 4886,
       "parent": {
-        "title": "FR-LAB-002 - Quản lý Dự án",
-        "file": "C:\\Hoctap\\kiem chung phan mem1\\ODC_SoftwareTesting_UTH\\e2e-tests\\lab-admin\\manage_project_test.js"
+        "title": "FR-MEN-004 - Nop Bao cao Mentor",
+        "file": "C:\\Hoctap\\kiem chung phan mem1\\ODC_SoftwareTesting_UTH\\e2e-tests\\mentor\\submit_report_test.js"
       },
       "steps": [
         {
@@ -387,8 +677,8 @@
             "/login"
           ],
           "status": "success",
-          "startTime": 1794566763114,
-          "endTime": 1794566764476,
+          "startTime": 1794629751639,
+          "endTime": 1794629752937,
           "parent": {}
         },
         {
@@ -396,11 +686,11 @@
           "title": "fillField",
           "args": [
             "Tên đăng nhập",
-            "admin@labodc.com"
+            "mentor.nguyenquang@uth.edu.vn"
           ],
           "status": "success",
-          "startTime": 1794566764477,
-          "endTime": 1794566765072,
+          "startTime": 1794629752938,
+          "endTime": 1794629753686,
           "parent": {}
         },
         {
@@ -411,8 +701,8 @@
             "123123"
           ],
           "status": "success",
-          "startTime": 1794566765073,
-          "endTime": 1794566765367,
+          "startTime": 1794629753687,
+          "endTime": 1794629753952,
           "parent": {}
         },
         {
@@ -422,8 +712,8 @@
             "Đăng nhập"
           ],
           "status": "success",
-          "startTime": 1794566765368,
-          "endTime": 1794566765519,
+          "startTime": 1794629753953,
+          "endTime": 1794629754101,
           "parent": {}
         },
         {
@@ -434,42 +724,42 @@
             "10"
           ],
           "status": "success",
-          "startTime": 1794566765519,
-          "endTime": 1794566765589,
+          "startTime": 1794629754101,
+          "endTime": 1794629754170,
           "parent": {}
         },
         {
           "opts": {},
           "title": "amOnPage",
           "args": [
-            "/admin/projects"
+            "/mentor/reports/new"
           ],
           "status": "success",
-          "startTime": 1794566765589,
-          "endTime": 1794566766678,
+          "startTime": 1794629754171,
+          "endTime": 1794629755216,
           "parent": {}
         },
         {
           "opts": {},
           "title": "waitForText",
           "args": [
-            "Quản lý Dự án",
+            "Nộp báo cáo sinh viên",
             "10"
           ],
           "status": "success",
-          "startTime": 1794566766679,
-          "endTime": 1794566766683,
+          "startTime": 1794629755216,
+          "endTime": 1794629755221,
           "parent": {}
         },
         {
           "opts": {},
           "title": "click",
           "args": [
-            ".ant-select:nth-of-type(2)"
+            "Gửi báo cáo"
           ],
           "status": "success",
-          "startTime": 1794566766683,
-          "endTime": 1794566766835,
+          "startTime": 1794629755221,
+          "endTime": 1794629755388,
           "parent": {}
         },
         {
@@ -479,52 +769,74 @@
             "1"
           ],
           "status": "success",
-          "startTime": 1794566766835,
-          "endTime": 1794566767848,
+          "startTime": 1794629755388,
+          "endTime": 1794629756399,
           "parent": {}
         },
         {
           "opts": {},
-          "title": "click",
+          "title": "see",
           "args": [
-            "Chờ duyệt"
+            "Vui lòng nhập mã dự án"
           ],
           "status": "success",
-          "startTime": 1794566767848,
-          "endTime": 1794566768033,
+          "startTime": 1794629756400,
+          "endTime": 1794629756405,
           "parent": {}
         },
         {
           "opts": {},
-          "title": "wait",
+          "title": "see",
           "args": [
-            "1"
+            "Vui lòng nhập MSSV"
           ],
           "status": "success",
-          "startTime": 1794566768034,
-          "endTime": 1794566769046,
+          "startTime": 1794629756405,
+          "endTime": 1794629756408,
           "parent": {}
         },
         {
           "opts": {},
-          "title": "seeElement",
+          "title": "see",
           "args": [
-            ".ant-table"
+            "Vui lòng nhập tên sinh viên"
           ],
           "status": "success",
-          "startTime": 1794566769046,
-          "endTime": 1794566769051,
+          "startTime": 1794629756408,
+          "endTime": 1794629756410,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "see",
+          "args": [
+            "Vui lòng nhập tên báo cáo"
+          ],
+          "status": "success",
+          "startTime": 1794629756410,
+          "endTime": 1794629756412,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "see",
+          "args": [
+            "Vui lòng chọn hạn nộp"
+          ],
+          "status": "success",
+          "startTime": 1794629756412,
+          "endTime": 1794629756414,
           "parent": {}
         },
         {
           "opts": {},
           "title": "saveScreenshot",
           "args": [
-            "TC-LP-03_Lọc dự án theo trạng thái xác thực (Chờ duyệt).png"
+            "TC-MR-04_Validate bắt buộc khi để trống các trường.png"
           ],
           "status": "success",
-          "startTime": 1794566769051,
-          "endTime": 1794566769150,
+          "startTime": 1794629756414,
+          "endTime": 1794629756520,
           "parent": {}
         }
       ]
@@ -535,9 +847,9 @@
         "stepRetryPriority": 50
       },
       "tags": [],
-      "uid": "+xft3qM5xbA9We6lpNg3LXBxtuQ24kTG9kNsyILPS6",
+      "uid": "pvrSlr449ZtyXNtgqxBemmlGFP8+loqAEwt8jb6ahR",
       "retries": -1,
-      "title": "TC-LP-04 - Lọc dự án theo trạng thái xác thực (Đã duyệt)",
+      "title": "TC-MR-05 - Chon trang thai bao cao tu dropdown",
       "state": "passed",
       "notes": [],
       "meta": {
@@ -546,10 +858,10 @@
         "windowSize": "1280x720"
       },
       "artifacts": [],
-      "duration": 5927,
+      "duration": 6176,
       "parent": {
-        "title": "FR-LAB-002 - Quản lý Dự án",
-        "file": "C:\\Hoctap\\kiem chung phan mem1\\ODC_SoftwareTesting_UTH\\e2e-tests\\lab-admin\\manage_project_test.js"
+        "title": "FR-MEN-004 - Nop Bao cao Mentor",
+        "file": "C:\\Hoctap\\kiem chung phan mem1\\ODC_SoftwareTesting_UTH\\e2e-tests\\mentor\\submit_report_test.js"
       },
       "steps": [
         {
@@ -559,8 +871,8 @@
             "/login"
           ],
           "status": "success",
-          "startTime": 1794566769692,
-          "endTime": 1794566770998,
+          "startTime": 1794629757221,
+          "endTime": 1794629758529,
           "parent": {}
         },
         {
@@ -568,11 +880,11 @@
           "title": "fillField",
           "args": [
             "Tên đăng nhập",
-            "admin@labodc.com"
+            "mentor.nguyenquang@uth.edu.vn"
           ],
           "status": "success",
-          "startTime": 1794566770998,
-          "endTime": 1794566771596,
+          "startTime": 1794629758529,
+          "endTime": 1794629759405,
           "parent": {}
         },
         {
@@ -583,8 +895,8 @@
             "123123"
           ],
           "status": "success",
-          "startTime": 1794566771596,
-          "endTime": 1794566771858,
+          "startTime": 1794629759406,
+          "endTime": 1794629759685,
           "parent": {}
         },
         {
@@ -594,8 +906,8 @@
             "Đăng nhập"
           ],
           "status": "success",
-          "startTime": 1794566771858,
-          "endTime": 1794566772005,
+          "startTime": 1794629759686,
+          "endTime": 1794629759831,
           "parent": {}
         },
         {
@@ -606,42 +918,42 @@
             "10"
           ],
           "status": "success",
-          "startTime": 1794566772005,
-          "endTime": 1794566772070,
+          "startTime": 1794629759831,
+          "endTime": 1794629759909,
           "parent": {}
         },
         {
           "opts": {},
           "title": "amOnPage",
           "args": [
-            "/admin/projects"
+            "/mentor/reports/new"
           ],
           "status": "success",
-          "startTime": 1794566772071,
-          "endTime": 1794566773137,
+          "startTime": 1794629759909,
+          "endTime": 1794629760949,
           "parent": {}
         },
         {
           "opts": {},
           "title": "waitForText",
           "args": [
-            "Quản lý Dự án",
+            "Nộp báo cáo sinh viên",
             "10"
           ],
           "status": "success",
-          "startTime": 1794566773138,
-          "endTime": 1794566773144,
+          "startTime": 1794629760950,
+          "endTime": 1794629760955,
           "parent": {}
         },
         {
           "opts": {},
           "title": "click",
           "args": [
-            ".ant-select:nth-of-type(2)"
+            ".ant-select"
           ],
           "status": "success",
-          "startTime": 1794566773145,
-          "endTime": 1794566773279,
+          "startTime": 1794629760955,
+          "endTime": 1794629761089,
           "parent": {}
         },
         {
@@ -651,19 +963,19 @@
             "1"
           ],
           "status": "success",
-          "startTime": 1794566773280,
-          "endTime": 1794566774293,
+          "startTime": 1794629761089,
+          "endTime": 1794629762103,
           "parent": {}
         },
         {
           "opts": {},
           "title": "click",
           "args": [
-            "Đã duyệt"
+            "Nộp trễ"
           ],
           "status": "success",
-          "startTime": 1794566774294,
-          "endTime": 1794566774481,
+          "startTime": 1794629762104,
+          "endTime": 1794629762262,
           "parent": {}
         },
         {
@@ -673,30 +985,30 @@
             "1"
           ],
           "status": "success",
-          "startTime": 1794566774481,
-          "endTime": 1794566775496,
+          "startTime": 1794629762262,
+          "endTime": 1794629763274,
           "parent": {}
         },
         {
           "opts": {},
-          "title": "seeElement",
+          "title": "see",
           "args": [
-            ".ant-table"
+            "Nộp trễ"
           ],
           "status": "success",
-          "startTime": 1794566775497,
-          "endTime": 1794566775507,
+          "startTime": 1794629763274,
+          "endTime": 1794629763277,
           "parent": {}
         },
         {
           "opts": {},
           "title": "saveScreenshot",
           "args": [
-            "TC-LP-04_Lọc dự án theo trạng thái xác thực (Đã duyệt).png"
+            "TC-MR-05_Chọn trạng thái báo cáo từ dropdown.png"
           ],
           "status": "success",
-          "startTime": 1794566775507,
-          "endTime": 1794566775616,
+          "startTime": 1794629763277,
+          "endTime": 1794629763389,
           "parent": {}
         }
       ]
@@ -707,9 +1019,9 @@
         "stepRetryPriority": 50
       },
       "tags": [],
-      "uid": "AzMBr6cURE4eAyQ8M8FXMkZOtWg3A+7lEaWfOdW8TG",
+      "uid": "6EG3qk1UHv4A0E9rikHkyFXzxjuSbcbj1WMn0jc6Rs",
       "retries": -1,
-      "title": "TC-LP-05 - Mở modal chỉnh sửa dự án",
+      "title": "TC-MR-06 - Xem bang bao cao da nop va lam moi du lieu",
       "state": "passed",
       "notes": [],
       "meta": {
@@ -718,10 +1030,10 @@
         "windowSize": "1280x720"
       },
       "artifacts": [],
-      "duration": 5212,
+      "duration": 5106,
       "parent": {
-        "title": "FR-LAB-002 - Quản lý Dự án",
-        "file": "C:\\Hoctap\\kiem chung phan mem1\\ODC_SoftwareTesting_UTH\\e2e-tests\\lab-admin\\manage_project_test.js"
+        "title": "FR-MEN-004 - Nop Bao cao Mentor",
+        "file": "C:\\Hoctap\\kiem chung phan mem1\\ODC_SoftwareTesting_UTH\\e2e-tests\\mentor\\submit_report_test.js"
       },
       "steps": [
         {
@@ -731,8 +1043,8 @@
             "/login"
           ],
           "status": "success",
-          "startTime": 1794566776196,
-          "endTime": 1794566777475,
+          "startTime": 1794629763944,
+          "endTime": 1794629765322,
           "parent": {}
         },
         {
@@ -740,11 +1052,11 @@
           "title": "fillField",
           "args": [
             "Tên đăng nhập",
-            "admin@labodc.com"
+            "mentor.nguyenquang@uth.edu.vn"
           ],
           "status": "success",
-          "startTime": 1794566777476,
-          "endTime": 1794566778037,
+          "startTime": 1794629765323,
+          "endTime": 1794629766209,
           "parent": {}
         },
         {
@@ -755,8 +1067,8 @@
             "123123"
           ],
           "status": "success",
-          "startTime": 1794566778037,
-          "endTime": 1794566778301,
+          "startTime": 1794629766209,
+          "endTime": 1794629766476,
           "parent": {}
         },
         {
@@ -766,8 +1078,8 @@
             "Đăng nhập"
           ],
           "status": "success",
-          "startTime": 1794566778302,
-          "endTime": 1794566778457,
+          "startTime": 1794629766477,
+          "endTime": 1794629766624,
           "parent": {}
         },
         {
@@ -778,110 +1090,64 @@
             "10"
           ],
           "status": "success",
-          "startTime": 1794566778458,
-          "endTime": 1794566778542,
+          "startTime": 1794629766624,
+          "endTime": 1794629766705,
           "parent": {}
         },
         {
           "opts": {},
           "title": "amOnPage",
           "args": [
-            "/admin/projects"
+            "/mentor/reports/new"
           ],
           "status": "success",
-          "startTime": 1794566778542,
-          "endTime": 1794566779614,
+          "startTime": 1794629766706,
+          "endTime": 1794629767753,
           "parent": {}
         },
         {
           "opts": {},
           "title": "waitForText",
           "args": [
-            "Quản lý Dự án",
+            "Nộp báo cáo sinh viên",
             "10"
           ],
           "status": "success",
-          "startTime": 1794566779615,
-          "endTime": 1794566779623,
+          "startTime": 1794629767755,
+          "endTime": 1794629767760,
           "parent": {}
         },
         {
           "opts": {},
-          "title": "waitForElement",
+          "title": "see",
           "args": [
-            ".ant-table-row",
-            "10"
+            "Báo cáo đã nộp (đồng bộ database)"
           ],
           "status": "success",
-          "startTime": 1794566779623,
-          "endTime": 1794566779629,
+          "startTime": 1794629767760,
+          "endTime": 1794629767763,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "seeElement",
+          "args": [
+            ".ant-table"
+          ],
+          "status": "success",
+          "startTime": 1794629767763,
+          "endTime": 1794629767765,
           "parent": {}
         },
         {
           "opts": {},
           "title": "click",
           "args": [
-            ".ant-table-tbody .ant-btn"
+            "Làm mới"
           ],
           "status": "success",
-          "startTime": 1794566779630,
-          "endTime": 1794566779896,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "waitForText",
-          "args": [
-            "Chỉnh sửa Dự án",
-            "5"
-          ],
-          "status": "success",
-          "startTime": 1794566779897,
-          "endTime": 1794566779904,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "see",
-          "args": [
-            "Tên dự án"
-          ],
-          "status": "success",
-          "startTime": 1794566779904,
-          "endTime": 1794566779909,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "see",
-          "args": [
-            "Mô tả"
-          ],
-          "status": "success",
-          "startTime": 1794566779909,
-          "endTime": 1794566779912,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "see",
-          "args": [
-            "Ngân sách"
-          ],
-          "status": "success",
-          "startTime": 1794566779913,
-          "endTime": 1794566779916,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "click",
-          "args": [
-            "Hủy"
-          ],
-          "status": "success",
-          "startTime": 1794566779917,
-          "endTime": 1794566780270,
+          "startTime": 1794629767766,
+          "endTime": 1794629767925,
           "parent": {}
         },
         {
@@ -891,30 +1157,30 @@
             "1"
           ],
           "status": "success",
-          "startTime": 1794566780270,
-          "endTime": 1794566781285,
+          "startTime": 1794629767925,
+          "endTime": 1794629768936,
           "parent": {}
         },
         {
           "opts": {},
-          "title": "dontSee",
+          "title": "seeElement",
           "args": [
-            "Chỉnh sửa Dự án"
+            ".ant-table"
           ],
           "status": "success",
-          "startTime": 1794566781285,
-          "endTime": 1794566781289,
+          "startTime": 1794629768936,
+          "endTime": 1794629768940,
           "parent": {}
         },
         {
           "opts": {},
           "title": "saveScreenshot",
           "args": [
-            "TC-LP-05_Mở modal chỉnh sửa dự án.png"
+            "TC-MR-06_Xem bảng báo cáo đã nộp và làm mới dữ liệu.png"
           ],
           "status": "success",
-          "startTime": 1794566781289,
-          "endTime": 1794566781404,
+          "startTime": 1794629768940,
+          "endTime": 1794629769046,
           "parent": {}
         }
       ]
@@ -925,9 +1191,9 @@
         "stepRetryPriority": 50
       },
       "tags": [],
-      "uid": "GuDoypQoEwKJ39NTLGRfES_n5HQY9OzOZ4aEu3VuC_",
+      "uid": "axuWEOXWk5F_DnjF6MgOUqmDh97jHJU1DvRpFYkn9G",
       "retries": -1,
-      "title": "TC-LP-06 - Truy cập trang Xác thực Dự án và duyệt qua các Tab",
+      "title": "TC-MR-07 - Chan truy cap trai phep khi chua dang nhap",
       "state": "passed",
       "notes": [],
       "meta": {
@@ -936,259 +1202,21 @@
         "windowSize": "1280x720"
       },
       "artifacts": [],
-      "duration": 6501,
+      "duration": 1492,
       "parent": {
-        "title": "FR-LAB-002 - Quản lý Dự án",
-        "file": "C:\\Hoctap\\kiem chung phan mem1\\ODC_SoftwareTesting_UTH\\e2e-tests\\lab-admin\\manage_project_test.js"
+        "title": "FR-MEN-004 - Nop Bao cao Mentor",
+        "file": "C:\\Hoctap\\kiem chung phan mem1\\ODC_SoftwareTesting_UTH\\e2e-tests\\mentor\\submit_report_test.js"
       },
       "steps": [
         {
           "opts": {},
           "title": "amOnPage",
           "args": [
-            "/login"
+            "/mentor/reports"
           ],
           "status": "success",
-          "startTime": 1794566782009,
-          "endTime": 1794566783313,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "fillField",
-          "args": [
-            "Tên đăng nhập",
-            "admin@labodc.com"
-          ],
-          "status": "success",
-          "startTime": 1794566783314,
-          "endTime": 1794566783890,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "fillField",
-          "args": [
-            "Mật khẩu",
-            "123123"
-          ],
-          "status": "success",
-          "startTime": 1794566783891,
-          "endTime": 1794566784171,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "click",
-          "args": [
-            "Đăng nhập"
-          ],
-          "status": "success",
-          "startTime": 1794566784172,
-          "endTime": 1794566784323,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "waitForText",
-          "args": [
-            "Đăng nhập thành công!",
-            "10"
-          ],
-          "status": "success",
-          "startTime": 1794566784323,
-          "endTime": 1794566784396,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "amOnPage",
-          "args": [
-            "/admin/projects/validate"
-          ],
-          "status": "success",
-          "startTime": 1794566784396,
-          "endTime": 1794566785962,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "waitForText",
-          "args": [
-            "Xác thực Dự án",
-            "10"
-          ],
-          "status": "success",
-          "startTime": 1794566785963,
-          "endTime": 1794566785969,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "see",
-          "args": [
-            "Xác thực Dự án"
-          ],
-          "status": "success",
-          "startTime": 1794566785969,
-          "endTime": 1794566785972,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "see",
-          "args": [
-            "Chờ xác thực"
-          ],
-          "status": "success",
-          "startTime": 1794566785973,
-          "endTime": 1794566785976,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "see",
-          "args": [
-            "Đã phê duyệt"
-          ],
-          "status": "success",
-          "startTime": 1794566785976,
-          "endTime": 1794566785981,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "see",
-          "args": [
-            "Đã từ chối"
-          ],
-          "status": "success",
-          "startTime": 1794566785982,
-          "endTime": 1794566785985,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "see",
-          "args": [
-            "Đang tuyển"
-          ],
-          "status": "success",
-          "startTime": 1794566785985,
-          "endTime": 1794566785987,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "click",
-          "args": [
-            "Đã phê duyệt"
-          ],
-          "status": "success",
-          "startTime": 1794566785987,
-          "endTime": 1794566786178,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "wait",
-          "args": [
-            "1"
-          ],
-          "status": "success",
-          "startTime": 1794566786178,
-          "endTime": 1794566787181,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "seeElement",
-          "args": [
-            ".ant-table"
-          ],
-          "status": "success",
-          "startTime": 1794566787181,
-          "endTime": 1794566787184,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "click",
-          "args": [
-            "Đã từ chối"
-          ],
-          "status": "success",
-          "startTime": 1794566787184,
-          "endTime": 1794566787353,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "wait",
-          "args": [
-            "1"
-          ],
-          "status": "success",
-          "startTime": 1794566787354,
-          "endTime": 1794566788368,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "seeElement",
-          "args": [
-            ".ant-table"
-          ],
-          "status": "success",
-          "startTime": 1794566788368,
-          "endTime": 1794566788374,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "saveScreenshot",
-          "args": [
-            "TC-LP-06_Truy cập trang Xác thực Dự án và duyệt qua các Tab.png"
-          ],
-          "status": "success",
-          "startTime": 1794566788375,
-          "endTime": 1794566788505,
-          "parent": {}
-        }
-      ]
-    },
-    {
-      "opts": {
-        "conditionalRetries": 3,
-        "stepRetryPriority": 50
-      },
-      "tags": [],
-      "uid": "VlOWbI4cvOD6FyGVDCXMn9RwO7a9cAKgfNlL6bAwJX",
-      "retries": -1,
-      "title": "TC-LP-07 - Chặn truy cập trái phép khi chưa đăng nhập",
-      "state": "passed",
-      "notes": [],
-      "meta": {
-        "browser": "chromium",
-        "browserVersion": "158.0.8127.18",
-        "windowSize": "1280x720"
-      },
-      "artifacts": [],
-      "duration": 1497,
-      "parent": {
-        "title": "FR-LAB-002 - Quản lý Dự án",
-        "file": "C:\\Hoctap\\kiem chung phan mem1\\ODC_SoftwareTesting_UTH\\e2e-tests\\lab-admin\\manage_project_test.js"
-      },
-      "steps": [
-        {
-          "opts": {},
-          "title": "amOnPage",
-          "args": [
-            "/admin/projects"
-          ],
-          "status": "success",
-          "startTime": 1794566789138,
-          "endTime": 1794566790431,
+          "startTime": 1794629769597,
+          "endTime": 1794629770921,
           "parent": {}
         },
         {
@@ -1199,8 +1227,8 @@
             "10"
           ],
           "status": "success",
-          "startTime": 1794566790432,
-          "endTime": 1794566790438,
+          "startTime": 1794629770921,
+          "endTime": 1794629770924,
           "parent": {}
         },
         {
@@ -1210,8 +1238,8 @@
             "Đăng nhập"
           ],
           "status": "success",
-          "startTime": 1794566790438,
-          "endTime": 1794566790445,
+          "startTime": 1794629770924,
+          "endTime": 1794629770927,
           "parent": {}
         },
         {
@@ -1221,19 +1249,19 @@
             "input[placeholder=\"Tên đăng nhập\"]"
           ],
           "status": "success",
-          "startTime": 1794566790445,
-          "endTime": 1794566790452,
+          "startTime": 1794629770927,
+          "endTime": 1794629770931,
           "parent": {}
         },
         {
           "opts": {},
           "title": "saveScreenshot",
           "args": [
-            "TC-LP-07_Chặn truy cập trái phép khi chưa đăng nhập.png"
+            "TC-MR-07_Chặn truy cập trái phép khi chưa đăng nhập.png"
           ],
           "status": "success",
-          "startTime": 1794566790453,
-          "endTime": 1794566790632,
+          "startTime": 1794629770931,
+          "endTime": 1794629771086,
           "parent": {}
         }
       ]
