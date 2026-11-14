@@ -129,7 +129,7 @@
         },
         {
           "opts": {},
-          "title": "see",
+          "title": "amOnPage",
           "args": [
             "Đăng ký thành công! Vui lòng chờ xác thực."
           ],
@@ -165,7 +165,7 @@
       "steps": [
         {
           "opts": {},
-          "title": "amOnPage",
+          "title": "waitForText",
           "args": [
             "/register"
           ],
@@ -176,7 +176,7 @@
         },
         {
           "opts": {},
-          "title": "fillField",
+          "title": "see",
           "args": [
             "Email",
             "newcompany@example.com"
@@ -188,7 +188,7 @@
         },
         {
           "opts": {},
-          "title": "fillField",
+          "title": "see",
           "args": [
             "Mật khẩu",
             "SecurePass123!"
@@ -234,7 +234,7 @@
         },
         {
           "opts": {},
-          "title": "click",
+          "title": "see",
           "args": [
             "Đăng ký"
           ],
@@ -245,7 +245,7 @@
         },
         {
           "opts": {},
-          "title": "waitForText",
+          "title": "see",
           "args": [
             "Đăng ký thành công!",
             "5"
@@ -257,7 +257,18 @@
         },
         {
           "opts": {},
-          "title": "see",
+          "title": "seeElement",
+          "args": [
+            ".ant-table"
+          ],
+          "status": "success",
+          "startTime": 1794629738348,
+          "endTime": 1794629738352,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "saveScreenshot",
           "args": [
             "Đăng ký thành công! Vui lòng chờ xác thực."
           ],
@@ -373,7 +384,7 @@
         },
         {
           "opts": {},
-          "title": "see",
+          "title": "amOnPage",
           "args": [
             "Vui lòng nhập email!"
           ],
@@ -409,7 +420,7 @@
       "steps": [
         {
           "opts": {},
-          "title": "amOnPage",
+          "title": "waitForText",
           "args": [
             "/register"
           ],
@@ -432,7 +443,7 @@
         },
         {
           "opts": {},
-          "title": "fillField",
+          "title": "click",
           "args": [
             "Mật khẩu",
             "SecurePass123!"
@@ -478,7 +489,7 @@
         },
         {
           "opts": {},
-          "title": "click",
+          "title": "waitInUrl",
           "args": [
             "Đăng ký"
           ],
@@ -537,7 +548,7 @@
       "steps": [
         {
           "opts": {},
-          "title": "amOnPage",
+          "title": "see",
           "args": [
             "/register"
           ],
@@ -548,7 +559,7 @@
         },
         {
           "opts": {},
-          "title": "fillField",
+          "title": "seeElement",
           "args": [
             "Email",
             "newtalentuth.edu.vn"
@@ -560,7 +571,7 @@
         },
         {
           "opts": {},
-          "title": "fillField",
+          "title": "seeElement",
           "args": [
             "Mật khẩu",
             "SecurePass123!"
@@ -606,7 +617,7 @@
         },
         {
           "opts": {},
-          "title": "click",
+          "title": "seeElement",
           "args": [
             "Đăng ký"
           ],
@@ -617,7 +628,7 @@
         },
         {
           "opts": {},
-          "title": "waitForText",
+          "title": "seeElement",
           "args": [
             "Email không hợp lệ!",
             "5"
@@ -629,7 +640,7 @@
         },
         {
           "opts": {},
-          "title": "see",
+          "title": "saveScreenshot",
           "args": [
             "Email không hợp lệ!"
           ],
@@ -757,7 +768,7 @@
         },
         {
           "opts": {},
-          "title": "see",
+          "title": "amOnPage",
           "args": [
             "Email không hợp lệ!"
           ],
@@ -793,7 +804,7 @@
       "steps": [
         {
           "opts": {},
-          "title": "amOnPage",
+          "title": "waitForText",
           "args": [
             "/register"
           ],
@@ -862,7 +873,7 @@
         },
         {
           "opts": {},
-          "title": "click",
+          "title": "fillField",
           "args": [
             "Đăng ký"
           ],
@@ -873,7 +884,7 @@
         },
         {
           "opts": {},
-          "title": "waitForText",
+          "title": "fillField",
           "args": [
             "Email already registered",
             "5"
@@ -885,7 +896,7 @@
         },
         {
           "opts": {},
-          "title": "see",
+          "title": "click",
           "args": [
             "Email already registered"
           ],
@@ -921,7 +932,7 @@
       "steps": [
         {
           "opts": {},
-          "title": "amOnPage",
+          "title": "fillField",
           "args": [
             "/register"
           ],
@@ -991,8 +1002,8 @@
           "opts": {},
           "title": "waitForText",
           "args": [
-            "Vui lòng nhập mật khẩu!",
-            "5"
+            "Đã gửi báo cáo thành công!",
+            "10"
           ],
           "status": "success",
           "startTime": 1794479163775,
@@ -1003,7 +1014,18 @@
           "opts": {},
           "title": "see",
           "args": [
-            "Vui lòng nhập mật khẩu!"
+            "Đã gửi báo cáo thành công!"
+          ],
+          "status": "success",
+          "startTime": 1794629750931,
+          "endTime": 1794629750933,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "saveScreenshot",
+          "args": [
+            "TC-MR-03_Nộp báo cáo thành công đầy đủ thông tin (Nominal).png"
           ],
           "status": "success",
           "startTime": 1794479163779,
@@ -1247,8 +1269,8 @@
           "opts": {},
           "title": "waitForText",
           "args": [
-            "Validation failed",
-            "5"
+            "Đăng nhập thành công!",
+            "10"
           ],
           "status": "success",
           "startTime": 1794479171501,
@@ -1257,9 +1279,9 @@
         },
         {
           "opts": {},
-          "title": "see",
+          "title": "amOnPage",
           "args": [
-            "Validation failed"
+            "/mentor/reports/new"
           ],
           "status": "success",
           "startTime": 1794479171507,
@@ -1293,7 +1315,7 @@
       "steps": [
         {
           "opts": {},
-          "title": "amOnPage",
+          "title": "waitForText",
           "args": [
             "/register"
           ],
@@ -1304,7 +1326,7 @@
         },
         {
           "opts": {},
-          "title": "fillField",
+          "title": "click",
           "args": [
             "Email",
             "newtalent9@uth.edu.vn"
@@ -1316,7 +1338,7 @@
         },
         {
           "opts": {},
-          "title": "fillField",
+          "title": "wait",
           "args": [
             "Mật khẩu",
             "SecurePass123!"
@@ -2294,7 +2316,7 @@
         },
         {
           "opts": {},
-          "title": "fillField",
+          "title": "waitInUrl",
           "args": [
             "Email",
             "newent@company.com.vn"
@@ -2363,7 +2385,7 @@
         },
         {
           "opts": {},
-          "title": "waitForText",
+          "title": "seeElement",
           "args": [
             "Đăng ký thành công!",
             "5"
@@ -2375,7 +2397,7 @@
         },
         {
           "opts": {},
-          "title": "see",
+          "title": "saveScreenshot",
           "args": [
             "Đăng ký thành công! Vui lòng chờ xác thực."
           ],
