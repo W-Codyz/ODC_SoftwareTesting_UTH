@@ -10,8 +10,8 @@
 | **Tên dự án** | LabOdc - Hệ thống quản lý kết nối doanh nghiệp với sinh viên UTH trong dự án thực tế |
 | **Tên tiếng Anh** | LabOdc - A System for Managing Enterprise-Student Collaborations at UTH on Real-World Projects |
 | **Loại tài liệu** | Software Requirements Specification (SRS) |
-| **Phiên bản** | 1.5 |
-| **Ngày cập nhật** | 10 tháng 11 năm 2026 |
+| **Phiên bản** | 1.6 |
+| **Ngày cập nhật** | 12 tháng 11 năm 2026 |
 | **Người chuẩn bị** | Nhóm phát triển - Nhóm 6 |
 | **Tổ chức** | Đại học Giao thông Vận tải TP.HCM (UTH) |
 | **Trạng thái** | Bản nháp |
@@ -28,6 +28,7 @@
 | 1.3 | 05/11/2026 | Đình Phát | FR-TL-001: đánh dấu chưa triển khai, ghi nhận gap so với implementation thực tế (xác nhận qua LABODC-83); giữ thiết kế gốc làm baseline cho phase tương lai |
 | 1.4 | 07/11/2026 | Đình Phát | FR-AUTH-002: cập nhật theo demo mode hiện tại (status=ACTIVE, emailVerified=true); thêm actor Mentor; thống nhất input 4 fields chung (email, password, confirmPassword, role); bổ sung bảng Bug fix cần implement (domain validation, password strength) và Phát triển trong tương lai (email verification, status flow, extended input) |
 | 1.5 | 10/11/2026 | Đình Phát | FR-TAL-001: bổ sung và chuẩn hóa validation cho phone, portfolio URL, skill, số năm kinh nghiệm, Avatar và CV; đồng bộ giới hạn, định dạng file, mã lỗi và baseline kiểm thử |
+| 1.6 | 12/11/2026 | Đình Phát | FR-ENT-002: đồng bộ SRS theo code thực tế (LABODC-122) đổi endpoint `/api/enterprise/projects` → `/api/projects`; đổi field `title`→`name`, `numberOfStudents`→`requiredTalents`, `skillRequirements`→`requiredSkills`; bỏ attachment và fund distribution (chưa implement); cập nhật Business Rules: budget > 0, requiredTalents >= 1, bỏ ràng buộc duration và số tháng; bổ sung quyền LAB_ADMIN; cập nhật DB schema tương ứng |
 
 ---
 
@@ -557,18 +558,18 @@ Response:
 
 **API Endpoint:**
 ```
-POST   /api/enterprise/projects
-GET    /api/enterprise/projects
-GET    /api/enterprise/projects/{id}
-PUT    /api/enterprise/projects/{id}/draft
+POST   /api/projects
+GET    /api/projects
+GET    /api/projects/{id}
+GET    /api/projects/enterprise/{enterpriseId}
 ```
 
-**POST /api/enterprise/projects**
+**POST /api/projects**
 
 Request:
 ```json
 {
-  "title": "Website Quản lý Bán hàng",
+  "name": "Website Quản lý Bán hàng",
   "description": "Xây dựng website quản lý bán hàng online với dashboard admin, quản lý sản phẩm, đơn hàng, khách hàng",
   "objectives": [
     "Quản lý sản phẩm và kho",
@@ -579,39 +580,23 @@ Request:
   "startDate": "2026-02-01",
   "endDate": "2026-05-31",
   "budget": 100000000,
-  "numberOfStudents": 5,
-  "skillRequirements": [
-    {
-      "skill": "ReactJS",
-      "level": "Intermediate",
-      "required": true
-    },
-    {
-      "skill": "NodeJS",
-      "level": "Intermediate",
-      "required": true
-    }
-  ],
-  "attachments": [
-    {
-      "fileName": "requirement.pdf",
-      "fileUrl": "https://cloudinary.com/req.pdf"
-    }
-  ]
+  "requiredTalents": 5,
+  "requiredSkills": ["ReactJS", "NodeJS"],
+  "enterpriseId": null
 }
 ```
 
+> **Lưu ý:** `enterpriseId` là bắt buộc khi người dùng có role `LAB_ADMIN` (tạo dự án thay doanh nghiệp). Với role `ENTERPRISE`, hệ thống tự lấy từ user đang đăng nhập.
+
 **Processing:**
-1. Validate input (required fields, date ranges, budget > 0)
-2. Kiểm tra enterprise có active không
-3. Tạo project record (status=PENDING)
-4. Upload attachments to Cloudinary
-5. Calculate fund distribution:
-   - Team (70%): 70,000,000
-   - Mentor (20%): 20,000,000
-   - Lab (10%): 10,000,000
-6. Gửi notification đến Lab Admin
-7. Return project ID
+1. Validate input (required fields, startDate không sau endDate, requiredTalents >= 1)
+2. Kiểm tra role: chỉ ENTERPRISE hoặc LAB_ADMIN được phép tạo
+3. Lấy enterpriseId: từ user (ENTERPRISE) hoặc từ request body (LAB_ADMIN)
+4. Tạo project record (status=PENDING_VALIDATION), generate slug từ name
+5. Gửi notification đến Lab Admin
+6. Return project ID
+
+> **Lưu ý:** Validation DTO được thực hiện ở tầng Service. `@Valid` chưa được thêm vào `ProjectController.createProject()`.
 
 Response:
 ```json
@@ -620,67 +605,40 @@ Response:
   "message": "Đề xuất dự án đã được gửi. Lab sẽ xem xét trong vòng 48 giờ.",
   "data": {
     "projectId": 789,
-    "status": "PENDING",
-    "fundDistribution": {
-      "total": 100000000,
-      "team": 70000000,
-      "mentor": 20000000,
-      "lab": 10000000
-    }
+    "status": "PENDING_VALIDATION"
   }
 }
 ```
 
 **Business Rules:**
-- Budget minimum: 10,000,000 VNĐ
-- Duration minimum: 1 tháng
-- Duration maximum: 6 tháng
-- Number of students: 3-10
-- Attachments max: 5 files, 20MB each
+- `name`, `description`, `startDate`, `endDate`, `budget`, `requiredTalents` là bắt buộc (không được null/blank)
+- `endDate` phải sau hoặc bằng `startDate`
+- `requiredTalents` tối thiểu là 1
+- `budget` phải lớn hơn 0 (> 0)
+- Chỉ role ENTERPRISE hoặc LAB_ADMIN được tạo dự án
 
 **Database Schema:**
 ```sql
 CREATE TABLE projects (
     id BIGSERIAL PRIMARY KEY,
     enterprise_id BIGINT REFERENCES enterprises(id),
-    title VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
     objectives JSONB,
     technologies JSONB,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     budget DECIMAL(15,2) NOT NULL,
-    number_of_students INTEGER NOT NULL,
-    skill_requirements JSONB,
-    status VARCHAR(20) DEFAULT 'PENDING',
+    required_talents INTEGER NOT NULL,
+    required_skills JSONB,
+    status VARCHAR(20) DEFAULT 'PENDING_VALIDATION',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     validated_by BIGINT REFERENCES users(id),
     validated_at TIMESTAMP,
     mentor_id BIGINT REFERENCES mentors(id),
-    CONSTRAINT check_dates CHECK (end_date > start_date),
-    CONSTRAINT check_budget CHECK (budget >= 10000000),
-    CONSTRAINT check_students CHECK (number_of_students BETWEEN 3 AND 10)
-);
-
-CREATE TABLE project_attachments (
-    id BIGSERIAL PRIMARY KEY,
-    project_id BIGINT REFERENCES projects(id),
-    file_name VARCHAR(255),
-    file_url VARCHAR(500),
-    file_size BIGINT,
-    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE fund_distributions (
-    id BIGSERIAL PRIMARY KEY,
-    project_id BIGINT REFERENCES projects(id),
-    total_amount DECIMAL(15,2),
-    team_amount DECIMAL(15,2),
-    mentor_amount DECIMAL(15,2),
-    lab_amount DECIMAL(15,2),
-    status VARCHAR(20) DEFAULT 'PENDING',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    CONSTRAINT check_dates CHECK (end_date >= start_date),
+    CONSTRAINT check_talents CHECK (required_talents >= 1)
 );
 ```
 

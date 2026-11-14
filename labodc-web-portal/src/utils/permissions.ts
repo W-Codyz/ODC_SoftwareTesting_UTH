@@ -128,8 +128,9 @@ export const canAccessRoute = (userRole: TUserRole, routePath: string): boolean 
  * Get default route for user role
  */
 export const getDefaultRoute = (userRole: TUserRole): string => {
-  const roleRoutes: Record<TUserRole, string> = {
+  const roleRoutes: Record<string, string> = {
     LAB_ADMIN: '/admin/dashboard',
+    SYSTEM_ADMIN: '/admin/dashboard',
     ENTERPRISE: '/enterprise/dashboard',
     MENTOR: '/mentor/dashboard',
     TALENT: '/talent/dashboard',
