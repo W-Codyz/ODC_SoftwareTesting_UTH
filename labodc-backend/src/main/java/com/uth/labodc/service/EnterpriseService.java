@@ -16,6 +16,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.uth.labodc.exception.ConflictException;
+import com.uth.labodc.exception.ResourceNotFoundException;
+import com.uth.labodc.model.enums.EnterpriseStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,7 +45,7 @@ public class EnterpriseService {
     @Transactional(readOnly = true)
     public Enterprise findById(Long id) {
         Enterprise enterprise = enterpriseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Enterprise not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Enterprise not found with id: " + id));
         
         // Load rejection info if enterprise was rejected
         if (EnterpriseStatus.REJECTED.equals(enterprise.getStatus())) {
@@ -70,8 +73,8 @@ public class EnterpriseService {
         
         Enterprise enterprise = findById(id);
         
-        if (EnterpriseStatus.APPROVED.equals(enterprise.getStatus())) {
-            throw new RuntimeException("Enterprise is already approved");
+        if (!EnterpriseStatus.PENDING.equals(enterprise.getStatus())) {
+            throw new ConflictException("Enterprise is not in PENDING status (current status: " + enterprise.getStatus() + ")");
         }
         
         enterprise.setStatus(EnterpriseStatus.APPROVED);

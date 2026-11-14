@@ -18,6 +18,8 @@ public interface TalentSkillRepository extends JpaRepository<TalentSkill, Long> 
     
     Optional<TalentSkill> findByTalentIdAndSkillName(Long talentId, String skillName);
     
+    Optional<TalentSkill> findByTalentIdAndSkillNameIgnoreCase(Long talentId, String skillName);
+    
     @Query("SELECT ts FROM TalentSkill ts WHERE ts.talentId = :talentId AND ts.skillCategory = :category")
     List<TalentSkill> findByTalentIdAndSkillCategory(@Param("talentId") Long talentId, @Param("category") String category);
     

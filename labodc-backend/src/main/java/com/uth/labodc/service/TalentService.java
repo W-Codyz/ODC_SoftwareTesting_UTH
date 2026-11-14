@@ -1,5 +1,4 @@
 package com.uth.labodc.service;
-
 import com.uth.labodc.dto.ApiResponse;
 import com.uth.labodc.dto.talent.*;
 import com.uth.labodc.model.entity.*;
@@ -26,6 +25,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TalentService {
     
+    private final UserRepository userRepository;
     private final TalentRepository talentRepository;
     private final TalentSkillRepository talentSkillRepository;
     private final TalentCertificationRepository talentCertificationRepository;
@@ -48,6 +48,25 @@ public class TalentService {
     @Transactional
     public TalentProfileDTO updateProfile(Long userId, TalentProfileDTO profileDTO) {
         Talent talent = getTalentByUserId(userId);
+
+        // Validation SĐT nếu có truyền lên
+        if (profileDTO.getPhone() != null && !profileDTO.getPhone().isBlank()) {
+            String phone = profileDTO.getPhone().trim();
+            if (!phone.matches("^0\\d{9}$")) {
+                throw new IllegalArgumentException("Số điện thoại phải có đúng 10 chữ số và bắt đầu bằng số 0");
+            }
+            User user = userService.getUserById(userId);
+            user.setPhone(phone);
+            userRepository.save(user);
+        }
+        // Validation Portfolio URL nếu có truyền lên
+        if (profileDTO.getPortfolioUrl() != null && !profileDTO.getPortfolioUrl().isBlank()) {
+            String portfolio = profileDTO.getPortfolioUrl().trim();
+            if (!portfolio.matches("^https?://\\S+$") || portfolio.length() > 500) {
+                throw new IllegalArgumentException("Portfolio URL không hợp lệ hoặc vượt quá 500 ký tự");
+            }
+            talent.setPortfolioUrl(portfolio);
+        }
         
         // Update basic info
         if (profileDTO.getFullName() != null) talent.setFullName(profileDTO.getFullName());
@@ -74,6 +93,20 @@ public class TalentService {
     @Transactional
     public TalentSkillDTO addSkill(Long userId, TalentSkillDTO skillDTO) {
         Talent talent = getTalentByUserId(userId);
+
+         String skillName = skillDTO.getSkillName();
+        if (skillName == null || skillName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Tên kỹ năng không được để trống");
+        }
+        skillName = skillName.trim();
+        if (skillName.length() > 100) {
+            throw new IllegalArgumentException("Tên kỹ năng tối đa 100 ký tự");
+        }
+        
+        Double exp = skillDTO.getYearsOfExperience();
+        if (exp != null && (exp < 0.0 || exp > 50.0)) {
+            throw new IllegalArgumentException("Số năm kinh nghiệm phải nằm trong khoảng từ 0.0 đến 50.0");
+        }
         
         // Check if skill already exists
         if (talentSkillRepository.findByTalentIdAndSkillName(talent.getId(), skillDTO.getSkillName()).isPresent()) {
@@ -422,6 +455,7 @@ public class TalentService {
                 .major(talent.getMajor())
                 .yearOfStudy(talent.getYearOfStudy())
                 .email(user.getEmail())
+                .phone(user.getPhone())
                 .bio(talent.getBio())
                 .gpa(talent.getGpa())
                 .dateOfBirth(talent.getDateOfBirth())
@@ -475,11 +509,42 @@ public class TalentService {
     }
 
     public String storeAvatar(Long userId, MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("File avatar không được để trống");
+        }
+        // Giới hạn 5MB
+        if (file.getSize() > 5L * 1024 * 1024) {
+            throw new IllegalArgumentException("Dung lượng ảnh đại diện vượt quá 5MB");
+        }
+        // Định dạng JPG, JPEG, PNG
+        String ext = getFileExtension(file.getOriginalFilename()).toLowerCase();
+        if (!ext.equals("jpg") && !ext.equals("jpeg") && !ext.equals("png")) {
+            throw new IllegalArgumentException("Định dạng ảnh không hỗ trợ, chỉ chấp nhận JPG/PNG");
+        }
         return storeTalentFile(userId, file, "avatar");
     }
 
     public String storeCv(Long userId, MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("File CV không được để trống");
+        }
+        // Giới hạn 20MB
+        if (file.getSize() > 20L * 1024 * 1024) {
+            throw new IllegalArgumentException("Dung lượng file CV vượt quá 20MB");
+        }
+        // Định dạng PDF, DOC, DOCX
+        String ext = getFileExtension(file.getOriginalFilename()).toLowerCase();
+        if (!ext.equals("pdf") && !ext.equals("doc") && !ext.equals("docx")) {
+            throw new IllegalArgumentException("Định dạng file CV không hợp lệ, chỉ chấp nhận PDF, DOC, DOCX");
+        }
         return storeTalentFile(userId, file, "cv");
+    }
+    
+    private String getFileExtension(String filename) {
+        if (filename == null || !filename.contains(".")) {
+            return "";
+        }
+        return filename.substring(filename.lastIndexOf(".") + 1);
     }
 
     private String storeTalentFile(Long userId, MultipartFile file, String category) {
