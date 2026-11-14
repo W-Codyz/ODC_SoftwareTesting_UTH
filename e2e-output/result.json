@@ -1,16 +1,16 @@
 {
   "hasFailed": false,
   "stats": {
-    "passes": 13,
+    "passes": 7,
     "failures": 0,
-    "tests": 13,
+    "tests": 7,
     "pending": 0,
     "failedHooks": 0,
-    "start": "2026-11-09T09:38:41.135Z",
-    "end": "2026-11-09T09:39:19.568Z",
-    "duration": 38433
+    "start": "2026-11-13T10:45:52.423Z",
+    "end": "2026-11-13T10:46:30.748Z",
+    "duration": 38325
   },
-  "duration": 38453,
+  "duration": 38354,
   "tests": [
     {
       "opts": {
@@ -18,9 +18,9 @@
         "stepRetryPriority": 50
       },
       "tags": [],
-      "uid": "ty99WV+HpgoR9dHxekzaAwSa+epA0VCtW3VSdr2liV",
+      "uid": "WXbwtNDPD61X5tXvX0oOWYQSmNQEQWF9r7aqm2KWl+",
       "retries": -1,
-      "title": "TC-LOGIN-01 - Login thành công - nominal",
+      "title": "TC-LP-01 - Đăng nhập Lab Admin và truy cập trang Quản lý Dự án",
       "state": "passed",
       "notes": [],
       "meta": {
@@ -29,10 +29,10 @@
         "windowSize": "1280x720"
       },
       "artifacts": [],
-      "duration": 2718,
+      "duration": 3674,
       "parent": {
-        "title": "FR-AUTH-001 - Đăng nhập",
-        "file": "D:\\Mobile\\ODC_SoftwareTesting_UTH\\e2e-tests\\auth\\login_test.js"
+        "title": "FR-LAB-002 - Quản lý Dự án",
+        "file": "C:\\Hoctap\\kiem chung phan mem1\\ODC_SoftwareTesting_UTH\\e2e-tests\\lab-admin\\manage_project_test.js"
       },
       "steps": [
         {
@@ -42,8 +42,8 @@
             "/login"
           ],
           "status": "success",
-          "startTime": 1794217121812,
-          "endTime": 1794217123271,
+          "startTime": 1794566753101,
+          "endTime": 1794566754416,
           "parent": {}
         },
         {
@@ -54,8 +54,8 @@
             "admin@labodc.com"
           ],
           "status": "success",
-          "startTime": 1794217123271,
-          "endTime": 1794217123813,
+          "startTime": 1794566754417,
+          "endTime": 1794566755055,
           "parent": {}
         },
         {
@@ -66,8 +66,8 @@
             "123123"
           ],
           "status": "success",
-          "startTime": 1794217123813,
-          "endTime": 1794217124124,
+          "startTime": 1794566755056,
+          "endTime": 1794566755353,
           "parent": {}
         },
         {
@@ -77,8 +77,8 @@
             "Đăng nhập"
           ],
           "status": "success",
-          "startTime": 1794217124124,
-          "endTime": 1794217124295,
+          "startTime": 1794566755353,
+          "endTime": 1794566755501,
           "parent": {}
         },
         {
@@ -86,22 +86,111 @@
           "title": "waitForText",
           "args": [
             "Đăng nhập thành công!",
-            "5"
+            "10"
           ],
           "status": "success",
-          "startTime": 1794217124296,
-          "endTime": 1794217124512,
+          "startTime": 1794566755501,
+          "endTime": 1794566755566,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "amOnPage",
+          "args": [
+            "/admin/projects"
+          ],
+          "status": "success",
+          "startTime": 1794566755566,
+          "endTime": 1794566756624,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "waitForText",
+          "args": [
+            "Quản lý Dự án",
+            "10"
+          ],
+          "status": "success",
+          "startTime": 1794566756625,
+          "endTime": 1794566756631,
           "parent": {}
         },
         {
           "opts": {},
           "title": "see",
           "args": [
-            "Đăng nhập thành công!"
+            "Quản lý Dự án"
           ],
           "status": "success",
-          "startTime": 1794217124513,
-          "endTime": 1794217124517,
+          "startTime": 1794566756632,
+          "endTime": 1794566756635,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "seeElement",
+          "args": [
+            "input[placeholder=\"Tìm kiếm theo tên dự án...\"]"
+          ],
+          "status": "success",
+          "startTime": 1794566756636,
+          "endTime": 1794566756641,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "see",
+          "args": [
+            "Dự án"
+          ],
+          "status": "success",
+          "startTime": 1794566756641,
+          "endTime": 1794566756644,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "see",
+          "args": [
+            "Doanh nghiệp"
+          ],
+          "status": "success",
+          "startTime": 1794566756644,
+          "endTime": 1794566756646,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "see",
+          "args": [
+            "Trạng thái"
+          ],
+          "status": "success",
+          "startTime": 1794566756646,
+          "endTime": 1794566756648,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "see",
+          "args": [
+            "Xác thực"
+          ],
+          "status": "success",
+          "startTime": 1794566756648,
+          "endTime": 1794566756650,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "saveScreenshot",
+          "args": [
+            "TC-LP-01_Đăng nhập Lab Admin và truy cập trang Quản lý Dự án.png"
+          ],
+          "status": "success",
+          "startTime": 1794566756651,
+          "endTime": 1794566756761,
           "parent": {}
         }
       ]
@@ -112,9 +201,9 @@
         "stepRetryPriority": 50
       },
       "tags": [],
-      "uid": "m0AmAiS_S40lJDOOO1UD594pzK0iWwW3vYXjXxIBMH",
+      "uid": "uxDyAfvEs0PWRwnDe2N_Cp7v9vN0_m6Ejk43DRVE+X",
       "retries": -1,
-      "title": "TC-LOGIN-02 - Login thành công - password tại biên min (8 ký tự)",
+      "title": "TC-LP-02 - Tìm kiếm dự án theo tên dự án",
       "state": "passed",
       "notes": [],
       "meta": {
@@ -123,10 +212,10 @@
         "windowSize": "1280x720"
       },
       "artifacts": [],
-      "duration": 2513,
+      "duration": 5167,
       "parent": {
-        "title": "FR-AUTH-001 - Đăng nhập",
-        "file": "D:\\Mobile\\ODC_SoftwareTesting_UTH\\e2e-tests\\auth\\login_test.js"
+        "title": "FR-LAB-002 - Quản lý Dự án",
+        "file": "C:\\Hoctap\\kiem chung phan mem1\\ODC_SoftwareTesting_UTH\\e2e-tests\\lab-admin\\manage_project_test.js"
       },
       "steps": [
         {
@@ -136,8 +225,8 @@
             "/login"
           ],
           "status": "success",
-          "startTime": 1794217124983,
-          "endTime": 1794217126255,
+          "startTime": 1794566757380,
+          "endTime": 1794566758708,
           "parent": {}
         },
         {
@@ -145,187 +234,11 @@
           "title": "fillField",
           "args": [
             "Tên đăng nhập",
-            "testmin@labodc.com"
+            "admin@labodc.com"
           ],
           "status": "success",
-          "startTime": 1794217126256,
-          "endTime": 1794217126859,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "fillField",
-          "args": [
-            "Mật khẩu",
-            "Abcdef1!"
-          ],
-          "status": "success",
-          "startTime": 1794217126860,
-          "endTime": 1794217127246,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "click",
-          "args": [
-            "Đăng nhập"
-          ],
-          "status": "success",
-          "startTime": 1794217127246,
-          "endTime": 1794217127396,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "waitForText",
-          "args": [
-            "Đăng nhập thành công!",
-            "5"
-          ],
-          "status": "success",
-          "startTime": 1794217127396,
-          "endTime": 1794217127484,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "see",
-          "args": [
-            "Đăng nhập thành công!"
-          ],
-          "status": "success",
-          "startTime": 1794217127484,
-          "endTime": 1794217127493,
-          "parent": {}
-        }
-      ]
-    },
-    {
-      "opts": {
-        "conditionalRetries": 3,
-        "stepRetryPriority": 50
-      },
-      "tags": [],
-      "uid": "tYNn2m0jwx7R7iQbNpxgoMSw+GDIlJoXtbRcjMwK22",
-      "retries": -1,
-      "title": "TC-LOGIN-03 - Login thành công - password tại biên min+ (9 ký tự)",
-      "state": "passed",
-      "notes": [],
-      "meta": {
-        "browser": "chromium",
-        "browserVersion": "158.0.8127.18",
-        "windowSize": "1280x720"
-      },
-      "artifacts": [],
-      "duration": 2539,
-      "parent": {
-        "title": "FR-AUTH-001 - Đăng nhập",
-        "file": "D:\\Mobile\\ODC_SoftwareTesting_UTH\\e2e-tests\\auth\\login_test.js"
-      },
-      "steps": [
-        {
-          "opts": {},
-          "title": "amOnPage",
-          "args": [
-            "/login"
-          ],
-          "status": "success",
-          "startTime": 1794217128054,
-          "endTime": 1794217129391,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "fillField",
-          "args": [
-            "Tên đăng nhập",
-            "testminplus@labodc.com"
-          ],
-          "status": "success",
-          "startTime": 1794217129391,
-          "endTime": 1794217129999,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "fillField",
-          "args": [
-            "Mật khẩu",
-            "Abcdefg1!"
-          ],
-          "status": "success",
-          "startTime": 1794217129999,
-          "endTime": 1794217130355,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "click",
-          "args": [
-            "Đăng nhập"
-          ],
-          "status": "success",
-          "startTime": 1794217130355,
-          "endTime": 1794217130504,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "waitForText",
-          "args": [
-            "Đăng nhập thành công!",
-            "5"
-          ],
-          "status": "success",
-          "startTime": 1794217130505,
-          "endTime": 1794217130586,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "see",
-          "args": [
-            "Đăng nhập thành công!"
-          ],
-          "status": "success",
-          "startTime": 1794217130586,
-          "endTime": 1794217130589,
-          "parent": {}
-        }
-      ]
-    },
-    {
-      "opts": {
-        "conditionalRetries": 3,
-        "stepRetryPriority": 50
-      },
-      "tags": [],
-      "uid": "W7yiZ8aoLq4xpccao42wJKmrPNxbi7k72RQC_6ETiW",
-      "retries": -1,
-      "title": "TC-LOGIN-04 - để trống tên đăng nhập",
-      "state": "passed",
-      "notes": [],
-      "meta": {
-        "browser": "chromium",
-        "browserVersion": "158.0.8127.18",
-        "windowSize": "1280x720"
-      },
-      "artifacts": [],
-      "duration": 1818,
-      "parent": {
-        "title": "FR-AUTH-001 - Đăng nhập",
-        "file": "D:\\Mobile\\ODC_SoftwareTesting_UTH\\e2e-tests\\auth\\login_test.js"
-      },
-      "steps": [
-        {
-          "opts": {},
-          "title": "amOnPage",
-          "args": [
-            "/login"
-          ],
-          "status": "success",
-          "startTime": 1794217131040,
-          "endTime": 1794217132387,
+          "startTime": 1794566758708,
+          "endTime": 1794566759298,
           "parent": {}
         },
         {
@@ -336,8 +249,8 @@
             "123123"
           ],
           "status": "success",
-          "startTime": 1794217132387,
-          "endTime": 1794217132695,
+          "startTime": 1794566759298,
+          "endTime": 1794566759608,
           "parent": {}
         },
         {
@@ -347,31 +260,99 @@
             "Đăng nhập"
           ],
           "status": "success",
-          "startTime": 1794217132696,
-          "endTime": 1794217132850,
+          "startTime": 1794566759608,
+          "endTime": 1794566759763,
           "parent": {}
         },
         {
           "opts": {},
           "title": "waitForText",
           "args": [
-            "Vui lòng nhập tên đăng nhập!",
-            "5"
+            "Đăng nhập thành công!",
+            "10"
           ],
           "status": "success",
-          "startTime": 1794217132851,
-          "endTime": 1794217132854,
+          "startTime": 1794566759763,
+          "endTime": 1794566759828,
           "parent": {}
         },
         {
           "opts": {},
-          "title": "see",
+          "title": "amOnPage",
           "args": [
-            "Vui lòng nhập tên đăng nhập!"
+            "/admin/projects"
           ],
           "status": "success",
-          "startTime": 1794217132854,
-          "endTime": 1794217132856,
+          "startTime": 1794566759828,
+          "endTime": 1794566760920,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "waitForText",
+          "args": [
+            "Quản lý Dự án",
+            "10"
+          ],
+          "status": "success",
+          "startTime": 1794566760921,
+          "endTime": 1794566760925,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "fillField",
+          "args": [
+            "input[placeholder=\"Tìm kiếm theo tên dự án...\"]",
+            "Website"
+          ],
+          "status": "success",
+          "startTime": 1794566760925,
+          "endTime": 1794566761322,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "pressKey",
+          "args": [
+            "Enter"
+          ],
+          "status": "success",
+          "startTime": 1794566761322,
+          "endTime": 1794566761431,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "wait",
+          "args": [
+            "1"
+          ],
+          "status": "success",
+          "startTime": 1794566761431,
+          "endTime": 1794566762437,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "seeElement",
+          "args": [
+            ".ant-table"
+          ],
+          "status": "success",
+          "startTime": 1794566762437,
+          "endTime": 1794566762441,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "saveScreenshot",
+          "args": [
+            "TC-LP-02_Tìm kiếm dự án theo tên dự án.png"
+          ],
+          "status": "success",
+          "startTime": 1794566762441,
+          "endTime": 1794566762541,
           "parent": {}
         }
       ]
@@ -382,9 +363,9 @@
         "stepRetryPriority": 50
       },
       "tags": [],
-      "uid": "yDt2Iov0mx28TcJV9Ee+RskgVG9fnT4pPFh3ysEVcH",
+      "uid": "fUb6wiXhHPXTUQ9JjVsNONevJuwow+YEsO0bXIKef1",
       "retries": -1,
-      "title": "TC-LOGIN-05 - Email sai format - thiếu @ (single fault)",
+      "title": "TC-LP-03 - Lọc dự án theo trạng thái xác thực (Chờ duyệt)",
       "state": "passed",
       "notes": [],
       "meta": {
@@ -393,10 +374,10 @@
         "windowSize": "1280x720"
       },
       "artifacts": [],
-      "duration": 2392,
+      "duration": 6041,
       "parent": {
-        "title": "FR-AUTH-001 - Đăng nhập",
-        "file": "D:\\Mobile\\ODC_SoftwareTesting_UTH\\e2e-tests\\auth\\login_test.js"
+        "title": "FR-LAB-002 - Quản lý Dự án",
+        "file": "C:\\Hoctap\\kiem chung phan mem1\\ODC_SoftwareTesting_UTH\\e2e-tests\\lab-admin\\manage_project_test.js"
       },
       "steps": [
         {
@@ -406,8 +387,8 @@
             "/login"
           ],
           "status": "success",
-          "startTime": 1794217133331,
-          "endTime": 1794217134638,
+          "startTime": 1794566763114,
+          "endTime": 1794566764476,
           "parent": {}
         },
         {
@@ -415,11 +396,11 @@
           "title": "fillField",
           "args": [
             "Tên đăng nhập",
-            "testloginlabodc.com"
+            "admin@labodc.com"
           ],
           "status": "success",
-          "startTime": 1794217134639,
-          "endTime": 1794217135184,
+          "startTime": 1794566764477,
+          "endTime": 1794566765072,
           "parent": {}
         },
         {
@@ -427,11 +408,11 @@
           "title": "fillField",
           "args": [
             "Mật khẩu",
-            "Secure@123"
+            "123123"
           ],
           "status": "success",
-          "startTime": 1794217135184,
-          "endTime": 1794217135556,
+          "startTime": 1794566765073,
+          "endTime": 1794566765367,
           "parent": {}
         },
         {
@@ -441,31 +422,109 @@
             "Đăng nhập"
           ],
           "status": "success",
-          "startTime": 1794217135557,
-          "endTime": 1794217135713,
+          "startTime": 1794566765368,
+          "endTime": 1794566765519,
           "parent": {}
         },
         {
           "opts": {},
           "title": "waitForText",
           "args": [
-            "Validation failed",
-            "5"
+            "Đăng nhập thành công!",
+            "10"
           ],
           "status": "success",
-          "startTime": 1794217135713,
-          "endTime": 1794217135717,
+          "startTime": 1794566765519,
+          "endTime": 1794566765589,
           "parent": {}
         },
         {
           "opts": {},
-          "title": "see",
+          "title": "amOnPage",
           "args": [
-            "Validation failed"
+            "/admin/projects"
           ],
           "status": "success",
-          "startTime": 1794217135717,
-          "endTime": 1794217135721,
+          "startTime": 1794566765589,
+          "endTime": 1794566766678,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "waitForText",
+          "args": [
+            "Quản lý Dự án",
+            "10"
+          ],
+          "status": "success",
+          "startTime": 1794566766679,
+          "endTime": 1794566766683,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "click",
+          "args": [
+            ".ant-select:nth-of-type(2)"
+          ],
+          "status": "success",
+          "startTime": 1794566766683,
+          "endTime": 1794566766835,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "wait",
+          "args": [
+            "1"
+          ],
+          "status": "success",
+          "startTime": 1794566766835,
+          "endTime": 1794566767848,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "click",
+          "args": [
+            "Chờ duyệt"
+          ],
+          "status": "success",
+          "startTime": 1794566767848,
+          "endTime": 1794566768033,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "wait",
+          "args": [
+            "1"
+          ],
+          "status": "success",
+          "startTime": 1794566768034,
+          "endTime": 1794566769046,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "seeElement",
+          "args": [
+            ".ant-table"
+          ],
+          "status": "success",
+          "startTime": 1794566769046,
+          "endTime": 1794566769051,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "saveScreenshot",
+          "args": [
+            "TC-LP-03_Lọc dự án theo trạng thái xác thực (Chờ duyệt).png"
+          ],
+          "status": "success",
+          "startTime": 1794566769051,
+          "endTime": 1794566769150,
           "parent": {}
         }
       ]
@@ -476,9 +535,9 @@
         "stepRetryPriority": 50
       },
       "tags": [],
-      "uid": "8dnJtHDY3iRow5+guk9PJoChRu02mb0KH_JZAhfcSX",
+      "uid": "+xft3qM5xbA9We6lpNg3LXBxtuQ24kTG9kNsyILPS6",
       "retries": -1,
-      "title": "TC-LOGIN-06 - Email sai format - thiếu domain (single fault)",
+      "title": "TC-LP-04 - Lọc dự án theo trạng thái xác thực (Đã duyệt)",
       "state": "passed",
       "notes": [],
       "meta": {
@@ -487,10 +546,10 @@
         "windowSize": "1280x720"
       },
       "artifacts": [],
-      "duration": 2534,
+      "duration": 5927,
       "parent": {
-        "title": "FR-AUTH-001 - Đăng nhập",
-        "file": "D:\\Mobile\\ODC_SoftwareTesting_UTH\\e2e-tests\\auth\\login_test.js"
+        "title": "FR-LAB-002 - Quản lý Dự án",
+        "file": "C:\\Hoctap\\kiem chung phan mem1\\ODC_SoftwareTesting_UTH\\e2e-tests\\lab-admin\\manage_project_test.js"
       },
       "steps": [
         {
@@ -500,8 +559,8 @@
             "/login"
           ],
           "status": "success",
-          "startTime": 1794217136236,
-          "endTime": 1794217137765,
+          "startTime": 1794566769692,
+          "endTime": 1794566770998,
           "parent": {}
         },
         {
@@ -509,11 +568,11 @@
           "title": "fillField",
           "args": [
             "Tên đăng nhập",
-            "testlogin@"
+            "admin@labodc.com"
           ],
           "status": "success",
-          "startTime": 1794217137765,
-          "endTime": 1794217138181,
+          "startTime": 1794566770998,
+          "endTime": 1794566771596,
           "parent": {}
         },
         {
@@ -521,11 +580,11 @@
           "title": "fillField",
           "args": [
             "Mật khẩu",
-            "Secure@123"
+            "123123"
           ],
           "status": "success",
-          "startTime": 1794217138181,
-          "endTime": 1794217138585,
+          "startTime": 1794566771596,
+          "endTime": 1794566771858,
           "parent": {}
         },
         {
@@ -535,31 +594,109 @@
             "Đăng nhập"
           ],
           "status": "success",
-          "startTime": 1794217138585,
-          "endTime": 1794217138758,
+          "startTime": 1794566771858,
+          "endTime": 1794566772005,
           "parent": {}
         },
         {
           "opts": {},
           "title": "waitForText",
           "args": [
-            "Validation failed",
-            "5"
+            "Đăng nhập thành công!",
+            "10"
           ],
           "status": "success",
-          "startTime": 1794217138758,
-          "endTime": 1794217138763,
+          "startTime": 1794566772005,
+          "endTime": 1794566772070,
           "parent": {}
         },
         {
           "opts": {},
-          "title": "see",
+          "title": "amOnPage",
           "args": [
-            "Validation failed"
+            "/admin/projects"
           ],
           "status": "success",
-          "startTime": 1794217138764,
-          "endTime": 1794217138767,
+          "startTime": 1794566772071,
+          "endTime": 1794566773137,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "waitForText",
+          "args": [
+            "Quản lý Dự án",
+            "10"
+          ],
+          "status": "success",
+          "startTime": 1794566773138,
+          "endTime": 1794566773144,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "click",
+          "args": [
+            ".ant-select:nth-of-type(2)"
+          ],
+          "status": "success",
+          "startTime": 1794566773145,
+          "endTime": 1794566773279,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "wait",
+          "args": [
+            "1"
+          ],
+          "status": "success",
+          "startTime": 1794566773280,
+          "endTime": 1794566774293,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "click",
+          "args": [
+            "Đã duyệt"
+          ],
+          "status": "success",
+          "startTime": 1794566774294,
+          "endTime": 1794566774481,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "wait",
+          "args": [
+            "1"
+          ],
+          "status": "success",
+          "startTime": 1794566774481,
+          "endTime": 1794566775496,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "seeElement",
+          "args": [
+            ".ant-table"
+          ],
+          "status": "success",
+          "startTime": 1794566775497,
+          "endTime": 1794566775507,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "saveScreenshot",
+          "args": [
+            "TC-LP-04_Lọc dự án theo trạng thái xác thực (Đã duyệt).png"
+          ],
+          "status": "success",
+          "startTime": 1794566775507,
+          "endTime": 1794566775616,
           "parent": {}
         }
       ]
@@ -570,9 +707,9 @@
         "stepRetryPriority": 50
       },
       "tags": [],
-      "uid": "0YlBc3LqPIECuFnBEMV9r7QYkEvAqBY8Jcx5YZBlKM",
+      "uid": "AzMBr6cURE4eAyQ8M8FXMkZOtWg3A+7lEaWfOdW8TG",
       "retries": -1,
-      "title": "TC-LOGIN-07 - Email không tồn tại trong DB (single fault)",
+      "title": "TC-LP-05 - Mở modal chỉnh sửa dự án",
       "state": "passed",
       "notes": [],
       "meta": {
@@ -581,10 +718,10 @@
         "windowSize": "1280x720"
       },
       "artifacts": [],
-      "duration": 2390,
+      "duration": 5212,
       "parent": {
-        "title": "FR-AUTH-001 - Đăng nhập",
-        "file": "D:\\Mobile\\ODC_SoftwareTesting_UTH\\e2e-tests\\auth\\login_test.js"
+        "title": "FR-LAB-002 - Quản lý Dự án",
+        "file": "C:\\Hoctap\\kiem chung phan mem1\\ODC_SoftwareTesting_UTH\\e2e-tests\\lab-admin\\manage_project_test.js"
       },
       "steps": [
         {
@@ -594,8 +731,8 @@
             "/login"
           ],
           "status": "success",
-          "startTime": 1794217139255,
-          "endTime": 1794217140550,
+          "startTime": 1794566776196,
+          "endTime": 1794566777475,
           "parent": {}
         },
         {
@@ -603,11 +740,11 @@
           "title": "fillField",
           "args": [
             "Tên đăng nhập",
-            "ghost@labodc.com"
+            "admin@labodc.com"
           ],
           "status": "success",
-          "startTime": 1794217140550,
-          "endTime": 1794217141108,
+          "startTime": 1794566777476,
+          "endTime": 1794566778037,
           "parent": {}
         },
         {
@@ -615,11 +752,11 @@
           "title": "fillField",
           "args": [
             "Mật khẩu",
-            "Secure@123"
+            "123123"
           ],
           "status": "success",
-          "startTime": 1794217141108,
-          "endTime": 1794217141480,
+          "startTime": 1794566778037,
+          "endTime": 1794566778301,
           "parent": {}
         },
         {
@@ -629,31 +766,155 @@
             "Đăng nhập"
           ],
           "status": "success",
-          "startTime": 1794217141481,
-          "endTime": 1794217141634,
+          "startTime": 1794566778302,
+          "endTime": 1794566778457,
           "parent": {}
         },
         {
           "opts": {},
           "title": "waitForText",
           "args": [
-            "Invalid email or password",
+            "Đăng nhập thành công!",
+            "10"
+          ],
+          "status": "success",
+          "startTime": 1794566778458,
+          "endTime": 1794566778542,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "amOnPage",
+          "args": [
+            "/admin/projects"
+          ],
+          "status": "success",
+          "startTime": 1794566778542,
+          "endTime": 1794566779614,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "waitForText",
+          "args": [
+            "Quản lý Dự án",
+            "10"
+          ],
+          "status": "success",
+          "startTime": 1794566779615,
+          "endTime": 1794566779623,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "waitForElement",
+          "args": [
+            ".ant-table-row",
+            "10"
+          ],
+          "status": "success",
+          "startTime": 1794566779623,
+          "endTime": 1794566779629,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "click",
+          "args": [
+            ".ant-table-tbody .ant-btn"
+          ],
+          "status": "success",
+          "startTime": 1794566779630,
+          "endTime": 1794566779896,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "waitForText",
+          "args": [
+            "Chỉnh sửa Dự án",
             "5"
           ],
           "status": "success",
-          "startTime": 1794217141634,
-          "endTime": 1794217141640,
+          "startTime": 1794566779897,
+          "endTime": 1794566779904,
           "parent": {}
         },
         {
           "opts": {},
           "title": "see",
           "args": [
-            "Invalid email or password"
+            "Tên dự án"
           ],
           "status": "success",
-          "startTime": 1794217141641,
-          "endTime": 1794217141642,
+          "startTime": 1794566779904,
+          "endTime": 1794566779909,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "see",
+          "args": [
+            "Mô tả"
+          ],
+          "status": "success",
+          "startTime": 1794566779909,
+          "endTime": 1794566779912,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "see",
+          "args": [
+            "Ngân sách"
+          ],
+          "status": "success",
+          "startTime": 1794566779913,
+          "endTime": 1794566779916,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "click",
+          "args": [
+            "Hủy"
+          ],
+          "status": "success",
+          "startTime": 1794566779917,
+          "endTime": 1794566780270,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "wait",
+          "args": [
+            "1"
+          ],
+          "status": "success",
+          "startTime": 1794566780270,
+          "endTime": 1794566781285,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "dontSee",
+          "args": [
+            "Chỉnh sửa Dự án"
+          ],
+          "status": "success",
+          "startTime": 1794566781285,
+          "endTime": 1794566781289,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "saveScreenshot",
+          "args": [
+            "TC-LP-05_Mở modal chỉnh sửa dự án.png"
+          ],
+          "status": "success",
+          "startTime": 1794566781289,
+          "endTime": 1794566781404,
           "parent": {}
         }
       ]
@@ -664,9 +925,9 @@
         "stepRetryPriority": 50
       },
       "tags": [],
-      "uid": "045DztVlp+FcFL_OsfOhtrYbx0ecdXRWV+aVEP6qVU",
+      "uid": "GuDoypQoEwKJ39NTLGRfES_n5HQY9OzOZ4aEu3VuC_",
       "retries": -1,
-      "title": "TC-LOGIN-08 - Password rỗng (single fault)",
+      "title": "TC-LP-06 - Truy cập trang Xác thực Dự án và duyệt qua các Tab",
       "state": "passed",
       "notes": [],
       "meta": {
@@ -675,10 +936,10 @@
         "windowSize": "1280x720"
       },
       "artifacts": [],
-      "duration": 2013,
+      "duration": 6501,
       "parent": {
-        "title": "FR-AUTH-001 - Đăng nhập",
-        "file": "D:\\Mobile\\ODC_SoftwareTesting_UTH\\e2e-tests\\auth\\login_test.js"
+        "title": "FR-LAB-002 - Quản lý Dự án",
+        "file": "C:\\Hoctap\\kiem chung phan mem1\\ODC_SoftwareTesting_UTH\\e2e-tests\\lab-admin\\manage_project_test.js"
       },
       "steps": [
         {
@@ -688,8 +949,8 @@
             "/login"
           ],
           "status": "success",
-          "startTime": 1794217142137,
-          "endTime": 1794217143423,
+          "startTime": 1794566782009,
+          "endTime": 1794566783313,
           "parent": {}
         },
         {
@@ -697,93 +958,11 @@
           "title": "fillField",
           "args": [
             "Tên đăng nhập",
-            "testlogin@labodc.com"
+            "admin@labodc.com"
           ],
           "status": "success",
-          "startTime": 1794217143424,
-          "endTime": 1794217144003,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "click",
-          "args": [
-            "Đăng nhập"
-          ],
-          "status": "success",
-          "startTime": 1794217144003,
-          "endTime": 1794217144142,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "waitForText",
-          "args": [
-            "Vui lòng nhập mật khẩu!",
-            "5"
-          ],
-          "status": "success",
-          "startTime": 1794217144142,
-          "endTime": 1794217144146,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "see",
-          "args": [
-            "Vui lòng nhập mật khẩu!"
-          ],
-          "status": "success",
-          "startTime": 1794217144146,
-          "endTime": 1794217144147,
-          "parent": {}
-        }
-      ]
-    },
-    {
-      "opts": {
-        "conditionalRetries": 3,
-        "stepRetryPriority": 50
-      },
-      "tags": [],
-      "uid": "rPhovfGvBTbsT2BhRG0MmcbehYDj4NMFrR_eXzyhyx",
-      "retries": -1,
-      "title": "TC-LOGIN-09 - Password sai - không khớp (single fault)",
-      "state": "passed",
-      "notes": [],
-      "meta": {
-        "browser": "chromium",
-        "browserVersion": "158.0.8127.18",
-        "windowSize": "1280x720"
-      },
-      "artifacts": [],
-      "duration": 2772,
-      "parent": {
-        "title": "FR-AUTH-001 - Đăng nhập",
-        "file": "D:\\Mobile\\ODC_SoftwareTesting_UTH\\e2e-tests\\auth\\login_test.js"
-      },
-      "steps": [
-        {
-          "opts": {},
-          "title": "amOnPage",
-          "args": [
-            "/login"
-          ],
-          "status": "success",
-          "startTime": 1794217144587,
-          "endTime": 1794217146035,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "fillField",
-          "args": [
-            "Tên đăng nhập",
-            "testlogin@labodc.com"
-          ],
-          "status": "success",
-          "startTime": 1794217146035,
-          "endTime": 1794217146705,
+          "startTime": 1794566783314,
+          "endTime": 1794566783890,
           "parent": {}
         },
         {
@@ -791,11 +970,11 @@
           "title": "fillField",
           "args": [
             "Mật khẩu",
-            "WrongPass999!"
+            "123123"
           ],
           "status": "success",
-          "startTime": 1794217146706,
-          "endTime": 1794217147174,
+          "startTime": 1794566783891,
+          "endTime": 1794566784171,
           "parent": {}
         },
         {
@@ -805,31 +984,175 @@
             "Đăng nhập"
           ],
           "status": "success",
-          "startTime": 1794217147174,
-          "endTime": 1794217147328,
+          "startTime": 1794566784172,
+          "endTime": 1794566784323,
           "parent": {}
         },
         {
           "opts": {},
           "title": "waitForText",
           "args": [
-            "Invalid email or password",
-            "5"
+            "Đăng nhập thành công!",
+            "10"
           ],
           "status": "success",
-          "startTime": 1794217147329,
-          "endTime": 1794217147353,
+          "startTime": 1794566784323,
+          "endTime": 1794566784396,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "amOnPage",
+          "args": [
+            "/admin/projects/validate"
+          ],
+          "status": "success",
+          "startTime": 1794566784396,
+          "endTime": 1794566785962,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "waitForText",
+          "args": [
+            "Xác thực Dự án",
+            "10"
+          ],
+          "status": "success",
+          "startTime": 1794566785963,
+          "endTime": 1794566785969,
           "parent": {}
         },
         {
           "opts": {},
           "title": "see",
           "args": [
-            "Invalid email or password"
+            "Xác thực Dự án"
           ],
           "status": "success",
-          "startTime": 1794217147353,
-          "endTime": 1794217147357,
+          "startTime": 1794566785969,
+          "endTime": 1794566785972,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "see",
+          "args": [
+            "Chờ xác thực"
+          ],
+          "status": "success",
+          "startTime": 1794566785973,
+          "endTime": 1794566785976,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "see",
+          "args": [
+            "Đã phê duyệt"
+          ],
+          "status": "success",
+          "startTime": 1794566785976,
+          "endTime": 1794566785981,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "see",
+          "args": [
+            "Đã từ chối"
+          ],
+          "status": "success",
+          "startTime": 1794566785982,
+          "endTime": 1794566785985,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "see",
+          "args": [
+            "Đang tuyển"
+          ],
+          "status": "success",
+          "startTime": 1794566785985,
+          "endTime": 1794566785987,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "click",
+          "args": [
+            "Đã phê duyệt"
+          ],
+          "status": "success",
+          "startTime": 1794566785987,
+          "endTime": 1794566786178,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "wait",
+          "args": [
+            "1"
+          ],
+          "status": "success",
+          "startTime": 1794566786178,
+          "endTime": 1794566787181,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "seeElement",
+          "args": [
+            ".ant-table"
+          ],
+          "status": "success",
+          "startTime": 1794566787181,
+          "endTime": 1794566787184,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "click",
+          "args": [
+            "Đã từ chối"
+          ],
+          "status": "success",
+          "startTime": 1794566787184,
+          "endTime": 1794566787353,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "wait",
+          "args": [
+            "1"
+          ],
+          "status": "success",
+          "startTime": 1794566787354,
+          "endTime": 1794566788368,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "seeElement",
+          "args": [
+            ".ant-table"
+          ],
+          "status": "success",
+          "startTime": 1794566788368,
+          "endTime": 1794566788374,
+          "parent": {}
+        },
+        {
+          "opts": {},
+          "title": "saveScreenshot",
+          "args": [
+            "TC-LP-06_Truy cập trang Xác thực Dự án và duyệt qua các Tab.png"
+          ],
+          "status": "success",
+          "startTime": 1794566788375,
+          "endTime": 1794566788505,
           "parent": {}
         }
       ]
@@ -840,9 +1163,9 @@
         "stepRetryPriority": 50
       },
       "tags": [],
-      "uid": "rAOVuRlCwvT2pPHn8gNDHalUucaGElmGymlN3Xirci",
+      "uid": "VlOWbI4cvOD6FyGVDCXMn9RwO7a9cAKgfNlL6bAwJX",
       "retries": -1,
-      "title": "TC-LOGIN-10 - Email chỉ có khoảng trắng",
+      "title": "TC-LP-07 - Chặn truy cập trái phép khi chưa đăng nhập",
       "state": "passed",
       "notes": [],
       "meta": {
@@ -851,361 +1174,66 @@
         "windowSize": "1280x720"
       },
       "artifacts": [],
-      "duration": 2151,
+      "duration": 1497,
       "parent": {
-        "title": "FR-AUTH-001 - Đăng nhập",
-        "file": "D:\\Mobile\\ODC_SoftwareTesting_UTH\\e2e-tests\\auth\\login_test.js"
+        "title": "FR-LAB-002 - Quản lý Dự án",
+        "file": "C:\\Hoctap\\kiem chung phan mem1\\ODC_SoftwareTesting_UTH\\e2e-tests\\lab-admin\\manage_project_test.js"
       },
       "steps": [
         {
           "opts": {},
           "title": "amOnPage",
           "args": [
-            "/login"
+            "/admin/projects"
           ],
           "status": "success",
-          "startTime": 1794217147893,
-          "endTime": 1794217149239,
+          "startTime": 1794566789138,
+          "endTime": 1794566790431,
           "parent": {}
         },
         {
           "opts": {},
-          "title": "fillField",
+          "title": "waitInUrl",
           "args": [
-            "Tên đăng nhập",
-            "   "
+            "/login",
+            "10"
           ],
           "status": "success",
-          "startTime": 1794217149239,
-          "endTime": 1794217149472,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "fillField",
-          "args": [
-            "Mật khẩu",
-            "Secure@123"
-          ],
-          "status": "success",
-          "startTime": 1794217149472,
-          "endTime": 1794217149860,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "click",
-          "args": [
-            "Đăng nhập"
-          ],
-          "status": "success",
-          "startTime": 1794217149860,
-          "endTime": 1794217150031,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "waitForText",
-          "args": [
-            "Validation failed",
-            "5"
-          ],
-          "status": "success",
-          "startTime": 1794217150032,
-          "endTime": 1794217150036,
+          "startTime": 1794566790432,
+          "endTime": 1794566790438,
           "parent": {}
         },
         {
           "opts": {},
           "title": "see",
           "args": [
-            "Validation failed"
-          ],
-          "status": "success",
-          "startTime": 1794217150037,
-          "endTime": 1794217150041,
-          "parent": {}
-        }
-      ]
-    },
-    {
-      "opts": {
-        "conditionalRetries": 3,
-        "stepRetryPriority": 50
-      },
-      "tags": [],
-      "uid": "zja_ADLudGu1cQsM9fvtDJwY2wsYEBMHrN36Xw6YJw",
-      "retries": -1,
-      "title": "TC-LOGIN-11 - Password chỉ có khoảng trắng",
-      "state": "passed",
-      "notes": [],
-      "meta": {
-        "browser": "chromium",
-        "browserVersion": "158.0.8127.18",
-        "windowSize": "1280x720"
-      },
-      "artifacts": [],
-      "duration": 2653,
-      "parent": {
-        "title": "FR-AUTH-001 - Đăng nhập",
-        "file": "D:\\Mobile\\ODC_SoftwareTesting_UTH\\e2e-tests\\auth\\login_test.js"
-      },
-      "steps": [
-        {
-          "opts": {},
-          "title": "amOnPage",
-          "args": [
-            "/login"
-          ],
-          "status": "success",
-          "startTime": 1794217150580,
-          "endTime": 1794217152149,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "fillField",
-          "args": [
-            "Tên đăng nhập",
-            "testlogin@labodc.com"
-          ],
-          "status": "success",
-          "startTime": 1794217152149,
-          "endTime": 1794217152832,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "fillField",
-          "args": [
-            "Mật khẩu",
-            "   "
-          ],
-          "status": "success",
-          "startTime": 1794217152832,
-          "endTime": 1794217153036,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "click",
-          "args": [
             "Đăng nhập"
           ],
           "status": "success",
-          "startTime": 1794217153036,
-          "endTime": 1794217153221,
+          "startTime": 1794566790438,
+          "endTime": 1794566790445,
           "parent": {}
         },
         {
           "opts": {},
-          "title": "waitForText",
+          "title": "seeElement",
           "args": [
-            "Validation failed",
-            "5"
+            "input[placeholder=\"Tên đăng nhập\"]"
           ],
           "status": "success",
-          "startTime": 1794217153222,
-          "endTime": 1794217153227,
+          "startTime": 1794566790445,
+          "endTime": 1794566790452,
           "parent": {}
         },
         {
           "opts": {},
-          "title": "see",
+          "title": "saveScreenshot",
           "args": [
-            "Validation failed"
+            "TC-LP-07_Chặn truy cập trái phép khi chưa đăng nhập.png"
           ],
           "status": "success",
-          "startTime": 1794217153227,
-          "endTime": 1794217153230,
-          "parent": {}
-        }
-      ]
-    },
-    {
-      "opts": {
-        "conditionalRetries": 3,
-        "stepRetryPriority": 50
-      },
-      "tags": [],
-      "uid": "VAqDsfdKTNrpHxzejPlDw2TTVX0hOjLSMIRUngSvUg",
-      "retries": -1,
-      "title": "TC-LOGIN-12 - Email có khoảng trắng đầu cuối (edge case)",
-      "state": "passed",
-      "notes": [],
-      "meta": {
-        "browser": "chromium",
-        "browserVersion": "158.0.8127.18",
-        "windowSize": "1280x720"
-      },
-      "artifacts": [],
-      "duration": 2568,
-      "parent": {
-        "title": "FR-AUTH-001 - Đăng nhập",
-        "file": "D:\\Mobile\\ODC_SoftwareTesting_UTH\\e2e-tests\\auth\\login_test.js"
-      },
-      "steps": [
-        {
-          "opts": {},
-          "title": "amOnPage",
-          "args": [
-            "/login"
-          ],
-          "status": "success",
-          "startTime": 1794217153727,
-          "endTime": 1794217155040,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "fillField",
-          "args": [
-            "Tên đăng nhập",
-            " testlogin@labodc.com "
-          ],
-          "status": "success",
-          "startTime": 1794217155041,
-          "endTime": 1794217155755,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "fillField",
-          "args": [
-            "Mật khẩu",
-            "Secure@123"
-          ],
-          "status": "success",
-          "startTime": 1794217155755,
-          "endTime": 1794217156128,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "click",
-          "args": [
-            "Đăng nhập"
-          ],
-          "status": "success",
-          "startTime": 1794217156128,
-          "endTime": 1794217156284,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "waitForText",
-          "args": [
-            "Validation failed",
-            "5"
-          ],
-          "status": "success",
-          "startTime": 1794217156284,
-          "endTime": 1794217156289,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "see",
-          "args": [
-            "Validation failed"
-          ],
-          "status": "success",
-          "startTime": 1794217156290,
-          "endTime": 1794217156292,
-          "parent": {}
-        }
-      ]
-    },
-    {
-      "opts": {
-        "conditionalRetries": 3,
-        "stepRetryPriority": 50
-      },
-      "tags": [],
-      "uid": "bqaqbfLbB8C1tpi19dGM4Ci7U3wi0E3tBE6lKKhY_s",
-      "retries": -1,
-      "title": "TC-LOGIN-13 - Email viết hoa - case sensitivity (single fault)",
-      "state": "passed",
-      "notes": [],
-      "meta": {
-        "browser": "chromium",
-        "browserVersion": "158.0.8127.18",
-        "windowSize": "1280x720"
-      },
-      "artifacts": [],
-      "duration": 2760,
-      "parent": {
-        "title": "FR-AUTH-001 - Đăng nhập",
-        "file": "D:\\Mobile\\ODC_SoftwareTesting_UTH\\e2e-tests\\auth\\login_test.js"
-      },
-      "steps": [
-        {
-          "opts": {},
-          "title": "amOnPage",
-          "args": [
-            "/login"
-          ],
-          "status": "success",
-          "startTime": 1794217156804,
-          "endTime": 1794217158397,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "fillField",
-          "args": [
-            "Tên đăng nhập",
-            "TESTLOGIN@LABODC.COM"
-          ],
-          "status": "success",
-          "startTime": 1794217158398,
-          "endTime": 1794217159068,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "fillField",
-          "args": [
-            "Mật khẩu",
-            "Secure@123"
-          ],
-          "status": "success",
-          "startTime": 1794217159068,
-          "endTime": 1794217159399,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "click",
-          "args": [
-            "Đăng nhập"
-          ],
-          "status": "success",
-          "startTime": 1794217159399,
-          "endTime": 1794217159554,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "waitForText",
-          "args": [
-            "Invalid email or password",
-            "5"
-          ],
-          "status": "success",
-          "startTime": 1794217159554,
-          "endTime": 1794217159558,
-          "parent": {}
-        },
-        {
-          "opts": {},
-          "title": "see",
-          "args": [
-            "Invalid email or password"
-          ],
-          "status": "success",
-          "startTime": 1794217159558,
-          "endTime": 1794217159561,
+          "startTime": 1794566790453,
+          "endTime": 1794566790632,
           "parent": {}
         }
       ]
