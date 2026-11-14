@@ -149,21 +149,29 @@ public class TalentController {
             Authentication authentication,
             @RequestParam("file") MultipartFile file) {
         User user = currentUser(authentication);
-        String url = talentService.storeAvatar(user.getId(), file);
-        return ResponseEntity.ok(ApiResponse.success("Avatar uploaded successfully", url));
+        try {
+            String url = talentService.storeAvatar(user.getId(), file);
+            return ResponseEntity.ok(ApiResponse.success("Avatar uploaded successfully", url));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
+        }
     }
 
     /**
      * POST /api/talent/profile/cv
      * Upload CV cho talent
      */
-    @PostMapping("/profile/cv")
+   @PostMapping("/profile/cv")
     public ResponseEntity<ApiResponse<String>> uploadCv(
             Authentication authentication,
             @RequestParam("file") MultipartFile file) {
         User user = currentUser(authentication);
-        String url = talentService.storeCv(user.getId(), file);
-        return ResponseEntity.ok(ApiResponse.success("CV uploaded successfully", url));
+        try {
+            String url = talentService.storeCv(user.getId(), file);
+            return ResponseEntity.ok(ApiResponse.success("CV uploaded successfully", url));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
+        }
     }
     
     /**
