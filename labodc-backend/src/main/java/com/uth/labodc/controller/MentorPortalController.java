@@ -20,6 +20,7 @@ import com.uth.labodc.service.MentorPortalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.MediaType;
@@ -96,6 +97,34 @@ public class MentorPortalController {
     public ResponseEntity<ApiResponse<List<MentorTaskDTO>>> projectTasks(Authentication authentication, @PathVariable long projectId) {
         User user = currentUser(authentication);
         return ResponseEntity.ok(ApiResponse.success(mentorPortalService.getProjectTasks(user, projectId)));
+    }
+
+    @GetMapping("/projects/{projectId}/task-template")
+    @PreAuthorize("hasRole('MENTOR')")
+    public ResponseEntity<Resource> downloadTaskTemplate(
+            Authentication authentication,
+            @PathVariable long projectId
+    ) {
+        User user = currentUser(authentication);
+        byte[] content = mentorPortalService.generateTaskTemplate(user, projectId);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"task-template.xlsx\"")
+                .contentType(MediaType.parseMediaType(
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .contentLength(content.length)
+                .body(new ByteArrayResource(content));
+    }
+
+    @PostMapping(value = "/projects/{projectId}/tasks/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('MENTOR')")
+    public ResponseEntity<ApiResponse<Integer>> uploadTasks(
+            Authentication authentication,
+            @PathVariable long projectId,
+            @RequestPart("file") MultipartFile file
+    ) {
+        User user = currentUser(authentication);
+        int imported = mentorPortalService.uploadTasks(user, projectId, file);
+        return ResponseEntity.ok(ApiResponse.success("Tasks imported successfully", imported));
     }
 
     @GetMapping("/tasks/{taskId}/submissions")
