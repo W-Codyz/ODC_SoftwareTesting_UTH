@@ -1,5 +1,6 @@
 package com.uth.labodc.controller;
 
+import java.util.List;
 import com.uth.labodc.dto.EnterpriseDTO;
 import com.uth.labodc.exception.BadRequestException;
 import com.uth.labodc.dto.ApiResponse;
@@ -43,6 +44,13 @@ public class EnterpriseAdminController {
                 })
                 .collect(java.util.stream.Collectors.toList());
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/pending")
+    public ResponseEntity<List<EnterpriseDTO>> getPendingEnterprises() {
+        log.info("Fetching all pending enterprises");
+        List<EnterpriseDTO> pendingEnterprises = enterpriseService.getPendingEnterprises();
+        return ResponseEntity.ok(pendingEnterprises);
     }
 
     @GetMapping("/{id}")
@@ -94,22 +102,22 @@ public class EnterpriseAdminController {
     public ResponseEntity<?> rejectEnterprise(
             @PathVariable Long id,
             @RequestParam(required = false) String reason) {
-        
+
         if (reason == null || reason.trim().isEmpty()) {
             throw new BadRequestException("Reason is required and cannot be empty");
         }
         if (reason.trim().length() > 500) {
             throw new BadRequestException("Reason must not exceed 500 characters");
         }
-        
-        org.springframework.security.core.Authentication authentication = 
-            org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+
+        org.springframework.security.core.Authentication authentication = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
         String userEmail = authentication.getName();
         com.uth.labodc.model.entity.User user = enterpriseService.findUserByEmail(userEmail);
-        
+
         // Gọi đúng tên hàm deleteEnterprise và truyền đúng thứ tự: (id, userId, reason)
         Enterprise enterprise = enterpriseService.deleteEnterprise(id, user.getId(), reason.trim());
-       
+
         return ResponseEntity.ok(ApiResponse.success("Enterprise rejected successfully", enterprise));
     }
 }
