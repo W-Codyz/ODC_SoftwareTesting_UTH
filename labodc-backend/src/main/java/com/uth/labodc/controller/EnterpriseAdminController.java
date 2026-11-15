@@ -1,6 +1,7 @@
 package com.uth.labodc.controller;
 
 import com.uth.labodc.dto.EnterpriseDTO;
+import com.uth.labodc.exception.BadRequestException;
 import com.uth.labodc.dto.ApiResponse;
 import com.uth.labodc.model.entity.Enterprise;
 import com.uth.labodc.service.EnterpriseService;
@@ -80,30 +81,35 @@ public class EnterpriseAdminController {
                 .getContext().getAuthentication();
         String userEmail = authentication.getName();
 
-        
         com.uth.labodc.model.entity.User user = enterpriseService.findUserByEmail(userEmail);
         log.info("Verifying enterprise {} by user {}", id, user.getId());
 
-        
         Enterprise enterprise = enterpriseService.verifyEnterprise(id, user.getId());
         EnterpriseDTO dto = enterpriseService.getEnterpriseById(enterprise.getId());
 
-        
         return ResponseEntity.ok(ApiResponse.success("Enterprise verified successfully", dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteEnterprise(
+    public ResponseEntity<?> rejectEnterprise(
             @PathVariable Long id,
-            @RequestParam String reason) {
-        org.springframework.security.core.Authentication authentication = org.springframework.security.core.context.SecurityContextHolder
-                .getContext().getAuthentication();
+            @RequestParam(required = false) String reason) {
+        
+        if (reason == null || reason.trim().isEmpty()) {
+            throw new BadRequestException("Reason is required and cannot be empty");
+        }
+        if (reason.trim().length() > 500) {
+            throw new BadRequestException("Reason must not exceed 500 characters");
+        }
+        
+        org.springframework.security.core.Authentication authentication = 
+            org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
-
-        // Get userId from userEmail
         com.uth.labodc.model.entity.User user = enterpriseService.findUserByEmail(userEmail);
-        log.info("Deleting/rejecting enterprise {} by user {}", id, user.getId());
-        enterpriseService.deleteEnterprise(id, user.getId(), reason);
-        return ResponseEntity.ok().build();
+        
+        // Gọi đúng tên hàm deleteEnterprise và truyền đúng thứ tự: (id, userId, reason)
+        Enterprise enterprise = enterpriseService.deleteEnterprise(id, user.getId(), reason.trim());
+       
+        return ResponseEntity.ok(ApiResponse.success("Enterprise rejected successfully", enterprise));
     }
 }
