@@ -177,9 +177,19 @@ public class FundAllocationService {
             throw new RuntimeException("Team distribution list is required");
         }
 
-        BigDecimal totalRequested = request.getTeamDistribution().stream()
-                .map(DisburseTeamRequest.TeamMemberDisbursement::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalRequested = BigDecimal.ZERO;
+        for (DisburseTeamRequest.TeamMemberDisbursement member : request.getTeamDistribution()) {
+            if (member == null) {
+                throw new RuntimeException("Team member disbursement cannot be null");
+            }
+            if (member.getTalentId() == null) {
+                throw new RuntimeException("Talent ID is required for team disbursement");
+            }
+            if (member.getAmount() == null || member.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+                throw new RuntimeException("Invalid disbursement amount for talent " + member.getTalentId());
+            }
+            totalRequested = totalRequested.add(member.getAmount());
+        }
 
         if (totalRequested.compareTo(BigDecimal.ZERO) <= 0) {
             throw new RuntimeException("Total team disbursement amount must be positive");
