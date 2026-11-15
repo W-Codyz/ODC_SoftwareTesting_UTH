@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.uth.labodc.exception.ConflictException;
 import com.uth.labodc.exception.ResourceNotFoundException;
-import com.uth.labodc.model.enums.EnterpriseStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -93,7 +92,6 @@ public class EnterpriseService {
     public Enterprise deleteEnterprise(Long id, Long rejectedBy, String reason) {
         log.info("Rejecting enterprise with id: {}", id);
 
-        
         if (reason == null || reason.trim().isEmpty()) {
             throw new BadRequestException("Reason is required and cannot be empty");
         }
@@ -103,13 +101,11 @@ public class EnterpriseService {
 
         Enterprise enterprise = findById(id);
 
-       
         if (!EnterpriseStatus.PENDING.equals(enterprise.getStatus())) {
             throw new ConflictException(
                     "Enterprise is not in PENDING status (current status: " + enterprise.getStatus() + ")");
         }
 
-        
         enterprise.setStatus(EnterpriseStatus.REJECTED);
         enterprise.setVerifiedAt(LocalDateTime.now());
         enterprise.setVerifiedBy(rejectedBy);
@@ -120,7 +116,6 @@ public class EnterpriseService {
         Enterprise saved = enterpriseRepository.save(enterprise);
         log.info("Enterprise {} marked as REJECTED", id);
 
-        
         EnterpriseRejection rejection = EnterpriseRejection.builder()
                 .enterpriseId(id)
                 .rejectedBy(rejectedBy)
@@ -135,7 +130,6 @@ public class EnterpriseService {
         log.info("Rejection record saved for enterprise {} ({}): {}", id, enterprise.getCompanyName(), reason.trim());
         log.info("Enterprise {} rejected successfully", id);
 
-        
         return saved;
     }
 
@@ -151,6 +145,15 @@ public class EnterpriseService {
     public EnterpriseDTO getEnterpriseById(Long id) {
         Enterprise enterprise = findById(id);
         return convertToDTO(enterprise);
+    }
+
+    @Transactional(readOnly = true)
+    public List<EnterpriseDTO> getPendingEnterprises() {
+        log.info("Fetching all pending enterprises");
+        return enterpriseRepository.findByStatus(EnterpriseStatus.PENDING)
+                .stream()
+                .map(this::convertToDTO)
+                .toList();
     }
 
     @Transactional
