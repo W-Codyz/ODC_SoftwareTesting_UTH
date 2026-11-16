@@ -13,6 +13,7 @@ import com.uth.labodc.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -85,12 +86,23 @@ public class AuthService {
         }
 
         // Authenticate user
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    )
+            );
+        } catch (BadCredentialsException ex) {
+            // Increment failed_login_attempts if user exists
+            userRepository.findByEmailAndDeletedAtIsNull(request.getEmail()).ifPresent(u -> {
+                int attempts = (u.getFailedLoginAttempts() != null ? u.getFailedLoginAttempts() : 0) + 1;
+                u.setFailedLoginAttempts(attempts);
+                userRepository.save(u);
+                log.warn("Failed login attempt for {}: count={}", u.getEmail(), attempts);
+            });
+            throw ex;
+        }
         
         // Get user from database if not fetched
         if (user == null) {
@@ -105,7 +117,7 @@ public class AuthService {
             throw new BadRequestException("Account is not active. Status: " + user.getStatus());
         }
         
-        // Update last login
+        // Update last login and reset failed login attempts
         user.setLastLoginAt(LocalDateTime.now());
         user.setFailedLoginAttempts(0);
         userRepository.save(user);
