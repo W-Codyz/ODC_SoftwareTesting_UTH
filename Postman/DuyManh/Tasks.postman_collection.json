@@ -1,0 +1,131 @@
+﻿{
+  "info": {
+    "name": "LabODC - Mentor Tasks (FR-MEN-002)",
+    "description": "Postman collection cho 12 test case Tasks đã chạy. Trước khi chạy: đăng nhập Mentor để điền biến token; lấy project_id từ GET /api/mentor/projects. Project mặc định là 1. Các request upload yêu cầu file Excel được chọn thủ công ở Body > form-data, key file (File). TC12 được tách thành hai request con: ngày sai qua upload Excel và progress sai qua PUT JSON.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8080", "type": "string" },
+    { "key": "project_id", "value": "1", "type": "string" },
+    { "key": "task_id", "value": "12", "type": "string" },
+    { "key": "token", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Tasks",
+      "item": [
+        {
+          "name": "TC1-View Mentor Tasks",
+          "request": { "method": "GET", "url": "{{base_url}}/api/mentor/tasks", "description": "Expected: 200; chỉ trả tasks của Mentor hiện tại." }
+        },
+        {
+          "name": "TC2-View Tasks by Project",
+          "request": { "method": "GET", "url": "{{base_url}}/api/mentor/projects/{{project_id}}/tasks", "description": "Expected: 200; project phải thuộc Mentor đăng nhập." }
+        },
+        {
+          "name": "TC3-Create a Valid Task",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Postman task {{$guid}}\",\n  \"description\": \"Created by FR-MEN-002 test\",\n  \"status\": \"pending\",\n  \"progress\": 0,\n  \"assignedTo\": [],\n  \"dueDate\": \"2027-12-31\",\n  \"priority\": \"medium\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{base_url}}/api/mentor/projects/{{project_id}}/tasks",
+            "description": "Expected: 200; tạo task. Request này ghi dữ liệu vào DB."
+          }
+        },
+        {
+          "name": "TC4-Update Task",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"progress\": 100,\n  \"status\": \"completed\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{base_url}}/api/mentor/projects/{{project_id}}/tasks/{{task_id}}",
+            "description": "Expected: 200; cập nhật task thuộc project. Gán task_id bằng ID thật (có thể lấy từ response TC3)."
+          }
+        },
+        {
+          "name": "TC5-Delete Test Task",
+          "request": { "method": "DELETE", "url": "{{base_url}}/api/mentor/projects/{{project_id}}/tasks/{{task_id}}", "description": "Expected: 200; xóa task thử nghiệm. Dùng task_id của TC3, không dùng task có dữ liệu cần giữ." }
+        },
+        {
+          "name": "TC6-Validate Empty Task Title",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"\",\n  \"description\": \"Validation test\",\n  \"status\": \"pending\",\n  \"progress\": 0,\n  \"dueDate\": \"2027-12-31\",\n  \"priority\": \"medium\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{base_url}}/api/mentor/projects/{{project_id}}/tasks",
+            "description": "Expected: 400; title rỗng bị từ chối và không tạo task."
+          }
+        },
+        {
+          "name": "TC7-Progress Value Exceeds 100%",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Progress boundary {{$guid}}\",\n  \"description\": \"Progress validation test\",\n  \"status\": \"pending\",\n  \"progress\": 105,\n  \"dueDate\": \"2027-12-31\",\n  \"priority\": \"medium\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{base_url}}/api/mentor/projects/{{project_id}}/tasks",
+            "description": "Expected by the case: out-of-range progress is rejected. Inspect response value; current service may normalize progress to 100. This request creates a task if accepted."
+          }
+        },
+        {
+          "name": "TC8-Download Excel Template",
+          "request": { "method": "GET", "url": "{{base_url}}/api/mentor/projects/{{project_id}}/task-template", "description": "Expected: 200 XLSX. Use Save Response to store task-template.xlsx. Project must belong to current Mentor." }
+        },
+        {
+          "name": "TC9-Upload a Valid Excel File",
+          "request": {
+            "method": "POST",
+            "body": { "mode": "formdata", "formdata": [{ "key": "file", "type": "file", "src": "" }] },
+            "url": "{{base_url}}/api/mentor/projects/{{project_id}}/tasks/upload",
+            "description": "Expected: 200. In Postman select an XLSX under file. Keep template headers, add a valid row and unique Task ID. Do not set Content-Type manually."
+          }
+        },
+        {
+          "name": "TC10-Upload Invalid File Type or Exceeds File Size Limit",
+          "request": {
+            "method": "POST",
+            "body": { "mode": "formdata", "formdata": [{ "key": "file", "type": "file", "src": "" }] },
+            "url": "{{base_url}}/api/mentor/projects/{{project_id}}/tasks/upload",
+            "description": "Expected: 4xx for invalid file. Choose a non-XLSX test file or an oversized file. Do not manually add Content-Type."
+          }
+        },
+        {
+          "name": "TC11-Enforce Unique Task IDs",
+          "request": {
+            "method": "POST",
+            "body": { "mode": "formdata", "formdata": [{ "key": "file", "type": "file", "src": "" }] },
+            "url": "{{base_url}}/api/mentor/projects/{{project_id}}/tasks/upload",
+            "description": "Expected: duplicate Task ID is rejected. Choose an XLSX containing an ID already imported into this project. The API validates duplicates before database insertion."
+          }
+        },
+        {
+          "name": "TC12-Validate Dates and Progress Constraints",
+          "item": [
+            {
+              "name": "TC12a-Due Date Before Start Date (Excel upload)",
+              "request": {
+                "method": "POST",
+                "body": { "mode": "formdata", "formdata": [{ "key": "file", "type": "file", "src": "" }] },
+                "url": "{{base_url}}/api/mentor/projects/{{project_id}}/tasks/upload",
+                "description": "Expected: 4xx. Choose XLSX with Start Date later than Due Date; dates should be yyyy-MM-dd. Do not manually add Content-Type."
+              }
+            },
+            {
+              "name": "TC12b-Progress Outside 0-100 (JSON update)",
+              "request": {
+                "method": "PUT",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": { "mode": "raw", "raw": "{\n  \"progress\": 105\n}", "options": { "raw": { "language": "json" } } },
+                "url": "{{base_url}}/api/mentor/projects/{{project_id}}/tasks/{{task_id}}",
+                "description": "Expected by the requirement: reject values outside 0-100. Inspect response; current service may clamp to 100. Use a real task_id."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

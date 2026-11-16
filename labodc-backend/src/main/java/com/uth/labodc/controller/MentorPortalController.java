@@ -6,6 +6,7 @@ import com.uth.labodc.dto.mentor.MentorApplicationDTO;
 import com.uth.labodc.dto.mentor.MentorApplicationDecisionRequest;
 import com.uth.labodc.dto.mentor.MentorDashboardDTO;
 import com.uth.labodc.dto.mentor.MentorInvitationDTO;
+import com.uth.labodc.dto.mentor.MentorInvitationListDTO;
 import com.uth.labodc.dto.mentor.MentorProjectOptionDTO;
 import com.uth.labodc.dto.mentor.MentorReportDTO;
 import com.uth.labodc.dto.mentor.MentorTaskDTO;
@@ -52,9 +53,14 @@ public class MentorPortalController {
 
     @GetMapping("/invitations")
     @PreAuthorize("hasRole('MENTOR')")
-    public ResponseEntity<ApiResponse<List<MentorInvitationDTO>>> invitations(Authentication authentication) {
+    public ResponseEntity<ApiResponse<MentorInvitationListDTO>> invitations(
+            Authentication authentication,
+            @RequestParam(required = false, defaultValue = "PENDING") String status,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int limit
+    ) {
         User user = currentUser(authentication);
-        return ResponseEntity.ok(ApiResponse.success(mentorPortalService.getInvitations(user)));
+        return ResponseEntity.ok(ApiResponse.success(mentorPortalService.getInvitations(user, status, page, limit)));
     }
 
     @GetMapping("/invitations/{id}")
