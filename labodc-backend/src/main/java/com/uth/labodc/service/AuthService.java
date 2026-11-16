@@ -61,6 +61,21 @@ public class AuthService {
     
     @Transactional
     public AuthResponse login(LoginRequest request) {
+        User user = userRepository.findByEmailAndDeletedAtIsNull(request.getEmail()).orElse(null);
+
+        // Check auto unlock if lock duration has expired
+        if (user != null && user.getStatus() == UserStatus.LOCKED) {
+            if (user.getLockedUntil() != null && LocalDateTime.now().isAfter(user.getLockedUntil())) {
+                user.setStatus(UserStatus.ACTIVE);
+                user.setFailedLoginAttempts(0);
+                user.setLockedUntil(null);
+                user = userRepository.save(user);
+                log.info("Account auto-unlocked after lock duration expired: {}", user.getEmail());
+            } else {
+                throw new BadRequestException("Account is not active. Status: LOCKED");
+            }
+        }
+
         // Authenticate user
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -69,9 +84,11 @@ public class AuthService {
                 )
         );
         
-        // Get user from database
-        User user = userRepository.findByEmailAndDeletedAtIsNull(request.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        // Get user from database if not fetched
+        if (user == null) {
+            user = userRepository.findByEmailAndDeletedAtIsNull(request.getEmail())
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        }
         
         // Check if user is active
         if (user.getStatus() != UserStatus.ACTIVE) {
