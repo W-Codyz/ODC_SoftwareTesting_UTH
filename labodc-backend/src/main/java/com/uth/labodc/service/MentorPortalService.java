@@ -137,11 +137,9 @@ public class MentorPortalService {
                 .build();
     }
 
-    public List<MentorInvitationDTO> getInvitations(User user) {
-        Mentor mentor = requireMentor(user);
-        List<MentorInvitation> invitations = mentorInvitationRepository.findPendingByMentorIdOrderByReceivedDateDesc(mentor.getId());
-        if (invitations.isEmpty()) {
-            return List.of();
+    public MentorInvitationListDTO getInvitations(User user, String status, int page, int limit) {
+        if (page < 1 || limit < 1 || limit > 100) {
+            throw new BadRequestException("Page must be at least 1 and limit must be between 1 and 100");
         }
 
         Map<Long, String> projectTitles = loadProjectTitles(invitations.stream().map(MentorInvitation::getProjectId).distinct().toList());
@@ -179,6 +177,49 @@ public class MentorPortalService {
                 .skills(parseStringList(invitation.getSkills()))
                 .receivedDate(formatDate(invitation.getReceivedDate()))
                 .priority(normalizePriority(invitation.getPriority()))
+        Mentor mentor = requireMentor(user);
+        String normalizedStatus = status == null || status.isBlank()
+                ? "PENDING"
+                : status.trim().toUpperCase(Locale.ROOT);
+        if (!Set.of("PENDING", "ACCEPTED", "REJECTED").contains(normalizedStatus)) {
+            throw new BadRequestException("Status must be one of PENDING, ACCEPTED, REJECTED");
+        }
+
+        List<MentorInvitation> allInvitations =
+                mentorInvitationRepository.findByMentorIdAndStatusOrderByReceivedDateDesc(mentor.getId(), normalizedStatus);
+        long totalInvitations = allInvitations.size();
+        int totalPages = totalInvitations == 0
+                ? 0
+                : (int) Math.ceil(totalInvitations / (double) limit);
+        int fromIndex = Math.min((page - 1) * limit, allInvitations.size());
+        int toIndex = Math.min(fromIndex + limit, allInvitations.size());
+        List<MentorInvitation> invitations = allInvitations.subList(fromIndex, toIndex);
+
+        Map<Long, String> projectTitles = loadProjectTitles(invitations.stream()
+                .map(MentorInvitation::getProjectId)
+                .distinct()
+                .toList());
+        List<MentorInvitationDTO> result = new ArrayList<>();
+        for (MentorInvitation inv : invitations) {
+            result.add(MentorInvitationDTO.builder()
+                    .id(String.valueOf(inv.getId()))
+                    .projectName(projectTitles.getOrDefault(inv.getProjectId(), "Project #" + inv.getProjectId()))
+                    .groupName(inv.getGroupName())
+                    .studentCount(inv.getStudentCount() != null ? inv.getStudentCount() : 0)
+                    .description(inv.getDescription() != null ? inv.getDescription() : "")
+                    .deadline(formatDate(inv.getDeadline() != null ? inv.getDeadline() : (inv.getExpiresAt() != null ? inv.getExpiresAt().toLocalDate() : null)))
+                    .skills(parseStringList(inv.getSkills()))
+                    .receivedDate(formatDate(inv.getReceivedDate()))
+                    .priority(normalizePriority(inv.getPriority()))
+                    .build());
+        }
+        return MentorInvitationListDTO.builder()
+                .invitations(result)
+                .pagination(MentorInvitationPaginationDTO.builder()
+                        .currentPage(page)
+                        .totalPages(totalPages)
+                        .totalInvitations(totalInvitations)
+                        .build())
                 .build();
     }
 
