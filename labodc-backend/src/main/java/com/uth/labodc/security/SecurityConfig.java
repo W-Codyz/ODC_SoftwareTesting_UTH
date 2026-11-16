@@ -1,5 +1,7 @@
 package com.uth.labodc.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.uth.labodc.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +22,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.List;
+import java.nio.charset.StandardCharsets;
 
 @Configuration
 @EnableWebSecurity
@@ -29,6 +32,7 @@ public class SecurityConfig {
     
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
+    private final ObjectMapper objectMapper;
     
     @Value("${cors.allowed-origins}")
     private String allowedOrigins;
@@ -51,7 +55,13 @@ public class SecurityConfig {
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                            response.setHeader(HttpHeaders.WWW_AUTHENTICATE, "Bearer");
+                            response.setHeader(HttpHeaders.WWW_AUTHENTICATE, "Bearer error=\"invalid_token\"");
+                            response.setContentType("application/json");
+                            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+                            objectMapper.writeValue(
+                                    response.getOutputStream(),
+                                    ApiResponse.error("Invalid or expired token")
+                            );
                         })
                 )
                 .sessionManagement(session -> session
