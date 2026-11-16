@@ -6,6 +6,7 @@ import com.uth.labodc.dto.auth.RegisterRequest;
 import com.uth.labodc.exception.BadRequestException;
 import com.uth.labodc.exception.ResourceNotFoundException;
 import com.uth.labodc.model.entity.User;
+import com.uth.labodc.model.enums.UserRole;
 import com.uth.labodc.model.enums.UserStatus;
 import com.uth.labodc.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +38,11 @@ public class AuthService {
         // Validate passwords match
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new BadRequestException("Passwords do not match");
+        }
+
+        if (request.getRole() == UserRole.TALENT
+                && !request.getEmail().toLowerCase(Locale.ROOT).endsWith("@uth.edu.vn")) {
+            throw new BadRequestException("Talent accounts must use an @uth.edu.vn email address");
         }
         
         // Check if email already exists
