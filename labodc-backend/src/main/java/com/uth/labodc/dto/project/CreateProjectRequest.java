@@ -28,10 +28,11 @@ public class CreateProjectRequest {
     private LocalDate endDate;
 
     @NotNull
+    @Min(value = 1, message = "Budget phải lớn hơn 0")
     private Double budget;
 
     @NotNull
-    @Min(1)
+    @Min(value = 1, message = "Số lượng talent phải ít nhất là 1")
     private Integer requiredTalents;
 
     private List<String> technologies = new ArrayList<>();
