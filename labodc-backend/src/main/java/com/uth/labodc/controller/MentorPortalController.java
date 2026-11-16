@@ -63,6 +63,16 @@ public class MentorPortalController {
         return ResponseEntity.ok(ApiResponse.success(mentorPortalService.getInvitations(user, status, page, limit)));
     }
 
+    @GetMapping("/invitations/{id}")
+    @PreAuthorize("hasRole('MENTOR')")
+    public ResponseEntity<ApiResponse<MentorInvitationDTO>> invitationDetails(
+            Authentication authentication,
+            @PathVariable long id
+    ) {
+        User user = currentUser(authentication);
+        return ResponseEntity.ok(ApiResponse.success(mentorPortalService.getInvitationDetails(user, id)));
+    }
+
     @GetMapping("/projects")
     @PreAuthorize("hasRole('MENTOR')")
     public ResponseEntity<ApiResponse<List<MentorProjectOptionDTO>>> projects(Authentication authentication) {
