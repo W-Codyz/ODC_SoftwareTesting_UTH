@@ -137,8 +137,22 @@ public class FundAllocationService {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new RuntimeException("Invalid mentor disbursement amount");
         }
-        if (amount.compareTo(allocation.getMentorAmount()) > 0) {
-            throw new RuntimeException("Mentor disbursement exceeds allocated mentor amount");
+        BigDecimal alreadyDisbursed = fundDistributionRepository
+                .sumDisbursedByAllocationAndRecipientType(allocation.getId(), "MENTOR");
+        if (alreadyDisbursed == null) {
+            alreadyDisbursed = BigDecimal.ZERO;
+        }
+        BigDecimal projectedTotal = alreadyDisbursed.add(amount);
+        if (projectedTotal.compareTo(allocation.getMentorAmount()) > 0) {
+            BigDecimal remaining = allocation.getMentorAmount().subtract(alreadyDisbursed);
+            if (remaining.compareTo(BigDecimal.ZERO) < 0) {
+                remaining = BigDecimal.ZERO;
+            }
+            throw new RuntimeException(
+                    "Mentor disbursement exceeds allocated mentor amount. Allocated: "
+                            + allocation.getMentorAmount() + ", already disbursed: "
+                            + alreadyDisbursed + ", remaining: " + remaining
+                            + ", requested: " + amount);
         }
 
         Long mentorId = request.getMentorId() != null ? request.getMentorId() : project.getMentorId();
