@@ -142,6 +142,41 @@ public class MentorPortalService {
             throw new BadRequestException("Page must be at least 1 and limit must be between 1 and 100");
         }
 
+        Map<Long, String> projectTitles = loadProjectTitles(invitations.stream().map(MentorInvitation::getProjectId).distinct().toList());
+
+        return invitations.stream()
+                .map(inv -> toInvitationDTO(inv, projectTitles))
+                .toList();
+    }
+
+    public MentorInvitationDTO getInvitationDetails(User user, long invitationId) {
+        Mentor mentor = requireMentor(user);
+        MentorInvitation invitation = mentorInvitationRepository.findById(invitationId)
+                .filter(inv -> mentor.getId().equals(inv.getMentorId()))
+                .orElseThrow(() -> new ResourceNotFoundException("Invitation not found"));
+
+        Map<Long, String> projectTitles = loadProjectTitles(List.of(invitation.getProjectId()));
+        return toInvitationDTO(invitation, projectTitles);
+    }
+
+    private MentorInvitationDTO toInvitationDTO(
+            MentorInvitation invitation,
+            Map<Long, String> projectTitles
+    ) {
+        return MentorInvitationDTO.builder()
+                .id(String.valueOf(invitation.getId()))
+                .projectName(projectTitles.getOrDefault(
+                        invitation.getProjectId(),
+                        "Project #" + invitation.getProjectId()))
+                .groupName(invitation.getGroupName())
+                .studentCount(invitation.getStudentCount() != null ? invitation.getStudentCount() : 0)
+                .description(invitation.getDescription() != null ? invitation.getDescription() : "")
+                .deadline(formatDate(invitation.getDeadline() != null
+                        ? invitation.getDeadline()
+                        : (invitation.getExpiresAt() != null ? invitation.getExpiresAt().toLocalDate() : null)))
+                .skills(parseStringList(invitation.getSkills()))
+                .receivedDate(formatDate(invitation.getReceivedDate()))
+                .priority(normalizePriority(invitation.getPriority()))
         Mentor mentor = requireMentor(user);
         String normalizedStatus = status == null || status.isBlank()
                 ? "PENDING"
