@@ -5,6 +5,7 @@ import com.uth.labodc.dto.auth.LoginRequest;
 import com.uth.labodc.dto.auth.RegisterRequest;
 import com.uth.labodc.exception.BadRequestException;
 import com.uth.labodc.exception.ResourceNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
 import com.uth.labodc.model.entity.User;
 import com.uth.labodc.model.enums.UserStatus;
 import com.uth.labodc.repository.UserRepository;
@@ -74,7 +75,9 @@ public class AuthService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         
         // Check if user is active
-        if (user.getStatus() != UserStatus.ACTIVE) {
+        if (user.getStatus() == UserStatus.LOCKED) {
+            throw new AccessDeniedException("Tài khoản đã bị khóa");
+        } else if (user.getStatus() != UserStatus.ACTIVE) {
             throw new BadRequestException("Account is not active. Status: " + user.getStatus());
         }
         
