@@ -25,4 +25,9 @@ public interface FundDistributionRepository extends JpaRepository<FundDistributi
            "WHERE fd.allocationId = :allocationId AND fd.recipientType = :recipientType " +
            "AND fd.status <> 'FAILED'")
     BigDecimal sumDisbursedByAllocationAndRecipientType(Long allocationId, String recipientType);
+
+    @Query("SELECT COALESCE(SUM(fd.amount), 0) FROM FundDistribution fd " +
+           "WHERE fd.allocationId = :allocationId AND fd.recipientType IN :recipientTypes " +
+           "AND fd.status <> 'FAILED'")
+    BigDecimal sumDisbursedByAllocationAndRecipientTypes(Long allocationId, List<String> recipientTypes);
 }
