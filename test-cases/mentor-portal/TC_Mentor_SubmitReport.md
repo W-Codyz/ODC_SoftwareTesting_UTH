@@ -1,9 +1,10 @@
 # Test Design - FR-MEN-004 (Mentor: Submit Report)
 
-**Người thực hiện:** Nguyễn Duy Đức
-**Module:** Mentor Portal
-**Chức năng:** FR-MEN-004 Submit Report: `GET /api/mentor/reports`, `POST /api/mentor/reports`, `GET /api/mentor/reports/{id}/file`
-**Ngày tạo:** 08/11/2026
+**Người thực hiện:** Nguyễn Duy Đức  
+**Module:** Mentor Portal  
+**Chức năng:** FR-MEN-004 Submit Report: `GET /api/mentor/reports`, `POST /api/mentor/reports`, `GET /api/mentor/reports/{id}/file`  
+**Ngày tạo:** 15/11/2026  
+ 
 
 ## Giả định
 
@@ -111,8 +112,8 @@
 | Lớp | Mô tả | Tag | Giá trị đại diện |
 |---|---|---|---|
 | Hợp lệ (a) | Mentor có báo cáo | V-LST1 | MEN1 sau khi đã nộp |
-| Hợp lệ (b) | Mentor chưa có báo cáo nào | V-LST2 | Mentor mới |
-| Hợp lệ (c) | Cách ly dữ liệu giữa các mentor | V-LST3 | Đăng nhập MEN2 |
+| Hợp lệ (b) | Mentor chưa có báo cáo nào | V-LST2 | Mentor mới (MEN2 chưa nộp báo cáo) |
+| Hợp lệ (c) | Cách ly dữ liệu giữa các mentor | V-LST3 | Đăng nhập MEN2 (chỉ thấy báo cáo MEN2) |
 
 ### 1.12 reportId (GET /reports/{id}/file)
 
@@ -120,7 +121,7 @@
 |---|---|---|---|
 | Hợp lệ | Báo cáo của mentor, có file | V-RID1 | R-FILE |
 | Không hợp lệ (a) | Không tồn tại | X-RID1 | `99999` |
-| Không hợp lệ (b) | Báo cáo của mentor khác | X-RID2 | R-OTHER |
+| Không hợp lệ (b) | Báo cáo của mentor khác | X-RID2 | R-OTHER (hoặc MEN2 tải R-FILE của MEN1) |
 | Không hợp lệ (c) | Báo cáo không có file | X-RID3 | R-NOFILE |
 | Không hợp lệ (d) | Không phải số | X-RID4 | `abc` |
 | Không hợp lệ (e) | File đã bị xóa khỏi ổ đĩa | X-RID5 | R-FILE sau khi xóa file |
@@ -191,7 +192,6 @@ Trạng thái:
 | ST-06 | SUBMITTED | POST lại đúng dữ liệu đã nộp | Không đổi | Lỗi 409 hoặc 400 (SRS: UNIQUE) | TC-RPT-45 |
 | ST-07 | SUBMITTED | PUT sửa báo cáo | SUBMITTED (đã cập nhật) | 200 (SRS) | TC-RPT-51 |
 
-
 ## 4. Bảng quyết định (Decision Table)
 
 ### 4.1 POST /reports (nộp báo cáo)
@@ -250,11 +250,11 @@ Conditions: C1 token MENTOR, C2 báo cáo tồn tại, C3 báo cáo thuộc ment
 | Mã | Nội dung |
 |---|---|
 | MEN1 | Tài khoản mentor chính, có Bearer token (tài khoản seed, xem collection Postman) |
-| MEN2 | Tài khoản mentor thứ hai (test cách ly dữ liệu) |
+| MEN2 | Tài khoản mentor thứ hai (`mentor_edge@labodc.com` / `tokenMentor2` test cách ly dữ liệu) |
 | T-TALENT / T-ADMIN | Token TALENT / LAB_ADMIN (test sai role) |
-| P1 | Dự án được gán cho MEN1 (lấy ID từ `GET /api/mentor/projects`) |
-| P-OTHER | Dự án được gán cho MEN2 |
-| R-FILE | Báo cáo của MEN1, có file (tạo từ TC-RPT-03) |
+| P1 | Dự án được gán cho MEN1 (lấy ID từ `GET /api/mentor/projects`, mặc định `projectId=1`) |
+| P-OTHER | Dự án được gán cho MEN2 (hoặc MEN2 nộp vào P1 của MEN1) |
+| R-FILE | Báo cáo của MEN1, có file (tạo từ TC-RPT-03, `reportIdFile`) |
 | R-NOFILE | Báo cáo của MEN1, không có file (tạo từ TC-RPT-01) |
 | R-OTHER | Báo cáo của MEN2 |
 | F-PDF / F-EMPTY / F-EXE | File PDF nhỏ / file 0 byte / file `.exe` |
@@ -283,7 +283,7 @@ Lưu ý: code không có endpoint xóa báo cáo, mỗi lần POST thành công 
 | TC-RPT-15 | POST /reports | Không truyền status | MEN1; P1 | projectId=P1; student; studentId=SV001; reportName; dueDate=2026-12-31; summary (không có key status) | 200; status = "submitted" (service đặt mặc định) | Code | V-STS1, ST-01, G4, G13, R1 |
 | TC-RPT-16 | POST /reports | status giá trị lạ | MEN1; P1 | projectId=P1; student; studentId=SV001; reportName; dueDate=2026-12-31; summary; status=ABC | 400, không tạo báo cáo | REST | X-STS1, ST-05, G11, R7 |
 | TC-RPT-17 | POST /reports | Dự án không tồn tại | MEN1 | projectId=99999 | 404 hoặc 400 | REST | X-PJ1, G10, R3 |
-| TC-RPT-18 | POST /reports | Dự án của mentor khác | MEN1; P-OTHER | projectId=P-OTHER | 403 | REST | X-PJ3, G10, R4 |
+| TC-RPT-18 | POST /reports | Dự án của mentor khác | MEN2 đăng nhập (hoặc MEN1; P-OTHER) | projectId=P1 (dự án của MEN1, gửi bằng token MEN2) | 403 | REST | X-PJ3, G10, R4 |
 | TC-RPT-19 | POST /reports | File 0 byte | MEN1; P1; F-EMPTY | projectId=P1; student; studentId=SV001; reportName; dueDate=2026-12-31; summary; file=F-EMPTY | 200, báo cáo tạo không có file (code chỉ lưu file có dữ liệu); SRS không quy định | Code | X-FILE1, B-FIL0 |
 | TC-RPT-20 | POST /reports | File sai định dạng | MEN1; P1; F-EXE | projectId=P1; student; studentId=SV001; reportName; dueDate=2026-12-31; summary; file=F-EXE | 400 | SRS | X-FILE2, G12, R8 |
 | TC-RPT-21 | POST /reports | File vượt 20 MB | MEN1; P1; F-20MB+1 | projectId=P1; student; studentId=SV001; reportName; dueDate=2026-12-31; summary; file=F-20MB+1 | 400 hoặc 413 | SRS | X-FILE3, B-FIL2, G12, R8 |
@@ -293,13 +293,13 @@ Lưu ý: code không có endpoint xóa báo cáo, mỗi lần POST thành công 
 | TC-RPT-25 | POST /reports | Gửi JSON thay vì form-data | MEN1; P1 | Body raw JSON | 415 (consumes multipart/form-data) | Code | X-CT1 |
 | TC-RPT-26 | GET /reports | Danh sách khi mentor đã có báo cáo | MEN1; đã có báo cáo | Không có tham số | 200; data là mảng; mỗi phần tử có id, student, studentId, reportName, status, submittedDate, dueDate, score, fileSize, fileName | Code | V-AUTH1, V-LST1, G7 |
 | TC-RPT-27 | GET /reports | Thứ tự danh sách | MEN1; có từ 2 báo cáo dueDate khác nhau | Không có tham số | dueDate giảm dần | Code | V-LST1 |
-| TC-RPT-28 | GET /reports | Mentor chưa có báo cáo | Mentor mới | Không có tham số | 200; data = [] | Code | V-LST2 |
+| TC-RPT-28 | GET /reports | Mentor chưa có báo cáo | MEN2 mới chưa nộp báo cáo | Không có tham số | 200; data = [] | Code | V-LST2 |
 | TC-RPT-29 | GET /reports | Cách ly giữa các mentor | MEN2 đăng nhập; MEN1 đã có báo cáo | Không có tham số | Không thấy báo cáo của MEN1 | Code | V-LST3 |
 | TC-RPT-30 | GET /reports | Không gửi token | — | No Auth | 401 | REST | X-AUTH1 |
 | TC-RPT-31 | GET /reports | Token TALENT | T-TALENT | Bearer T-TALENT | 403 | Code | X-AUTH3 |
 | TC-RPT-32 | GET /reports/{id}/file | Tải file báo cáo có file | MEN1; R-FILE | id=R-FILE | 200; header Content-Disposition chứa "attachment" | Code | V-RID1, G6, DL-R1 |
 | TC-RPT-33 | GET /reports/{id}/file | Báo cáo không tồn tại | MEN1 | id=99999 | 404 ("Report not found") | Code | X-RID1, DL-R3 |
-| TC-RPT-34 | GET /reports/{id}/file | Báo cáo của mentor khác | MEN1; R-OTHER | id=R-OTHER | 404 hoặc 403 (code trả "Report not found"); SRS không quy định | Code | X-RID2, DL-R4 |
+| TC-RPT-34 | GET /reports/{id}/file | Báo cáo của mentor khác | MEN2 đăng nhập; R-FILE (báo cáo của MEN1) | id=R-FILE | 404 hoặc 403 (code trả "Report not found"); SRS không quy định | Code | X-RID2, DL-R4 |
 | TC-RPT-35 | GET /reports/{id}/file | Báo cáo không có file | MEN1; R-NOFILE | id=R-NOFILE | 404 ("File not found") | Code | X-RID3, DL-R5 |
 | TC-RPT-36 | GET /reports/{id}/file | id không phải số | MEN1 | id=abc | 400 (kiểu long) | Code | X-RID4, DL-R3 |
 | TC-RPT-37 | GET /reports/{id}/file | Không gửi token | R-FILE | No Auth | 401 | REST | X-AUTH1, DL-R2 |
@@ -433,7 +433,7 @@ Lưu ý: code không có endpoint xóa báo cáo, mỗi lần POST thành công 
 | G7 | Response là `MentorReportDTO` (id, student, studentId, reportName, status, submittedDate, dueDate, score, fileSize, fileName); SRS trả reportId, projectId, reportType, reportingPeriod, submittedAt, status, recipients | TC-RPT-01, TC-RPT-26 |
 | G8 | `PUT /reports/{id}` của SRS: không tìm thấy trong code (kết quả tìm `@PutMapping`, `@DeleteMapping`, `@PatchMapping` chỉ ra endpoint của Task) | TC-RPT-51 |
 | G9 | Không có ràng buộc chống nộp trùng (SRS: UNIQUE project_id + reporting_period); code không có `reportingPeriod` | TC-RPT-45 |
-| G10 | Nghi: code không thấy kiểm tra `projectId` tồn tại hoặc mentor thuộc dự án (xác nhận khi chạy) | TC-RPT-17, TC-RPT-18, TC-RPT-41, TC-RPT-42 |
+| G10 | Code không kiểm tra `projectId` tồn tại hoặc mentor thuộc dự án (đã xác nhận qua kiểm thử thực tế) | TC-RPT-17, TC-RPT-18, TC-RPT-41, TC-RPT-42 |
 | G11 | Nghi: `status` không được validate (xác nhận khi chạy) | TC-RPT-16 |
 | G12 | Nghi: không thấy kiểm tra loại và dung lượng file ở bước nộp (xác nhận khi chạy) | TC-RPT-20, TC-RPT-21 |
 | G13 | Nội bộ code: entity mặc định `status = "pending"`, service mặc định `"submitted"` | TC-RPT-15 |
