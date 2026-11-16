@@ -12,6 +12,7 @@ import com.uth.labodc.repository.UserRepository;
 import com.uth.labodc.service.ProjectDataService;
 import com.uth.labodc.service.ProjectManagementService;
 import com.uth.labodc.service.ProjectService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -77,7 +78,7 @@ public class ProjectController {
     @PostMapping
     public ResponseEntity<ApiResponse<ProjectResponse>> createProject(
             Authentication authentication,
-            @RequestBody CreateProjectRequest request
+            @Valid @RequestBody CreateProjectRequest request
     ) {
         User user = currentUser(authentication);
         return ResponseEntity.ok(ApiResponse.success(projectDataService.createProject(user, request)));
