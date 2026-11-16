@@ -62,6 +62,13 @@ public class GlobalExceptionHandler {
                 .body(new ApiResponse<>(false, "Validation failed", errors));
     }
     
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAccessDenied(AccessDeniedException ex) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(ApiResponse.error(ex.getMessage() != null && !ex.getMessage().isEmpty() ? ex.getMessage() : "Access denied"));
+    }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponse<Void>> handleRuntimeException(RuntimeException ex) {
         return ResponseEntity
