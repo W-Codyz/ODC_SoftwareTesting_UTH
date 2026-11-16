@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -112,6 +113,15 @@ public class TalentService {
     
     @Transactional
     public TalentCertificationDTO addCertification(Long userId, TalentCertificationDTO certDTO) {
+        if (certDTO.getIssueDate() != null && certDTO.getIssueDate().isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("Issue date cannot be in the future");
+        }
+        
+        if (certDTO.getIssueDate() != null && certDTO.getExpiryDate() != null 
+                && certDTO.getExpiryDate().isBefore(certDTO.getIssueDate())) {
+            throw new IllegalArgumentException("Expiry date must be after issue date");
+        }
+        
         Talent talent = getTalentByUserId(userId);
         
         TalentCertification cert = TalentCertification.builder()
