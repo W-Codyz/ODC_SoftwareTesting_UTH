@@ -80,7 +80,7 @@ public class AuthService {
                 user = userRepository.save(user);
                 log.info("Account auto-unlocked after lock duration expired: {}", user.getEmail());
             } else {
-                throw new BadRequestException("Account is not active. Status: LOCKED");
+                throw new AccessDeniedException("Tài khoản đã bị khóa");
             }
         }
 
