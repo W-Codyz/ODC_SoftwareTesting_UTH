@@ -146,21 +146,40 @@ public class MentorPortalService {
 
         Map<Long, String> projectTitles = loadProjectTitles(invitations.stream().map(MentorInvitation::getProjectId).distinct().toList());
 
-        List<MentorInvitationDTO> result = new ArrayList<>();
-        for (MentorInvitation inv : invitations) {
-            result.add(MentorInvitationDTO.builder()
-                    .id(String.valueOf(inv.getId()))
-                    .projectName(projectTitles.getOrDefault(inv.getProjectId(), "Project #" + inv.getProjectId()))
-                    .groupName(inv.getGroupName())
-                    .studentCount(inv.getStudentCount() != null ? inv.getStudentCount() : 0)
-                    .description(inv.getDescription() != null ? inv.getDescription() : "")
-                    .deadline(formatDate(inv.getDeadline() != null ? inv.getDeadline() : (inv.getExpiresAt() != null ? inv.getExpiresAt().toLocalDate() : null)))
-                    .skills(parseStringList(inv.getSkills()))
-                    .receivedDate(formatDate(inv.getReceivedDate()))
-                    .priority(normalizePriority(inv.getPriority()))
-                    .build());
-        }
-        return result;
+        return invitations.stream()
+                .map(inv -> toInvitationDTO(inv, projectTitles))
+                .toList();
+    }
+
+    public MentorInvitationDTO getInvitationDetails(User user, long invitationId) {
+        Mentor mentor = requireMentor(user);
+        MentorInvitation invitation = mentorInvitationRepository.findById(invitationId)
+                .filter(inv -> mentor.getId().equals(inv.getMentorId()))
+                .orElseThrow(() -> new ResourceNotFoundException("Invitation not found"));
+
+        Map<Long, String> projectTitles = loadProjectTitles(List.of(invitation.getProjectId()));
+        return toInvitationDTO(invitation, projectTitles);
+    }
+
+    private MentorInvitationDTO toInvitationDTO(
+            MentorInvitation invitation,
+            Map<Long, String> projectTitles
+    ) {
+        return MentorInvitationDTO.builder()
+                .id(String.valueOf(invitation.getId()))
+                .projectName(projectTitles.getOrDefault(
+                        invitation.getProjectId(),
+                        "Project #" + invitation.getProjectId()))
+                .groupName(invitation.getGroupName())
+                .studentCount(invitation.getStudentCount() != null ? invitation.getStudentCount() : 0)
+                .description(invitation.getDescription() != null ? invitation.getDescription() : "")
+                .deadline(formatDate(invitation.getDeadline() != null
+                        ? invitation.getDeadline()
+                        : (invitation.getExpiresAt() != null ? invitation.getExpiresAt().toLocalDate() : null)))
+                .skills(parseStringList(invitation.getSkills()))
+                .receivedDate(formatDate(invitation.getReceivedDate()))
+                .priority(normalizePriority(invitation.getPriority()))
+                .build();
     }
 
     public void acceptInvitation(User user, long invitationId) {
