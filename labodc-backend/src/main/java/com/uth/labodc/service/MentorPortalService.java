@@ -3,6 +3,7 @@ package com.uth.labodc.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uth.labodc.dto.mentor.*;
+import com.uth.labodc.exception.BadRequestException;
 import com.uth.labodc.exception.ResourceNotFoundException;
 import com.uth.labodc.model.entity.Mentor;
 import com.uth.labodc.model.entity.MentorInvitation;
@@ -13,7 +14,10 @@ import com.uth.labodc.model.entity.Project;
 import com.uth.labodc.model.entity.ProjectMember;
 import com.uth.labodc.model.entity.Talent;
 import com.uth.labodc.model.entity.TalentEvaluation;
+import com.uth.labodc.model.entity.Task;
 import com.uth.labodc.model.entity.User;
+import com.uth.labodc.model.enums.TaskPriority;
+import com.uth.labodc.model.enums.TaskStatus;
 import com.uth.labodc.repository.MentorInvitationRepository;
 import com.uth.labodc.repository.MentorReportRepository;
 import com.uth.labodc.repository.MentorRepository;
@@ -22,6 +26,7 @@ import com.uth.labodc.repository.MentorTaskSubmissionRepository;
 import com.uth.labodc.repository.ProjectRepository;
 import com.uth.labodc.repository.TalentEvaluationRepository;
 import com.uth.labodc.repository.TalentRepository;
+import com.uth.labodc.repository.TaskRepository;
 import com.uth.labodc.repository.ProjectMemberRepository;
 import com.uth.labodc.repository.TalentSkillRepository;
 import com.uth.labodc.repository.UserRepository;
@@ -31,13 +36,24 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeParseException;
+import java.time.format.DateTimeFormatter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -46,6 +62,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Locale;
+import java.util.stream.Collectors;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -65,6 +86,12 @@ public class MentorPortalService {
     private final ProjectMemberRepository projectMemberRepository;
     private final TalentSkillRepository talentSkillRepository;
     private final UserRepository userRepository;
+    private final TaskRepository taskRepository;
+
+    private static final String[] TASK_TEMPLATE_HEADERS = {
+            "Task ID", "Task Name", "Description", "Assigned To", "Priority",
+            "Start Date", "Due Date", "Estimated Hours", "Status", "Dependencies", "Tags"
+    };
 
     public List<MentorProjectOptionDTO> getProjects(User user) {
         Mentor mentor = requireMentor(user);
@@ -221,6 +248,249 @@ public class MentorPortalService {
         Mentor mentor = requireMentor(user);
         List<MentorTask> tasks = mentorTaskRepository.findByMentorIdAndProjectIdOrderByDueDateAsc(mentor.getId(), projectId);
         return tasks.stream().map(this::toTaskDTO).toList();
+    }
+
+    public byte[] generateTaskTemplate(User user, long projectId) {
+        requireMentorProject(user, projectId);
+        try (XSSFWorkbook workbook = new XSSFWorkbook();
+             ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+            Sheet sheet = workbook.createSheet("Tasks");
+            Row header = sheet.createRow(0);
+            for (int i = 0; i < TASK_TEMPLATE_HEADERS.length; i++) {
+                header.createCell(i).setCellValue(TASK_TEMPLATE_HEADERS[i]);
+                sheet.setColumnWidth(i, 18 * 256);
+            }
+            workbook.write(output);
+            return output.toByteArray();
+        } catch (IOException e) {
+            throw new BadRequestException("Không thể tạo file mẫu Excel");
+        }
+    }
+
+    @Transactional
+    public int uploadTasks(User user, long projectId, MultipartFile file) {
+        Mentor mentor = requireMentorProject(user, projectId);
+        if (file == null || file.isEmpty()) {
+            throw new BadRequestException("File Excel không được để trống");
+        }
+
+        List<Task> tasks = new ArrayList<>();
+        Set<String> taskIds = new HashSet<>();
+        List<String> errors = new ArrayList<>();
+        try (Workbook workbook = WorkbookFactory.create(file.getInputStream())) {
+            if (workbook.getNumberOfSheets() == 0) {
+                throw new BadRequestException("File Excel không có sheet");
+            }
+            Sheet sheet = workbook.getSheetAt(0);
+            for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+                Row row = sheet.getRow(rowIndex);
+                if (isBlankRow(row)) {
+                    continue;
+                }
+                int excelRow = rowIndex + 1;
+                try {
+                    Task task = parseTaskRow(row, projectId, mentor.getId());
+                    if (!taskIds.add(task.getTaskId())) {
+                        throw new BadRequestException("Task ID bị trùng trong file: " + task.getTaskId());
+                    }
+                    tasks.add(task);
+                } catch (BadRequestException e) {
+                    errors.add("Dòng " + excelRow + ": " + e.getMessage());
+                }
+            }
+        } catch (BadRequestException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BadRequestException("File Excel không hợp lệ hoặc không thể đọc: " + e.getMessage());
+        }
+
+        if (tasks.isEmpty() && errors.isEmpty()) {
+            throw new BadRequestException("File Excel không có dữ liệu task");
+        }
+
+        if (!taskIds.isEmpty()) {
+            Set<String> existing = taskRepository.findByProjectIdAndTaskIdIn(projectId, taskIds).stream()
+                    .map(Task::getTaskId)
+                    .collect(Collectors.toSet());
+            for (String taskId : existing) {
+                errors.add("Task ID đã tồn tại trong dự án: " + taskId);
+            }
+        }
+        if (!errors.isEmpty()) {
+            throw new BadRequestException(String.join("; ", errors));
+        }
+
+        taskRepository.saveAll(tasks);
+        return tasks.size();
+    }
+
+    private Task parseTaskRow(Row row, long projectId, long mentorId) {
+        String taskId = requiredCell(row, 0, "Task ID");
+        String taskName = requiredCell(row, 1, "Task Name");
+        if (taskId.length() > 20) {
+            throw new BadRequestException("Task ID không được dài quá 20 ký tự");
+        }
+        if (taskName.length() > 255) {
+            throw new BadRequestException("Task Name không được dài quá 255 ký tự");
+        }
+        Long assignedTo = optionalLong(row, 3, "Assigned To");
+        if (assignedTo != null && !talentRepository.existsById(assignedTo)) {
+            throw new BadRequestException("Assigned To phải là talents.id tồn tại: " + assignedTo);
+        }
+
+        TaskPriority priority = parsePriority(cellText(row, 4), "Priority");
+        LocalDate startDate = parseDate(row, 5, "Start Date");
+        LocalDate dueDate = parseDate(row, 6, "Due Date");
+        if (startDate != null && dueDate != null && dueDate.isBefore(startDate)) {
+            throw new BadRequestException("Due Date phải lớn hơn hoặc bằng Start Date");
+        }
+        Integer estimatedHours = optionalInteger(row, 7, "Estimated Hours");
+        TaskStatus status = parseStatus(cellText(row, 8), "Status");
+
+        Task task = new Task();
+        task.setProjectId(projectId);
+        task.setTaskId(taskId);
+        task.setTaskName(taskName);
+        task.setDescription(optionalText(row, 2));
+        task.setAssignedTo(assignedTo);
+        task.setCreatedBy(mentorId);
+        task.setPriority(priority);
+        task.setStatus(status);
+        task.setStartDate(startDate);
+        task.setDueDate(dueDate);
+        task.setEstimatedHours(estimatedHours);
+        task.setDependencies(optionalText(row, 9));
+        task.setTags(optionalText(row, 10));
+        task.setCreatedAt(LocalDateTime.now());
+        task.setUpdatedAt(LocalDateTime.now());
+        return task;
+    }
+
+    private Mentor requireMentorProject(User user, long projectId) {
+        Mentor mentor = requireMentor(user);
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
+        if (!mentor.getId().equals(project.getMentorId())) {
+            throw new ResourceNotFoundException("Project not found");
+        }
+        return mentor;
+    }
+
+    private String requiredCell(Row row, int index, String field) {
+        String value = cellText(row, index);
+        if (value == null || value.isBlank()) {
+            throw new BadRequestException(field + " là bắt buộc");
+        }
+        return value.trim();
+    }
+
+    private String optionalText(Row row, int index) {
+        String value = cellText(row, index);
+        return value == null || value.isBlank() ? null : value.trim();
+    }
+
+    private String cellText(Row row, int index) {
+        Cell cell = row.getCell(index);
+        if (cell == null) {
+            return null;
+        }
+        return new org.apache.poi.ss.usermodel.DataFormatter(Locale.US).formatCellValue(cell).trim();
+    }
+
+    private Long optionalLong(Row row, int index, String field) {
+        String value = cellText(row, index);
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        try {
+            return Long.parseLong(value.trim());
+        } catch (NumberFormatException e) {
+            throw new BadRequestException(field + " phải là talents.id dạng số");
+        }
+    }
+
+    private Integer optionalInteger(Row row, int index, String field) {
+        String value = cellText(row, index);
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        try {
+            int hours = Integer.parseInt(value.trim());
+            if (hours < 0) {
+                throw new NumberFormatException();
+            }
+            return hours;
+        } catch (NumberFormatException e) {
+            throw new BadRequestException(field + " phải là số nguyên không âm");
+        }
+    }
+
+    private LocalDate parseDate(Row row, int index, String field) {
+        Cell cell = row.getCell(index);
+        String value = cellText(row, index);
+        if (cell == null || value == null || value.isBlank()) {
+            return null;
+        }
+        if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
+            return cell.getLocalDateTimeCellValue().toLocalDate();
+        }
+        List<DateTimeFormatter> formats = List.of(
+                DateTimeFormatter.ISO_LOCAL_DATE,
+                DateTimeFormatter.ISO_LOCAL_DATE_TIME,
+                DateTimeFormatter.ofPattern("d/M/yyyy"),
+                DateTimeFormatter.ofPattern("d-M-yyyy"),
+                DateTimeFormatter.ofPattern("d/M/yyyy H:mm"),
+                DateTimeFormatter.ofPattern("d-M-yyyy H:mm"),
+                DateTimeFormatter.ofPattern("d/M/yyyy HH:mm"),
+                DateTimeFormatter.ofPattern("d-M-yyyy HH:mm")
+        );
+        for (DateTimeFormatter format : formats) {
+            try {
+                return LocalDateTime.parse(value, format).toLocalDate();
+            } catch (DateTimeParseException ignored) {
+                try {
+                    return LocalDate.parse(value, format);
+                } catch (DateTimeParseException ignoredDate) {
+                    // Try the next supported Excel text format.
+                }
+            }
+        }
+        throw new BadRequestException(field + " không đúng định dạng ngày/giờ");
+    }
+
+    private TaskPriority parsePriority(String value, String field) {
+        if (value == null || value.isBlank()) {
+            return TaskPriority.MEDIUM;
+        }
+        try {
+            return TaskPriority.valueOf(value.trim().replace('-', '_').toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(field + " không hợp lệ (LOW, MEDIUM, HIGH, CRITICAL)");
+        }
+    }
+
+    private TaskStatus parseStatus(String value, String field) {
+        if (value == null || value.isBlank()) {
+            return TaskStatus.TODO;
+        }
+        try {
+            return TaskStatus.valueOf(value.trim().replace('-', '_').replace(' ', '_').toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(field + " không hợp lệ (TODO, IN_PROGRESS, IN_REVIEW, COMPLETED, BLOCKED, CANCELLED)");
+        }
+    }
+
+    private boolean isBlankRow(Row row) {
+        if (row == null) {
+            return true;
+        }
+        for (int i = 0; i < TASK_TEMPLATE_HEADERS.length; i++) {
+            String value = cellText(row, i);
+            if (value != null && !value.isBlank()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public List<MentorApplicationDTO> getProjectApplications(User user, long projectId) {

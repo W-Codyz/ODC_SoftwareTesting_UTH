@@ -108,6 +108,22 @@ cloudinary:
 
 Tài liệu API có sẵn tại: `http://localhost:8080/swagger-ui.html`
 
+### Mentor - import task từ Excel
+
+- `GET /api/mentor/projects/{projectId}/task-template`: tải mẫu `task-template.xlsx`.
+- `POST /api/mentor/projects/{projectId}/tasks/upload`: gửi file `.xlsx`/`.xls` bằng
+  `multipart/form-data` với field `file`. Sheet đầu tiên được đọc từ dòng 2.
+
+Mẫu có 11 cột theo thứ tự: `Task ID`, `Task Name`, `Description`, `Assigned To`,
+`Priority`, `Start Date`, `Due Date`, `Estimated Hours`, `Status`, `Dependencies`,
+`Tags`. `Assigned To` là **ID số của bản ghi `talents.id`** (để trống nếu chưa
+phân công). Priority hợp lệ: `LOW`, `MEDIUM`, `HIGH`, `CRITICAL`; Status hợp lệ:
+`TODO`, `IN_PROGRESS`, `IN_REVIEW`, `COMPLETED`, `BLOCKED`, `CANCELLED`.
+
+Chỉ mentor đang được gán cho project mới gọi được hai API. Upload được kiểm tra
+toàn bộ trước khi lưu; nếu có lỗi, response sẽ nêu dòng Excel và nguyên nhân và
+không task nào trong file được lưu.
+
 ## 🧪 Kiểm thử
 
 ```bash

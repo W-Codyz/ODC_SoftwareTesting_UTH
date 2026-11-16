@@ -10,7 +10,7 @@
 | **Tên dự án** | LabOdc - Hệ thống quản lý kết nối doanh nghiệp với sinh viên UTH trong dự án thực tế |
 | **Tên tiếng Anh** | LabOdc - A System for Managing Enterprise-Student Collaborations at UTH on Real-World Projects |
 | **Loại tài liệu** | Software Requirements Specification (SRS) |
-| **Phiên bản** | 1.6 |
+| **Phiên bản** | 1.7 |
 | **Ngày cập nhật** | 12 tháng 11 năm 2026 |
 | **Người chuẩn bị** | Nhóm phát triển - Nhóm 6 |
 | **Tổ chức** | Đại học Giao thông Vận tải TP.HCM (UTH) |
@@ -28,7 +28,8 @@
 | 1.3 | 05/11/2026 | Đình Phát | FR-TL-001: đánh dấu chưa triển khai, ghi nhận gap so với implementation thực tế (xác nhận qua LABODC-83); giữ thiết kế gốc làm baseline cho phase tương lai |
 | 1.4 | 07/11/2026 | Đình Phát | FR-AUTH-002: cập nhật theo demo mode hiện tại (status=ACTIVE, emailVerified=true); thêm actor Mentor; thống nhất input 4 fields chung (email, password, confirmPassword, role); bổ sung bảng Bug fix cần implement (domain validation, password strength) và Phát triển trong tương lai (email verification, status flow, extended input) |
 | 1.5 | 10/11/2026 | Đình Phát | FR-TAL-001: bổ sung và chuẩn hóa validation cho phone, portfolio URL, skill, số năm kinh nghiệm, Avatar và CV; đồng bộ giới hạn, định dạng file, mã lỗi và baseline kiểm thử |
-| 1.6 | 12/11/2026 | Đình Phát | FR-ENT-002: đồng bộ SRS theo code thực tế (LABODC-122) đổi endpoint `/api/enterprise/projects` → `/api/projects`; đổi field `title`→`name`, `numberOfStudents`→`requiredTalents`, `skillRequirements`→`requiredSkills`; bỏ attachment và fund distribution (chưa implement); cập nhật Business Rules: budget > 0, requiredTalents >= 1, bỏ ràng buộc duration và số tháng; bổ sung quyền LAB_ADMIN; cập nhật DB schema tương ứng |
+| 1.6 | 12/11/2026 | Nguyễn Thành Nhân | FR-LAB-001: bổ sung ràng buộc enterprise phải tồn tại và ở trạng thái `PENDING`, MST chỉ gồm 10–13 chữ số và không trùng, `reason` bắt buộc dài 1–500 ký tự, `note` tùy chọn tối đa 500 ký tự; đồng bộ API với backend |
+| 1.7 | 12/11/2026 | Đình Phát | FR-ENT-002: đồng bộ SRS theo code thực tế (LABODC-122) đổi endpoint `/api/enterprise/projects` → `/api/projects`; đổi field `title`→`name`, `numberOfStudents`→`requiredTalents`, `skillRequirements`→`requiredSkills`; bỏ attachment và fund distribution (chưa implement); cập nhật Business Rules: budget > 0, requiredTalents >= 1, bỏ ràng buộc duration và số tháng; bổ sung quyền LAB_ADMIN; cập nhật DB schema tương ứng |
 
 ---
 
@@ -1981,14 +1982,16 @@ Bạn có muốn tôi tiếp tục với Module Lab Administrator và System Adm
 
 **API Endpoints:**
 ```
-GET    /api/lab-admin/enterprises/pending
+GET    /api/lab-admin/enterprise/pending
 GET    /api/lab-admin/enterprises/{id}
-POST   /api/lab-admin/enterprises/{id}/approve
-POST   /api/lab-admin/enterprises/{id}/reject
-POST   /api/lab-admin/enterprises/{id}/request-info
+POST   /api/lab-admin/enterprises/{id}/verify
+DELETE /api/lab-admin/enterprises/{id}?reason={reason}
 ```
 
-**GET /api/lab-admin/enterprises/pending**
+**GET /api/lab-admin/enterprise/pending**
+
+Lấy danh sách các doanh nghiệp đang ở trạng thái `PENDING` để Lab Admin
+thực hiện xác thực. API chỉ trả về các doanh nghiệp có `status = PENDING`.
 
 Response:
 ```json
@@ -2022,14 +2025,15 @@ Response:
 }
 ```
 
-**POST /api/lab-admin/enterprises/{id}/approve**
+**POST /api/lab-admin/enterprises/{id}/verify**
 
-Request:
-```json
-{
-  "note": "Doanh nghiệp hợp lệ, đã verify mã số thuế và giấy phép kinh doanh"
-}
-```
+Request: Không có request body.
+
+**Validation Rules:**
+
+- `enterpriseId` phải tồn tại và enterprise phải ở trạng thái `PENDING`.
+- `taxCode` của enterprise phải được verify, chỉ gồm chữ số, dài từ 10 đến 13 chữ số và không trùng với enterprise khác.
+- `note` là optional, độ dài tối đa 500 ký tự.
 
 **Processing:**
 1. Validate enterprise exists và status=PENDING
@@ -2054,15 +2058,24 @@ Response:
 }
 ```
 
-**POST /api/lab-admin/enterprises/{id}/reject**
+**DELETE /api/lab-admin/enterprises/{id}?reason={reason}**
 
-Request:
-```json
-{
-  "reason": "Mã số thuế không hợp lệ hoặc đã bị thu hồi",
-  "details": "Sau khi kiểm tra trên hệ thống thuế quốc gia, mã số 0123456789 không tồn tại."
-}
-```
+Request: Truyền lý do từ chối bằng query parameter `reason`.
+
+**Validation Rules:**
+
+- `enterpriseId` phải tồn tại và enterprise phải ở trạng thái `PENDING`.
+- `taxCode` của enterprise phải được verify, chỉ gồm chữ số, dài từ 10 đến 13 chữ số và không trùng với enterprise khác.
+- `reason` là bắt buộc, độ dài từ 1 đến 500 ký tự.
+- `details` là optional; nếu có, phải là nội dung mô tả chi tiết lý do từ chối.
+
+**Processing:**
+
+1. Validate enterprise exists và status=PENDING
+2. Update enterprise status=REJECTED
+3. Gửi email notification đến enterprise
+4. Log rejection action
+5. Return confirmation
 
 Response:
 ```json
@@ -2077,11 +2090,52 @@ Response:
 }
 ```
 
+**POST /api/lab-admin/enterprises/{id}/request-info (chưa có trong backend)**
+
+Request:
+```json
+{
+  "note": "Vui lòng bổ sung bản sao giấy phép đăng ký kinh doanh."
+}
+```
+
+**Validation Rules:**
+
+- `enterpriseId` phải tồn tại và enterprise phải ở trạng thái `PENDING`.
+- `note` là bắt buộc, độ dài tối đa 500 ký tự.
+
+**Processing:**
+1. Validate enterprise exists và status=PENDING
+2. Update enterprise validation action=INFO_REQUESTED
+3. Gửi email notification đến enterprise
+4. Log request-info action
+5. Return confirmation
+
+Response:
+```json
+{
+  "success": true,
+  "message": "Đã yêu cầu doanh nghiệp bổ sung thông tin",
+  "data": {
+    "enterpriseId": 123,
+    "status": "INFO_REQUESTED",
+    "requestedAt": "2026-01-11T09:30:00Z"
+  }
+}
+```
+
 **Business Rules:**
+
 - Mỗi enterprise chỉ được approve 1 lần
-- Phải verify mã số thuế (có thể integrate API thuế)
 - Email notification trong vòng 5 phút
 - Log tất cả actions để audit
+
+**Error Handling:**
+
+- `400 Bad Request`: Dữ liệu request hoặc dữ liệu xác thực mã số thuế không hợp lệ.
+- `403 Forbidden`: Người dùng không có quyền `LAB_ADMIN` hoặc `SYSTEM_ADMIN`.
+- `404 Not Found`: Enterprise không tồn tại.
+- `409 Conflict`: Enterprise không ở trạng thái `PENDING` hoặc đã được approve trước đó.
 
 **Database Schema:**
 ```sql
