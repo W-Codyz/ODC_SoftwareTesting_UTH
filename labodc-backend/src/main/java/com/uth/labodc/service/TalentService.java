@@ -69,6 +69,23 @@ public class TalentService {
             talent.setPortfolioUrl(portfolio);
         }
         
+        // Validate profile data
+        if (profileDTO.getGpa() != null) {
+            if (profileDTO.getGpa().compareTo(BigDecimal.ZERO) < 0 || profileDTO.getGpa().compareTo(BigDecimal.valueOf(4.0)) > 0) {
+                throw new IllegalArgumentException("GPA must be between 0.0 and 4.0");
+            }
+        }
+        if (profileDTO.getYearOfStudy() != null) {
+            if (profileDTO.getYearOfStudy() < 1 || profileDTO.getYearOfStudy() > 5) {
+                throw new IllegalArgumentException("Year of study must be between 1 and 5");
+            }
+        }
+        if (profileDTO.getHoursPerWeek() != null) {
+            if (profileDTO.getHoursPerWeek() < 1 || profileDTO.getHoursPerWeek() > 40) {
+                throw new IllegalArgumentException("Hours per week must be between 1 and 40");
+            }
+        }
+
         // Update basic info
         if (profileDTO.getFullName() != null) talent.setFullName(profileDTO.getFullName());
         if (profileDTO.getFaculty() != null) talent.setFaculty(profileDTO.getFaculty());
