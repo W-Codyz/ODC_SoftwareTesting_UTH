@@ -184,8 +184,24 @@ public class FundAllocationService {
         if (totalRequested.compareTo(BigDecimal.ZERO) <= 0) {
             throw new RuntimeException("Total team disbursement amount must be positive");
         }
-        if (totalRequested.compareTo(allocation.getTeamAmount()) > 0) {
-            throw new RuntimeException("Team disbursement exceeds allocated team amount");
+
+        BigDecimal alreadyDisbursed = fundDistributionRepository
+                .sumDisbursedByAllocationAndRecipientTypes(
+                        allocation.getId(), java.util.Arrays.asList("TEAM", "TALENT"));
+        if (alreadyDisbursed == null) {
+            alreadyDisbursed = BigDecimal.ZERO;
+        }
+        BigDecimal projectedTotal = alreadyDisbursed.add(totalRequested);
+        if (projectedTotal.compareTo(allocation.getTeamAmount()) > 0) {
+            BigDecimal remaining = allocation.getTeamAmount().subtract(alreadyDisbursed);
+            if (remaining.compareTo(BigDecimal.ZERO) < 0) {
+                remaining = BigDecimal.ZERO;
+            }
+            throw new RuntimeException(
+                    "Team disbursement exceeds allocated team amount. Allocated: "
+                            + allocation.getTeamAmount() + ", already disbursed: "
+                            + alreadyDisbursed + ", remaining: " + remaining
+                            + ", requested: " + totalRequested);
         }
 
         TeamFundDistribution teamDistribution;
