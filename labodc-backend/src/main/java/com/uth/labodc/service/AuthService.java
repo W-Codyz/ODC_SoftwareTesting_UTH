@@ -7,6 +7,7 @@ import com.uth.labodc.exception.BadRequestException;
 import com.uth.labodc.exception.ResourceNotFoundException;
 import org.springframework.security.access.AccessDeniedException;
 import com.uth.labodc.model.entity.User;
+import com.uth.labodc.model.enums.UserRole;
 import com.uth.labodc.model.enums.UserStatus;
 import com.uth.labodc.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +39,11 @@ public class AuthService {
         // Validate passwords match
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new BadRequestException("Passwords do not match");
+        }
+
+        if (request.getRole() == UserRole.TALENT
+                && !request.getEmail().toLowerCase(Locale.ROOT).endsWith("@uth.edu.vn")) {
+            throw new BadRequestException("Talent accounts must use an @uth.edu.vn email address");
         }
         
         // Check if email already exists
@@ -62,10 +69,19 @@ public class AuthService {
     
     @Transactional
     public AuthResponse login(LoginRequest request) {
-        // Check if user is locked before authenticating password to prevent leaking password validity
         User user = userRepository.findByEmailAndDeletedAtIsNull(request.getEmail()).orElse(null);
+
+        // Check auto unlock if lock duration has expired
         if (user != null && user.getStatus() == UserStatus.LOCKED) {
-            throw new AccessDeniedException("Tài khoản đã bị khóa");
+            if (user.getLockedUntil() != null && LocalDateTime.now().isAfter(user.getLockedUntil())) {
+                user.setStatus(UserStatus.ACTIVE);
+                user.setFailedLoginAttempts(0);
+                user.setLockedUntil(null);
+                user = userRepository.save(user);
+                log.info("Account auto-unlocked after lock duration expired: {}", user.getEmail());
+            } else {
+                throw new AccessDeniedException("Tài khoản đã bị khóa");
+            }
         }
 
         // Authenticate user
@@ -76,14 +92,16 @@ public class AuthService {
                 )
         );
         
-        // Get user from database
+        // Get user from database if not fetched
         if (user == null) {
             user = userRepository.findByEmailAndDeletedAtIsNull(request.getEmail())
                     .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         }
         
         // Check if user is active
-        if (user.getStatus() != UserStatus.ACTIVE) {
+        if (user.getStatus() == UserStatus.LOCKED) {
+            throw new AccessDeniedException("Tài khoản đã bị khóa");
+        } else if (user.getStatus() != UserStatus.ACTIVE) {
             throw new BadRequestException("Account is not active. Status: " + user.getStatus());
         }
         

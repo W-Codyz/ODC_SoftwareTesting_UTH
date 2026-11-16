@@ -3,10 +3,9 @@
 **Module:** Mentor Portal  
 **Chức năng:** Submit Report (`POST /api/mentor/reports`, `GET /api/mentor/reports`, `GET /api/mentor/reports/{id}/file`)  
 **Người thực hiện:** Nguyễn Duy Đức  
-**Ngày thực hiện lần đầu:** 10/11/2026
-**Ngày cập nhật bổ sung:** 11/11/2026
+**Ngày thực hiện:** 15/11/2026   
 **Môi trường test:** Postman, collection `FR-MEN-004 Test`, backend local `http://localhost:8080`  
-**Tham chiếu test case:** `test-cases/mentor-portal/TC_Mentor_SubmitReport.md`
+**Tham chiếu test case:** `test-cases/mentor-portal/TC_Mentor_SubmitReport.md`  
 
 ---
 
@@ -15,12 +14,12 @@
 | Chỉ số | Giá trị |
 |---|---:|
 | Tổng số test case | 55 |
-| Passed | 25 |
-| Failed | 26 |
-| Blocked / Skipped | 4 |
-| **Pass rate** | **25/55 = 45.5%** |
+| Passed | 28 |
+| Failed | 27 |
+| Blocked / Skipped | 0 |
+| **Pass rate** | **28/55 = 50.9%** |
 
-Pass rate trên số test case đã chạy: 25/51 = 49.0%. 4 test case Blocked (TC-RPT-18, 28, 29, 34) do chưa có tài khoản mentor thứ hai (MEN2).
+Pass rate trên toàn bộ 55 test case: **28/55 = 50.9%**. Không còn test case nào bị Blocked (**0 Blocked**). Cả 4 test case (TC-RPT-18, 28, 29, 34) đã được thực thi đầy đủ với tài khoản mentor thứ hai (MEN2) để kiểm chứng quyền truy cập dự án và cách ly dữ liệu giữa các mentor.
 
 ---
 
@@ -45,7 +44,7 @@ Pass rate trên số test case đã chạy: 25/51 = 49.0%. 4 test case Blocked (
 | 15 | TC-RPT-15 | [POST /reports] Không truyền status | projectId=P1; student; studentId=SV001; reportName; dueDate=2026-12-31; summary (không có key status) | 200; status = "submitted" (service đặt mặc định) | 200; id=14; status="submitted" | PASS | V-STS1, ST-01, R1 |  |
 | 16 | TC-RPT-16 | [POST /reports] status giá trị lạ | projectId=P1; student; studentId=SV001; reportName; dueDate=2026-12-31; summary; status=ABC | 400, không tạo báo cáo | 200; id=6; status="ABC" được lưu nguyên | FAIL | X-STS1, ST-05, R7 | status không được validate (Bug B) |
 | 17 | TC-RPT-17 | [POST /reports] Dự án không tồn tại | projectId=99999 | 404 hoặc 400 | 200; id=10; tạo báo cáo cho projectId=99999 | FAIL | X-PJ1, R3 | Tạo báo cáo cho dự án không tồn tại (Bug C) |
-| 18 | TC-RPT-18 | [POST /reports] Dự án của mentor khác | projectId=P-OTHER | 403 | Chưa chạy | BLOCKED | X-PJ3, R4 | Chưa chạy: thiếu tài khoản mentor thứ hai (MEN2) |
+| 18 | TC-RPT-18 | [POST /reports] Dự án của mentor khác | projectId=1 (dự án của MEN1, gửi bằng token MEN2) | 403 | 200; id=6; tạo báo cáo thành công cho dự án của mentor khác | FAIL | X-PJ3, R4 | Bug C: Mentor nộp được báo cáo vào dự án không thuộc mình |
 | 19 | TC-RPT-19 | [POST /reports] File 0 byte | projectId=P1; student; studentId=SV001; reportName; dueDate=2026-12-31; summary; file=F-EMPTY | 200, báo cáo tạo không có file (code chỉ lưu file có dữ liệu); SRS không quy định | 200; id=26; fileName=null; fileSize=null (file 0 byte bị bỏ qua) | PASS | X-FILE1, B-FIL0 | PASS theo code (file 0 byte bị bỏ qua); SRS không quy định |
 | 20 | TC-RPT-20 | [POST /reports] File sai định dạng | projectId=P1; student; studentId=SV001; reportName; dueDate=2026-12-31; summary; file=F-EXE | 400 | 200; id=24; fileName="f_exe.exe"; fileSize="1.5 KB" (file .exe được lưu) | FAIL | X-FILE2, R8 | Bug E: file .exe được lưu, SRS chỉ cho pdf, doc, docx, ppt, pptx |
 | 21 | TC-RPT-21 | [POST /reports] File vượt 20 MB | projectId=P1; student; studentId=SV001; reportName; dueDate=2026-12-31; summary; file=F-20MB+1 | 400 hoặc 413 | 400; message "Maximum upload size exceeded"; data=null | PASS | X-FILE3, B-FIL2, R8 | Chạy lại lần 2 với đúng file 20 MB + 1 byte. PASS nhưng giới hạn upload thấp hơn 20 MB (Bug F) |
@@ -55,13 +54,13 @@ Pass rate trên số test case đã chạy: 25/51 = 49.0%. 4 test case Blocked (
 | 25 | TC-RPT-25 | [POST /reports] Gửi JSON thay vì form-data | Body raw JSON | 415 (consumes multipart/form-data) | 500; message "An error occurred: Content-Type 'application/json' is not supported"; data=null | FAIL | X-CT1 | Bug A: trả 500 thay vì 415 |
 | 26 | TC-RPT-26 | [GET /reports] Danh sách khi mentor đã có báo cáo | Không có tham số | 200; data là mảng; mỗi phần tử có id, student, studentId, reportName, status, submittedDate, dueDate, score, fileSize, fileName | 200; data là mảng; mọi phần tử có đủ 10 field id, student, studentId, reportName, status, submittedDate, dueDate, score, fileSize, fileName | PASS | V-AUTH1, V-LST1 |  |
 | 27 | TC-RPT-27 | [GET /reports] Thứ tự danh sách | Không có tham số | dueDate giảm dần | 200; các dueDate 2026-12-31 đứng trước, hai bản ghi dueDate 2026-02-28 (id 16, 21) đứng cuối, giảm dần | PASS | V-LST1 | Thứ tự phụ trong cùng dueDate không theo id; SRS không quy định |
-| 28 | TC-RPT-28 | [GET /reports] Mentor chưa có báo cáo | Không có tham số | 200; data = [] | Chưa chạy | BLOCKED | V-LST2 | Chưa chạy: thiếu tài khoản mentor thứ hai (MEN2) |
-| 29 | TC-RPT-29 | [GET /reports] Cách ly giữa các mentor | Không có tham số | Không thấy báo cáo của MEN1 | Chưa chạy | BLOCKED | V-LST3 | Chưa chạy: thiếu tài khoản mentor thứ hai (MEN2) |
+| 28 | TC-RPT-28 | [GET /reports] Mentor chưa có báo cáo | Không có tham số (token MEN2 khi chưa có báo cáo) | 200; data = [] | 200; data = [] | PASS | V-LST2 | Mentor mới chưa có báo cáo trả về mảng rỗng [] đúng kỳ vọng |
+| 29 | TC-RPT-29 | [GET /reports] Cách ly giữa các mentor | Không có tham số (token MEN2) | Không thấy báo cáo của MEN1 | 200; data chỉ gồm các báo cáo [id: 3, 6] thuộc MEN2; không chứa ID nào của MEN1 | PASS | V-LST3 | Dữ liệu cách ly hoàn toàn, MEN2 không thấy báo cáo của MEN1 |
 | 30 | TC-RPT-30 | [GET /reports] Không gửi token | No Auth | 401 | 403; body mặc định của Spring, "Access Denied" | FAIL | X-AUTH1 | Bug G: trả 403 thay vì 401 |
 | 31 | TC-RPT-31 | [GET /reports] Token TALENT | Bearer T-TALENT | 403 | 400; message "Access Denied"; data=null | FAIL | X-AUTH3 | Bug H: trả 400 thay vì 403 |
 | 32 | TC-RPT-32 | [GET /reports/{id}/file] Tải file báo cáo có file | id=R-FILE | 200; header Content-Disposition chứa "attachment" | 200; Content-Disposition: attachment; filename="f_pdf.pdf" | PASS | V-RID1, DL-R1 |  |
 | 33 | TC-RPT-33 | [GET /reports/{id}/file] Báo cáo không tồn tại | id=99999 | 404 ("Report not found") | 404; message "Report not found"; data=null | PASS | X-RID1, DL-R3 |  |
-| 34 | TC-RPT-34 | [GET /reports/{id}/file] Báo cáo của mentor khác | id=R-OTHER | 404 hoặc 403 (code trả "Report not found"); SRS không quy định | Chưa chạy | BLOCKED | X-RID2, DL-R4 | Chưa chạy: thiếu tài khoản mentor thứ hai (MEN2) |
+| 34 | TC-RPT-34 | [GET /reports/{id}/file] Báo cáo của mentor khác | id=R-FILE (báo cáo của MEN1, token MEN2) | 404 hoặc 403 (code trả "Report not found"); SRS không quy định | 404; message "Report not found"; data=null | PASS | X-RID2, DL-R4 | Code chặn không cho tải file của mentor khác (trả 404 Report not found) |
 | 35 | TC-RPT-35 | [GET /reports/{id}/file] Báo cáo không có file | id=R-NOFILE | 404 ("File not found") | 404; message "File not found"; data=null | PASS | X-RID3, DL-R5 |  |
 | 36 | TC-RPT-36 | [GET /reports/{id}/file] id không phải số | id=abc | 400 (kiểu long) | 400; message "Failed to convert value of type 'java.lang.String' to required type 'long'; For input string: \"abc\"" | PASS | X-RID4, DL-R3 |  |
 | 37 | TC-RPT-37 | [GET /reports/{id}/file] Không gửi token | No Auth | 401 | 403; body mặc định của Spring, "Access Denied", path /api/mentor/reports/22/file | FAIL | X-AUTH1, DL-R2 | Bug G: trả 403 thay vì 401 |
@@ -100,7 +99,7 @@ Pass rate trên số test case đã chạy: 25/51 = 49.0%. 4 test case Blocked (
 | V-PJ1 | Dự án được gán cho mentor | P1 | TC-RPT-01 | PASS |
 | X-PJ1 | Dự án không tồn tại | `99999` | TC-RPT-17 | FAIL |
 | X-PJ2 | Không phải số | `abc` | TC-RPT-09 | PASS |
-| X-PJ3 | Dự án của mentor khác | P-OTHER | TC-RPT-18 | BLOCKED |
+| X-PJ3 | Dự án của mentor khác | P-OTHER / P1 với token MEN2 | TC-RPT-18 | FAIL |
 | X-PJ4 | Thiếu field | Bỏ key projectId | TC-RPT-08 | FAIL |
 | V-REQ1 | Cả ba có nội dung | SV001, TEST Nguyen Van A, TEST Bao cao tuan 1 | TC-RPT-01 | PASS |
 | X-REQ1 | Thiếu student | Bỏ key student | TC-RPT-04 | FAIL |
@@ -132,11 +131,11 @@ Pass rate trên số test case đã chạy: 25/51 = 49.0%. 4 test case Blocked (
 | X-URL2 | GET theo đường dẫn SRS | `/api/mentor/projects/{projectId}/reports` | TC-RPT-54 | FAIL |
 | S-DUP1 | Gửi lại đúng dữ liệu đã nộp | POST 2 lần cùng body | TC-RPT-45 | FAIL |
 | V-LST1 | Mentor có báo cáo | MEN1 sau khi đã nộp | TC-RPT-26, 27 | PASS |
-| V-LST2 | Mentor chưa có báo cáo nào | Mentor mới | TC-RPT-28 | BLOCKED |
-| V-LST3 | Cách ly dữ liệu giữa các mentor | Đăng nhập MEN2 | TC-RPT-29 | BLOCKED |
+| V-LST2 | Mentor chưa có báo cáo nào | MEN2 mới chưa có báo cáo | TC-RPT-28 | PASS |
+| V-LST3 | Cách ly dữ liệu giữa các mentor | Đăng nhập MEN2 (không thấy báo cáo MEN1) | TC-RPT-29 | PASS |
 | V-RID1 | Báo cáo của mentor, có file | R-FILE | TC-RPT-32 | PASS |
 | X-RID1 | Không tồn tại | `99999` | TC-RPT-33 | PASS |
-| X-RID2 | Báo cáo của mentor khác | R-OTHER | TC-RPT-34 | BLOCKED |
+| X-RID2 | Báo cáo của mentor khác | MEN2 tải file của MEN1 (R-FILE) | TC-RPT-34 | PASS |
 | X-RID3 | Báo cáo không có file | R-NOFILE | TC-RPT-35 | PASS |
 | X-RID4 | Không phải số | `abc` | TC-RPT-36 | PASS |
 | X-RID5 | File đã bị xóa khỏi ổ đĩa | R-FILE sau khi xóa file | TC-RPT-39 | PASS |
@@ -172,7 +171,7 @@ Pass rate trên số test case đã chạy: 25/51 = 49.0%. 4 test case Blocked (
 | R1 | Tất cả hợp lệ → 200 tạo báo cáo | TC-RPT-01, 02, 03, 15, 49, 50 | PASS |
 | R2 | Không có token hợp lệ hoặc sai role → 401/403 | TC-RPT-22, 23, 24, 40 | FAIL |
 | R3 | projectId không hợp lệ hoặc không tồn tại → 404/400 | TC-RPT-08, 09, 17, 41, 42 | FAIL (08, 17, 41, 42), PASS (09) |
-| R4 | Mentor không thuộc dự án → 403 | TC-RPT-18 | BLOCKED |
+| R4 | Mentor không thuộc dự án → 403 | TC-RPT-18 | FAIL |
 | R5 | Thiếu hoặc rỗng field bắt buộc → 400 | TC-RPT-04, 05, 06, 10, 11 | FAIL (04, 05, 06), PASS (10, 11) |
 | R6 | Ngày không hợp lệ → 400 | TC-RPT-07, 12, 13, 14, 48 | FAIL (07, 14), PASS (12, 13, 48) |
 | R7 | status không hợp lệ → 400 | TC-RPT-16 | FAIL |
@@ -180,12 +179,12 @@ Pass rate trên số test case đã chạy: 25/51 = 49.0%. 4 test case Blocked (
 | DL-R1 | Tất cả hợp lệ → 200 tải file | TC-RPT-32 | PASS |
 | DL-R2 | Không có token hợp lệ hoặc sai role → 401/403 | TC-RPT-37, 38 | FAIL |
 | DL-R3 | reportId không tồn tại hoặc sai kiểu → 404/400 | TC-RPT-33, 36 | PASS |
-| DL-R4 | Báo cáo của mentor khác → 404/403 | TC-RPT-34 | BLOCKED |
+| DL-R4 | Báo cáo của mentor khác → 404/403 | TC-RPT-34 | PASS |
 | DL-R5 | Báo cáo không có file → 404 | TC-RPT-35 | PASS |
 | DL-R6 | File không còn trên ổ đĩa → 404 | TC-RPT-39 | PASS |
 
 > **Bao phủ (trên tổng TC):** 48/48 EP tags, 7/7 BVA tags, 7/7 state transitions, 14/14 decision rules - **100%**.  
-> **Đã thực thi:** 51/55 test case. Kết quả: 27/48 EP tags PASS (17 FAIL, 4 chưa chạy), 4/7 BVA tags PASS (3 FAIL, 0 chưa chạy), 4/7 state transitions PASS (3 FAIL, 0 chưa chạy), 5/14 decision rules PASS (7 FAIL, 2 chưa chạy).
+> **Đã thực thi:** **55/55 test case (100%)**. Kết quả: **30/48 EP tags PASS** (18 FAIL, 0 chưa chạy), **4/7 BVA tags PASS** (3 FAIL, 0 chưa chạy), **4/7 state transitions PASS** (3 FAIL, 0 chưa chạy), **6/14 decision rules PASS** (8 FAIL, 0 chưa chạy).
 
 ---
 
@@ -197,7 +196,7 @@ Mã Jira điền sau khi tạo ticket (loại Bug, để Unassigned). Bug A, G, 
 |---|---|---|---|---|
 | A | API trả 500 thay vì 4xx cho lỗi request (thiếu tham số bắt buộc, sai Content-Type, endpoint không tồn tại) | 04 đến 08, 25, 51, 53, 54 | Medium | LABODC-__ |
 | B | POST /reports không validate `status`, chấp nhận giá trị bất kỳ ("ABC", "DRAFT") | 16, 52 | Medium | LABODC-__ |
-| C | POST /reports tạo báo cáo cho `projectId` không tồn tại (99999, 0, -1) | 17, 41, 42 | High | LABODC-__ |
+| C | POST /reports tạo báo cáo cho `projectId` không tồn tại (99999, 0, -1) hoặc dự án của mentor khác (TC-18) | 17, 18, 41, 42 | High | LABODC-__ |
 | D | Xử lý ngày sai: `dueDate` sai định dạng bị báo "Missing field: dueDate", `submittedDate` sai bị bỏ qua | 12, 13, 48, 14 | Low | LABODC-__ |
 | E | POST /reports nhận và lưu file `.exe`, không kiểm tra loại file | 20 | High | LABODC-__ |
 | F | File 20 MB bị từ chối "Maximum upload size exceeded", file 1.2 MB lên được, giới hạn thấp hơn SRS | 44, 21 | Medium | LABODC-__ |

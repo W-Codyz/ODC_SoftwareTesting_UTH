@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,6 +69,23 @@ public class TalentService {
             talent.setPortfolioUrl(portfolio);
         }
         
+        // Validate profile data
+        if (profileDTO.getGpa() != null) {
+            if (profileDTO.getGpa().compareTo(BigDecimal.ZERO) < 0 || profileDTO.getGpa().compareTo(BigDecimal.valueOf(4.0)) > 0) {
+                throw new IllegalArgumentException("GPA must be between 0.0 and 4.0");
+            }
+        }
+        if (profileDTO.getYearOfStudy() != null) {
+            if (profileDTO.getYearOfStudy() < 1 || profileDTO.getYearOfStudy() > 5) {
+                throw new IllegalArgumentException("Year of study must be between 1 and 5");
+            }
+        }
+        if (profileDTO.getHoursPerWeek() != null) {
+            if (profileDTO.getHoursPerWeek() < 1 || profileDTO.getHoursPerWeek() > 40) {
+                throw new IllegalArgumentException("Hours per week must be between 1 and 40");
+            }
+        }
+
         // Update basic info
         if (profileDTO.getFullName() != null) talent.setFullName(profileDTO.getFullName());
         if (profileDTO.getFaculty() != null) talent.setFaculty(profileDTO.getFaculty());
@@ -145,6 +163,15 @@ public class TalentService {
     
     @Transactional
     public TalentCertificationDTO addCertification(Long userId, TalentCertificationDTO certDTO) {
+        if (certDTO.getIssueDate() != null && certDTO.getIssueDate().isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("Issue date cannot be in the future");
+        }
+        
+        if (certDTO.getIssueDate() != null && certDTO.getExpiryDate() != null 
+                && certDTO.getExpiryDate().isBefore(certDTO.getIssueDate())) {
+            throw new IllegalArgumentException("Expiry date must be after issue date");
+        }
+        
         Talent talent = getTalentByUserId(userId);
         
         TalentCertification cert = TalentCertification.builder()
@@ -547,10 +574,58 @@ public class TalentService {
         return filename.substring(filename.lastIndexOf(".") + 1);
     }
 
-    private String storeTalentFile(Long userId, MultipartFile file, String category) {
+    private void validateTalentFile(MultipartFile file, String category) {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("File is required");
         }
+
+        String originalFilename = file.getOriginalFilename();
+        String extension = getFileExtension(originalFilename);
+        String rawContentType = file.getContentType();
+        String contentType = rawContentType != null ? rawContentType.split(";")[0].trim() : "";
+
+        if ("avatar".equalsIgnoreCase(category)) {
+            // Max 5MB
+            if (file.getSize() > 5 * 1024 * 1024) {
+                throw new IllegalArgumentException("Avatar file size must not exceed 5MB");
+            }
+            // Allowed MIME types: image/jpeg, image/png
+            if (!contentType.equalsIgnoreCase("image/jpeg") && !contentType.equalsIgnoreCase("image/png")) {
+                throw new IllegalArgumentException("Only JPEG and PNG image files are allowed for avatar");
+            }
+            // Allowed extensions: jpg, jpeg, png
+            if (!extension.matches("(?i)^(jpg|jpeg|png)$")) {
+                throw new IllegalArgumentException("Invalid avatar file extension. Only .jpg, .jpeg, and .png are allowed");
+            }
+        } else if ("cv".equalsIgnoreCase(category)) {
+            // Max 20MB
+            if (file.getSize() > 20 * 1024 * 1024) {
+                throw new IllegalArgumentException("CV file size must not exceed 20MB");
+            }
+            // Allowed MIME types: application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document
+            if (!contentType.equalsIgnoreCase("application/pdf") &&
+                    !contentType.equalsIgnoreCase("application/msword") &&
+                    !contentType.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
+                throw new IllegalArgumentException("Only PDF, DOC, and DOCX files are allowed for CV");
+            }
+            // Allowed extensions: pdf, doc, docx
+            if (!extension.matches("(?i)^(pdf|doc|docx)$")) {
+                throw new IllegalArgumentException("Invalid CV file extension. Only .pdf, .doc, and .docx are allowed");
+            }
+        } else {
+            throw new IllegalArgumentException("Invalid file category");
+        }
+    }
+
+    private String getFileExtension(String filename) {
+        if (filename == null || !filename.contains(".")) {
+            return "";
+        }
+        return filename.substring(filename.lastIndexOf(".") + 1).trim();
+    }
+
+    private String storeTalentFile(Long userId, MultipartFile file, String category) {
+        validateTalentFile(file, category);
         try {
             String base = System.getProperty("java.io.tmpdir");
             java.nio.file.Path baseDir = java.nio.file.Path.of(base, "labodc", "talent").toAbsolutePath().normalize();
@@ -566,6 +641,8 @@ public class TalentService {
             }
             java.nio.file.Files.copy(file.getInputStream(), target, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
             return target.toAbsolutePath().toString();
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Failed to store file: " + e.getMessage());
         }
