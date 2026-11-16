@@ -111,7 +111,9 @@ public class AuthService {
         }
         
         // Check if user is active
-        if (user.getStatus() == UserStatus.LOCKED) {
+        if (user.getStatus() == UserStatus.PENDING) {
+            throw new AccessDeniedException("Tài khoản chưa kích hoạt");
+        } else if (user.getStatus() == UserStatus.LOCKED) {
             throw new AccessDeniedException("Tài khoản đã bị khóa");
         } else if (user.getStatus() != UserStatus.ACTIVE) {
             throw new BadRequestException("Account is not active. Status: " + user.getStatus());
