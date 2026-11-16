@@ -5,6 +5,7 @@ import com.uth.labodc.dto.auth.LoginRequest;
 import com.uth.labodc.dto.auth.RegisterRequest;
 import com.uth.labodc.exception.BadRequestException;
 import com.uth.labodc.exception.ResourceNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
 import com.uth.labodc.model.entity.User;
 import com.uth.labodc.model.enums.UserStatus;
 import com.uth.labodc.repository.UserRepository;
@@ -61,6 +62,12 @@ public class AuthService {
     
     @Transactional
     public AuthResponse login(LoginRequest request) {
+        // Check if user is locked before authenticating password to prevent leaking password validity
+        User user = userRepository.findByEmailAndDeletedAtIsNull(request.getEmail()).orElse(null);
+        if (user != null && user.getStatus() == UserStatus.LOCKED) {
+            throw new AccessDeniedException("Tài khoản đã bị khóa");
+        }
+
         // Authenticate user
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -70,8 +77,10 @@ public class AuthService {
         );
         
         // Get user from database
-        User user = userRepository.findByEmailAndDeletedAtIsNull(request.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        if (user == null) {
+            user = userRepository.findByEmailAndDeletedAtIsNull(request.getEmail())
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        }
         
         // Check if user is active
         if (user.getStatus() != UserStatus.ACTIVE) {
