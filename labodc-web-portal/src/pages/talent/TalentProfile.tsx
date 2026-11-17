@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { Card, Tabs, Form, Input, Button, Upload, Tag, Rate, message, Spin, Select, Typography, Space } from 'antd';
-import { UserOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { UserOutlined, PlusOutlined, DeleteOutlined, UploadOutlined } from '@ant-design/icons';
 import {
   talentService,
   TalentProfile as TalentProfileType,
@@ -19,6 +19,7 @@ const PROFICIENCY_OPTIONS = [
 ];
 
 const TalentProfile: React.FC = () => {
+  const [uploadingCv, setUploadingCv] = useState(false);
   const [profile, setProfile] = useState<TalentProfileType | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -66,6 +67,22 @@ const TalentProfile: React.FC = () => {
       message.error('Không thể tải lên ảnh đại diện');
     }
   };
+
+  const handleCvUpload: UploadProps['customRequest'] = async (options) => {
+  try {
+    setUploadingCv(true);
+    const { file } = options;
+    const cvUrl = await talentService.uploadCV(file as File);
+    setProfile((prev) => (prev ? { ...prev, cvUrl } : null));
+    message.success('Tải lên CV thành công');
+  } catch (error: any) {
+    console.error('Failed to upload CV:', error);
+    const errorMsg = error?.response?.data?.message || 'Không thể tải lên CV';
+    message.error(errorMsg);
+  } finally {
+    setUploadingCv(false);
+  }
+};
 
   if (loading) {
     return (
@@ -168,6 +185,26 @@ const TalentProfile: React.FC = () => {
 
               <Form.Item label="Portfolio" name="portfolioUrl">
                 <Input placeholder="https://yourportfolio.com" />
+              </Form.Item>
+
+               <Form.Item label="Hồ sơ CV (Curriculum Vitae)">
+                <Upload
+                  customRequest={handleCvUpload}
+                  showUploadList={false}
+                  accept=".pdf,.doc,.docx"
+                >
+                  <Button icon={<UploadOutlined />} loading={uploadingCv}>
+                    Tải lên CV
+                  </Button>
+                </Upload>
+                {profile.cvUrl && (
+                  <div style={{ marginTop: '8px' }}>
+                    <span style={{ color: '#8c8c8c', marginRight: '8px' }}>CV hiện tại:</span>
+                    <a href={profile.cvUrl} target="_blank" rel="noopener noreferrer">
+                      {profile.cvUrl}
+                    </a>
+                  </div>
+                )}
               </Form.Item>
 
               <Form.Item>
