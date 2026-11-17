@@ -1,0 +1,22 @@
+workspace:
+  id: e1b74e94-9796-4501-8005-e7bb9c8f63f8
+
+localResources:
+  collections:
+    - ../LabODC API Testing.postman_collection.json
+    - ../LabODC API Testing
+  environments:
+    - ../LabODC Local.environment.yaml
+  specs:
+    - ../postman/specs/abc/abc.json
+
+# Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
+
+cloudResources:
+  collections:
+    ../postman/collections/LabODC API Testing: 58733526-ae2f66b4-e3e4-420b-9ae2-44f2fbe3386e
+    ../postman/collections/LabODC Unified API Testing: 113479f7-4c7c-4e66-a7da-4d660a0fb33d
+    ../postman/collections/Member 5 - FR-TL-002, FR-MEN-003, FR-ENT-001: d8243953-e0aa-4582-9564-52957efd2aa8
+resourceNameMappings:
+  specs:
+    - ../postman/specs/abc/abc.json: abc

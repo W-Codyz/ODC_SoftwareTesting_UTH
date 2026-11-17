@@ -1,0 +1,71 @@
+$kind: http-request
+url: "{{base_url}}/api/lab-admin/mentors/{{mentor_id}}"
+method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \  \"fullName\": \"Test API Mentor\",\r
+
+    \  \"title\": \"Dr.\",\r
+
+    \  \"currentPosition\": \"Lead Developer\",\r
+
+    \  \"currentCompany\": \"Tech Corp\",\r
+
+    \  \"yearsOfExperience\": 7,\r
+
+    \  \"bio\": \"Updated bio\",\r
+
+    \  \"expertise\": [\"Java\", \"Spring Boot\", \"React\"],\r
+
+    \  \"hourlyRate\": 75.0,\r
+
+    \  \"currency\": \"USD\",\r
+
+    \  \"maxConcurrentProjects\": 5,\r
+
+    \  \"available\": true\r
+
+    }"
+scripts:
+  - type: beforeRequest
+    code: "const loginRequest = {\r
+
+      \    url: pm.environment.get(\"base_url\") + \"/api/auth/login\",\r
+
+      \    method: \"POST\",\r
+
+      \    header: { \"Content-Type\": \"application/json\" },\r
+
+      \    body: {\r
+
+      \        mode: \"raw\",\r
+
+      \        raw: JSON.stringify({\r
+
+      \            email: \"admin@labodc.com\",\r
+
+      \            password: \"admin123\"\r
+
+      \        })\r
+
+      \    }\r
+
+      };\r
+
+      \r
+
+      pm.sendRequest(loginRequest, function (err, res) {\r
+
+      \    var data = res.json();\r
+
+      \    if (data.data && data.data.token) {\r
+
+      \        pm.environment.set(\"token\", data.data.token);\r
+
+      \    }\r
+
+      });"
+    language: text/javascript
+order: 6000

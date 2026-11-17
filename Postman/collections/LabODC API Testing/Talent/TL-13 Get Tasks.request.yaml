@@ -1,0 +1,53 @@
+$kind: http-request
+name: 'TL-13 Get Tasks'
+method: GET
+url: '{{base_url}}/api/talent/tasks'
+order: 13000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{token}}'
+scripts:
+  - type: beforeRequest
+    language: text/javascript
+    code: |-
+      // Auto-login as Talent user to get correct role token
+      var base_url = pm.environment.get("base_url");
+      pm.sendRequest({
+          url: base_url + "/api/auth/login",
+          method: "POST",
+          header: { "Content-Type": "application/json" },
+          body: {
+              mode: "raw",
+              raw: JSON.stringify({
+                  email: "nguyenvana@student.uth.edu.vn",
+                  password: "123123"
+              })
+          }
+      }, function(err, res) {
+          if (!err && res.code === 200) {
+              var jsonData = res.json();
+              var token = jsonData.token || (jsonData.data && jsonData.data.token);
+              if (token) {
+                  pm.environment.set("token", token);
+              }
+          }
+      });
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+      pm.test("Response success is true", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.success).to.eql(true);
+      });
+      pm.test("Tasks data exists", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.data).to.not.be.null;
+      });
+      pm.test("Response time is under 2000ms", function () {
+          pm.expect(pm.response.responseTime).to.be.below(2000);
+      });

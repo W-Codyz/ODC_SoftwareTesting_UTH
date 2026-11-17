@@ -1,0 +1,57 @@
+$kind: http-request
+url: "{{base_url}}/api/auth/register"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "email": "{{test_email}}",
+      "password": "test123123",
+      "confirmPassword": "test123123",
+      "role": "TALENT"
+    }
+scripts:
+  - type: beforeRequest
+    code: |-
+      var timestamp = Date.now();
+      var randomEmail = "testuser_" + timestamp + "@mail.com";
+      pm.environment.set("test_email", randomEmail);
+    language: text/javascript
+  - type: afterResponse
+    code: "pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });
+
+
+      pm.test('Status code is 200 or 201', function () {
+
+      \    pm.expect([
+
+      \        200,
+
+      \        201
+
+      \    ]).to.include(pm.response.code);
+
+      })
+
+
+      pm.test('Response has success field', function () {
+
+      \    var jsonData = pm.response.json();
+
+      \    pm.expect(jsonData).to.have.property('success');
+
+      })
+
+
+      pm.test('Response time is under 3000ms', function () {
+
+      \    pm.expect(pm.response.responseTime).to.be.below(3000);
+
+      })"
+    language: text/javascript
+settings: {}
+order: 2000

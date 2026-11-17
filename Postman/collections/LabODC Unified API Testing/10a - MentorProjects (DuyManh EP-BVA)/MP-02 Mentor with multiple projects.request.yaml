@@ -1,0 +1,16 @@
+$kind: http-request
+description: Uses the root Login MENTOR request (Mentor 1). Seed database currently returns project ids 1 and 3.
+url: "{{base_url}}/api/mentor/projects"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{token}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Returns 200',()=>pm.response.to.have.status(200)); const b=pm.response.json(); const a=b.data||[];
+      pm.test('Success envelope contains array with at least two projects',()=>{pm.expect(b.success).to.eql(true);pm.expect(a).to.be.an('array').and.have.lengthOf.at.least(2);});
+      pm.test('Project DTO fields are present',()=>a.forEach(x=>['id','title','progressPercentage'].forEach(k=>pm.expect(x).to.have.property(k))));
+    language: text/javascript
+order: 2000

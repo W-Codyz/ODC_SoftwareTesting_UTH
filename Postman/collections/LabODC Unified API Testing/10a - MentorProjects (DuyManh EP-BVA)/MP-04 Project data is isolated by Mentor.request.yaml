@@ -1,0 +1,13 @@
+$kind: http-request
+description: "TC-MP-04: uses Mentor 1 token. Current seed data assigns ids 1 and 3 to Mentor 1 and id 2 to Mentor 3."
+url: "{{base_url}}/api/mentor/projects"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{token}}"
+scripts:
+  - type: afterResponse
+    code: pm.test('Mentor 1 sees only own project ids',()=>{pm.response.to.have.status(200);const b=pm.response.json();const ids=b.data.map(x=>x.id);pm.expect(ids).to.include(1);pm.expect(ids).to.include(3);pm.expect(ids).to.not.include(2);});
+    language: text/javascript
+order: 8000

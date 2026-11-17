@@ -1,0 +1,3 @@
+$kind: collection
+description: "Enterprise-facing portal endpoints. Requires ENTERPRISE token. Test account: contact@techcorp.vn / 123123"
+order: 17000

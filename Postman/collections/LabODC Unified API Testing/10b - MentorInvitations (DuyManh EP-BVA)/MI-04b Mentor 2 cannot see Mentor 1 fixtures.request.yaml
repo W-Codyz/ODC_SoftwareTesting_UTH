@@ -1,0 +1,13 @@
+$kind: http-request
+description: Requires SQL fixtures. Confirms Mentor 2 sees C only, never A or B.
+url: "{{base_url}}/api/mentor/invitations"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{token_mentor_b}}"
+scripts:
+  - type: afterResponse
+    code: pm.test('Returns 200',()=>pm.response.to.have.status(200)); const b=pm.response.json(); const groups=(b.data||[]).map(x=>x.groupName); pm.test('Sees its C fixture only among QA fixtures',()=>{pm.expect(groups).to.include('QA-POSTMAN-MI-C');pm.expect(groups).to.not.include('QA-POSTMAN-MI-A');pm.expect(groups).to.not.include('QA-POSTMAN-MI-B');});
+    language: text/javascript
+order: 6000

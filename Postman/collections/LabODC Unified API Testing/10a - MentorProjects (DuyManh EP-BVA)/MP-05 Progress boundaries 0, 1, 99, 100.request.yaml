@@ -1,0 +1,13 @@
+$kind: http-request
+description: "TC-MP-05: run scripts/postman_mentor_projects_fixtures.sql first. Fixture projects use slugs qa-postman-mp-boundary-*."
+url: "{{base_url}}/api/mentor/projects"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{token}}"
+scripts:
+  - type: afterResponse
+    code: pm.test('All four progress boundary fixtures are returned unchanged',()=>{pm.response.to.have.status(200);const a=pm.response.json().data;const f=a.filter(x=>x.title.startsWith('QA POSTMAN MP Boundary '));const got=Object.fromEntries(f.map(x=>[Number(x.title.split(' ').pop()),x]));[0,1,99,100].forEach(v=>{pm.expect(got[v],`progress ${v}`).to.exist;pm.expect(got[v].progressPercentage).to.eql(v);['id','title','progressPercentage'].forEach(k=>pm.expect(got[v]).to.have.property(k));});});
+    language: text/javascript
+order: 9000

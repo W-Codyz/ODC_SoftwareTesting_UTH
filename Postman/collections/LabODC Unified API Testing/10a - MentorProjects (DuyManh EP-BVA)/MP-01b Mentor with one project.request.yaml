@@ -1,0 +1,13 @@
+$kind: http-request
+description: "TC-MP-01: Mentor 3 currently has project id 2."
+url: "{{base_url}}/api/mentor/projects"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{token_mentor_single}}"
+scripts:
+  - type: afterResponse
+    code: pm.test('Returns exactly one project',()=>{pm.response.to.have.status(200);const b=pm.response.json();pm.expect(b.success).to.eql(true);pm.expect(b.data).to.have.lengthOf(1);pm.expect(b.data[0]).to.have.property('id');pm.expect(b.data[0]).to.have.property('title');pm.expect(b.data[0]).to.have.property('progressPercentage');});
+    language: text/javascript
+order: 5000

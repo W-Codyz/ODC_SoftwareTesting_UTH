@@ -1,0 +1,3 @@
+$kind: collection
+description: The create-evaluation request writes persistent data. Choose a valid, unused evaluation_period and run it only once for the initial test.
+order: 3000

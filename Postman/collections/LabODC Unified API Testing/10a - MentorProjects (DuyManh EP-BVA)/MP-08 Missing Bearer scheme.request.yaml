@@ -1,0 +1,13 @@
+$kind: http-request
+description: "TC-MP-08: expected 401. Current API returns 403."
+url: "{{base_url}}/api/mentor/projects"
+method: GET
+headers:
+  Authorization: "{{token}}"
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: pm.test('Expected 401 without Bearer scheme',()=>pm.response.to.have.status(401));
+    language: text/javascript
+order: 11000

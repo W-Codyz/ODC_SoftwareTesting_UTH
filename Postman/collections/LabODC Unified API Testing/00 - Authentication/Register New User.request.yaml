@@ -1,0 +1,37 @@
+$kind: http-request
+url: "{{base_url}}/api/auth/register"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "newuser{{test_suffix}}@example.com",
+      "password": "123123",
+      "confirmPassword": "123123",
+      "fullName": "Test User",
+      "role": "TALENT"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status code is [200, 201]', function () {
+          pm.expect([200,201]).to.include(pm.response.code);
+      });
+
+      pm.test('Response success is true', function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.success).to.eql(true);
+      });
+
+      pm.test('Response data exists', function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.data).to.not.be.null;
+      });
+
+      pm.test('Response time is under 2000ms', function () {
+          pm.expect(pm.response.responseTime).to.be.below(2000);
+      });
+    language: text/javascript
+order: 6000

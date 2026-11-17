@@ -1,0 +1,45 @@
+$kind: http-request
+url: "{{base_url}}/api/mentor/projects/{{project_id}}/reports"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "Test Report",
+      "content": "Report content from Postman",
+      "type": "PROGRESS"
+    }
+scripts:
+  - type: beforeRequest
+    code: |-
+      var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');
+      pm.sendRequest({
+          url: base_url + '/api/auth/login',
+          method: 'POST',
+          header: { 'Content-Type': 'application/json' },
+          body: {
+              mode: 'raw',
+              raw: JSON.stringify({ email: 'mentor1@labodc.com', password: '123123' })
+          }
+      }, function(err, res) {
+          if (!err && res.code === 200) {
+              var jsonData = res.json();
+              var token = jsonData.token || (jsonData.data && jsonData.data.token);
+              if (token) { pm.environment.set('token', token); }
+          }
+      });
+    language: text/javascript
+  - type: afterResponse
+    code: |-
+      var jsonData = pm.response.json();
+      pm.test('Report created', function () { pm.expect([200,201]).to.include(pm.response.code); });
+      pm.test('Report ID saved', function () {
+          if (jsonData.data && (jsonData.data.reportId || jsonData.data.id)) {
+              pm.environment.set('report_id', jsonData.data.reportId || jsonData.data.id);
+          }
+      });
+      pm.test('Response time is under 2000ms', function () { pm.expect(pm.response.responseTime).to.be.below(2000); });
+    language: text/javascript
+order: 23000

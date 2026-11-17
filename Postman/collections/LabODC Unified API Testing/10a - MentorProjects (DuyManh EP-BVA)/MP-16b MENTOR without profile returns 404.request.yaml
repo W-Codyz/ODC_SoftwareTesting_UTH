@@ -1,0 +1,13 @@
+$kind: http-request
+description: "TC-MP-16: expected 404 when a valid MENTOR user has no Mentor profile."
+url: "{{base_url}}/api/mentor/projects"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{token_mentor_no_profile}}"
+scripts:
+  - type: afterResponse
+    code: pm.test('Missing Mentor profile returns 404',()=>pm.response.to.have.status(404));
+    language: text/javascript
+order: 24000

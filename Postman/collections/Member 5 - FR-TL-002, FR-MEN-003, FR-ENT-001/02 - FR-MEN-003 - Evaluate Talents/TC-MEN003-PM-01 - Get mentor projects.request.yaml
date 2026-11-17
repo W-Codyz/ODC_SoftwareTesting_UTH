@@ -1,0 +1,12 @@
+$kind: http-request
+url: "{{base_url}}/api/mentor/projects"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{mentor_token}}"
+scripts:
+  - type: afterResponse
+    code: pm.test("Mentor projects returns HTTP 200", function () { pm.response.to.have.status(200); });
+    language: text/javascript
+order: 1000

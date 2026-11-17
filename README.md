@@ -161,6 +161,33 @@ Cần khởi động cả 3 thành phần: Database, Backend, Frontend trước 
 npx codeceptjs run --steps e2e-tests/auth/login_test.js #thay "auth/login_test.js" thành đường dẫn và tên file cần chạy
 ```
 
+### Chạy CodeceptJS cho FR-MEN-003 và FR-ENT-001
+
+Các suite này dùng tài khoản kiểm thử lấy từ biến môi trường; không ghi mật khẩu/token vào test hoặc commit.
+Đặt các biến trong terminal PowerShell đang dùng để chạy test:
+
+```powershell
+$env:MENTOR_EMAIL = "<email Mentor test>"
+$env:MENTOR_PASSWORD = "<mật khẩu Mentor test>"
+$env:TALENT_EMAIL = "<email Talent test>"
+$env:TALENT_PASSWORD = "<mật khẩu Talent test>"
+$env:ENTERPRISE_EMAIL = "<email Enterprise test>"
+$env:ENTERPRISE_PASSWORD = "<mật khẩu Enterprise test>"
+$env:API_BASE_URL = "http://localhost:8080/api"
+```
+
+Chạy các file liên quan:
+
+```powershell
+npx codeceptjs run --steps --grep 'TC-MEN003-(01|02|06|07)'
+npx codeceptjs run --steps --grep 'TC-MEN003-(14|15)'
+npx codeceptjs run --steps --grep 'TC-ENT001-0[1-4]'
+```
+
+`FR-ENT-001` profile endpoints phải được xác nhận trên backend build đang chạy; nếu API chưa được triển khai,
+suite sẽ báo lỗi thay vì giả lập PASS. Một số scenario ghi evaluation/profile vào database, vì vậy chỉ chạy
+trên môi trường test; scenario profile cố gắng khôi phục tên công ty ban đầu sau khi kiểm tra persistence.
+
 ### Chạy một Scenario cụ thể (theo tên)
 
 ```powershell
