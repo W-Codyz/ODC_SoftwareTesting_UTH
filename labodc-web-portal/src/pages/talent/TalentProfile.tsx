@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { Card, Tabs, Form, Input, Button, Upload, Tag, Rate, message, Spin, Select, Typography, Space } from 'antd';
+import { Card, Tabs, Form, Input, Button, Upload, Tag, Rate, message, Spin, Select, Typography, Space, InputNumber } from 'antd';
 import { UserOutlined, PlusOutlined, DeleteOutlined, UploadOutlined } from '@ant-design/icons';
 import {
   talentService,
@@ -69,20 +69,20 @@ const TalentProfile: React.FC = () => {
   };
 
   const handleCvUpload: UploadProps['customRequest'] = async (options) => {
-  try {
-    setUploadingCv(true);
-    const { file } = options;
-    const cvUrl = await talentService.uploadCV(file as File);
-    setProfile((prev) => (prev ? { ...prev, cvUrl } : null));
-    message.success('Tải lên CV thành công');
-  } catch (error: any) {
-    console.error('Failed to upload CV:', error);
-    const errorMsg = error?.response?.data?.message || 'Không thể tải lên CV';
-    message.error(errorMsg);
-  } finally {
-    setUploadingCv(false);
-  }
-};
+    try {
+      setUploadingCv(true);
+      const { file } = options;
+      const cvUrl = await talentService.uploadCV(file as File);
+      setProfile((prev) => (prev ? { ...prev, cvUrl } : null));
+      message.success('Tải lên CV thành công');
+    } catch (error: any) {
+      console.error('Failed to upload CV:', error);
+      const errorMsg = error?.response?.data?.message || 'Không thể tải lên CV';
+      message.error(errorMsg);
+    } finally {
+      setUploadingCv(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -187,7 +187,7 @@ const TalentProfile: React.FC = () => {
                 <Input placeholder="https://yourportfolio.com" />
               </Form.Item>
 
-               <Form.Item label="Hồ sơ CV (Curriculum Vitae)">
+              <Form.Item label="Hồ sơ CV (Curriculum Vitae)">
                 <Upload
                   customRequest={handleCvUpload}
                   showUploadList={false}
@@ -332,8 +332,33 @@ const SkillsManagement: React.FC<{
             >
               <Select options={PROFICIENCY_OPTIONS} style={{ width: '160px' }} />
             </Form.Item>
-            <Form.Item label="Số năm kinh nghiệm" name="yearsOfExperience" style={{ marginBottom: 0 }}>
-              <Input type="number" step="0.5" min="0" style={{ width: '80px' }} />
+            <Form.Item
+              label="Số năm kinh nghiệm"
+              name="yearsOfExperience"
+              style={{ marginBottom: 0 }}
+              rules={[
+                {
+                  validator: async (_, value) => {
+                    if (value === undefined || value === null || value === '') {
+                      return Promise.resolve(); // Cho phép để trống nếu không bắt buộc
+                    }
+                    const num = Number(value);
+                    if (num < 0) {
+                      return Promise.reject(new Error('Số năm kinh nghiệm phải lớn hơn hoặc bằng 0.0'));
+                    }
+                    if (num > 50) {
+                      return Promise.reject(new Error('Số năm kinh nghiệm tối đa là 50.0'));
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
+            >
+              <InputNumber
+                step={0.1}
+                placeholder="0.0"
+                style={{ width: '120px' }}
+              />
             </Form.Item>
             <Form.Item style={{ marginBottom: 0 }}>
               <Button type="primary" htmlType="submit" loading={addingSkill} icon={<PlusOutlined />}>
