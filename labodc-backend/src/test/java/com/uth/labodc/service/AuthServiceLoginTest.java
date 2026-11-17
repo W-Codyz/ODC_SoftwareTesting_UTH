@@ -7,6 +7,7 @@ import com.uth.labodc.model.enums.UserStatus;
 import com.uth.labodc.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -154,7 +156,10 @@ class AuthServiceLoginTest {
         assertEquals(0, user.getFailedLoginAttempts());
         assertNull(user.getLockedUntil());
         assertNotNull(user.getLastLoginAt());
-        verify(userRepository).save(user);
+        InOrder callOrder = inOrder(userRepository, authenticationManager);
+        callOrder.verify(userRepository).save(user);
+        callOrder.verify(authenticationManager).authenticate(any());
+        callOrder.verify(userRepository).save(user);
     }
 
     @Test
@@ -168,7 +173,7 @@ class AuthServiceLoginTest {
                 () -> authService.login(new LoginRequest(EMAIL, "CorrectPassword!"))
         );
 
-        assertEquals("Tài khoản chưa được kích hoạt", exception.getMessage());
+        assertEquals("Tài khoản chưa kích hoạt", exception.getMessage());
         verify(userRepository, never()).save(any());
     }
 

@@ -86,6 +86,7 @@ public class AuthService {
             user.setStatus(UserStatus.ACTIVE);
             user.setFailedLoginAttempts(0);
             user.setLockedUntil(null);
+            userRepository.save(user);
         }
 
         try {
@@ -121,7 +122,7 @@ public class AuthService {
         }
 
         if (user.getStatus() == UserStatus.PENDING) {
-            throw new AccessDeniedException("Tài khoản chưa được kích hoạt");
+            throw new AccessDeniedException("Tài khoản chưa kích hoạt");
         }
         if (user.getStatus() != UserStatus.ACTIVE) {
             throw new BadRequestException("Account is not active. Status: " + user.getStatus());
