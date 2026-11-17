@@ -335,6 +335,59 @@ public class MentorPortalController {
                 .body(resource);
     }
 
+    @PutMapping("/reports/{id}")
+    @PreAuthorize("hasRole('MENTOR')")
+    public ResponseEntity<ApiResponse<MentorReportDTO>> updateReport(
+            Authentication authentication,
+            @PathVariable long id,
+            @RequestParam(value = "reportName", required = false) String reportName,
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "summary", required = false) String summary
+    ) {
+        User user = currentUser(authentication);
+        return ResponseEntity.ok(ApiResponse.success(
+                mentorPortalService.updateReport(user, id, reportName, status, summary)
+        ));
+    }
+
+    @GetMapping("/projects/{projectId}/reports")
+    @PreAuthorize("hasRole('MENTOR')")
+    public ResponseEntity<ApiResponse<List<MentorReportDTO>>> getReportsByProject(
+            Authentication authentication,
+            @PathVariable Long projectId
+    ) {
+        User user = currentUser(authentication);
+        return ResponseEntity.ok(ApiResponse.success(mentorPortalService.getReportsByProject(user, projectId)));
+    }
+
+    @PostMapping(value = "/projects/{projectId}/reports", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PreAuthorize("hasRole('MENTOR')")
+    public ResponseEntity<ApiResponse<MentorReportDTO>> submitProjectReport(
+            Authentication authentication,
+            @PathVariable Long projectId,
+            @RequestBody(required = false) Map<String, Object> body,
+            @RequestParam(value = "student", required = false) String studentParam,
+            @RequestParam(value = "studentId", required = false) String studentIdParam,
+            @RequestParam(value = "reportName", required = false) String reportNameParam,
+            @RequestParam(value = "submittedDate", required = false) String submittedDateParam,
+            @RequestParam(value = "dueDate", required = false) String dueDateParam,
+            @RequestParam(value = "status", required = false) String statusParam,
+            @RequestParam(value = "summary", required = false) String summaryParam,
+            @RequestPart(value = "file", required = false) MultipartFile file
+    ) {
+        User user = currentUser(authentication);
+        String student = studentParam != null ? studentParam : (body != null && body.get("student") != null ? String.valueOf(body.get("student")) : "Student");
+        String studentId = studentIdParam != null ? studentIdParam : (body != null && body.get("studentId") != null ? String.valueOf(body.get("studentId")) : "SV001");
+        String reportName = reportNameParam != null ? reportNameParam : (body != null && body.get("reportName") != null ? String.valueOf(body.get("reportName")) : (body != null && body.get("reportType") != null ? String.valueOf(body.get("reportType")) : "Report"));
+        String submittedDate = submittedDateParam != null ? submittedDateParam : (body != null && body.get("submittedDate") != null ? String.valueOf(body.get("submittedDate")) : null);
+        String dueDate = dueDateParam != null ? dueDateParam : (body != null && body.get("dueDate") != null ? String.valueOf(body.get("dueDate")) : "2026-12-31");
+        String status = statusParam != null ? statusParam : (body != null && body.get("status") != null ? String.valueOf(body.get("status")) : "submitted");
+        String summary = summaryParam != null ? summaryParam : (body != null && body.get("summary") != null ? String.valueOf(body.get("summary")) : "");
+        return ResponseEntity.ok(ApiResponse.success(
+                mentorPortalService.submitReport(user, projectId, student, studentId, reportName, submittedDate, dueDate, status, summary, file)
+        ));
+    }
+
     private User currentUser(Authentication authentication) {
         String email = authentication.getName();
         return userRepository.findByEmailAndDeletedAtIsNull(email)
