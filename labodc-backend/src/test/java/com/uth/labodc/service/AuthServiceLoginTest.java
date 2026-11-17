@@ -1,6 +1,7 @@
 package com.uth.labodc.service;
 
 import com.uth.labodc.dto.auth.LoginRequest;
+import com.uth.labodc.exception.AccountStateException;
 import com.uth.labodc.model.entity.User;
 import com.uth.labodc.model.enums.UserRole;
 import com.uth.labodc.model.enums.UserStatus;
@@ -11,7 +12,6 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -81,8 +81,8 @@ class AuthServiceLoginTest {
                 .when(authenticationManager).authenticate(any());
         LocalDateTime beforeLogin = LocalDateTime.now().minusSeconds(1);
 
-        AccessDeniedException exception = assertThrows(
-                AccessDeniedException.class,
+        AccountStateException exception = assertThrows(
+                AccountStateException.class,
                 () -> authService.login(new LoginRequest(EMAIL, "WrongPassword!"))
         );
 
@@ -104,8 +104,8 @@ class AuthServiceLoginTest {
         user.setLockedUntil(LocalDateTime.now().plusMinutes(10));
         when(userRepository.findByEmailAndDeletedAtIsNull(EMAIL)).thenReturn(Optional.of(user));
 
-        AccessDeniedException exception = assertThrows(
-                AccessDeniedException.class,
+        AccountStateException exception = assertThrows(
+                AccountStateException.class,
                 () -> authService.login(new LoginRequest(EMAIL, "AnyPassword!"))
         );
 
@@ -168,8 +168,8 @@ class AuthServiceLoginTest {
         user.setStatus(UserStatus.PENDING);
         when(userRepository.findByEmailAndDeletedAtIsNull(EMAIL)).thenReturn(Optional.of(user));
 
-        AccessDeniedException exception = assertThrows(
-                AccessDeniedException.class,
+        AccountStateException exception = assertThrows(
+                AccountStateException.class,
                 () -> authService.login(new LoginRequest(EMAIL, "CorrectPassword!"))
         );
 
