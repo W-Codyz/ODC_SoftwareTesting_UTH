@@ -5,13 +5,13 @@ import com.uth.labodc.dto.auth.LoginRequest;
 import com.uth.labodc.dto.auth.RegisterRequest;
 import com.uth.labodc.exception.BadRequestException;
 import com.uth.labodc.exception.ResourceNotFoundException;
-import org.springframework.security.access.AccessDeniedException;
 import com.uth.labodc.model.entity.User;
 import com.uth.labodc.model.enums.UserRole;
 import com.uth.labodc.model.enums.UserStatus;
 import com.uth.labodc.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,11 +23,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AuthService {
+
+    private static final int MAX_FAILED_LOGIN_ATTEMPTS = 5;
+    private static final int ACCOUNT_LOCK_MINUTES = 30;
     
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -68,24 +72,22 @@ public class AuthService {
         return buildAuthResponse(user);
     }
     
-    @Transactional
+    @Transactional(noRollbackFor = {BadCredentialsException.class, AccessDeniedException.class})
     public AuthResponse login(LoginRequest request) {
-        User user = userRepository.findByEmailAndDeletedAtIsNull(request.getEmail()).orElse(null);
+        Optional<User> userResult = userRepository.findByEmailAndDeletedAtIsNull(request.getEmail());
+        User user = userResult.orElse(null);
+        LocalDateTime now = LocalDateTime.now();
 
-        // Check auto unlock if lock duration has expired
         if (user != null && user.getStatus() == UserStatus.LOCKED) {
-            if (user.getLockedUntil() != null && LocalDateTime.now().isAfter(user.getLockedUntil())) {
-                user.setStatus(UserStatus.ACTIVE);
-                user.setFailedLoginAttempts(0);
-                user.setLockedUntil(null);
-                user = userRepository.save(user);
-                log.info("Account auto-unlocked after lock duration expired: {}", user.getEmail());
-            } else {
+            if (user.getLockedUntil() == null || now.isBefore(user.getLockedUntil())) {
                 throw new AccessDeniedException("Tài khoản đã bị khóa");
             }
+
+            user.setStatus(UserStatus.ACTIVE);
+            user.setFailedLoginAttempts(0);
+            user.setLockedUntil(null);
         }
 
-        // Authenticate user
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -94,34 +96,41 @@ public class AuthService {
                     )
             );
         } catch (BadCredentialsException ex) {
-            // Increment failed_login_attempts if user exists
-            userRepository.findByEmailAndDeletedAtIsNull(request.getEmail()).ifPresent(u -> {
-                int attempts = (u.getFailedLoginAttempts() != null ? u.getFailedLoginAttempts() : 0) + 1;
-                u.setFailedLoginAttempts(attempts);
-                userRepository.save(u);
-                log.warn("Failed login attempt for {}: count={}", u.getEmail(), attempts);
-            });
+            if (user != null && user.getStatus() == UserStatus.ACTIVE) {
+                int failedAttempts = user.getFailedLoginAttempts() == null
+                        ? 1
+                        : user.getFailedLoginAttempts() + 1;
+                user.setFailedLoginAttempts(failedAttempts);
+
+                if (failedAttempts >= MAX_FAILED_LOGIN_ATTEMPTS) {
+                    user.setStatus(UserStatus.LOCKED);
+                    user.setLockedUntil(now.plusMinutes(ACCOUNT_LOCK_MINUTES));
+                    userRepository.save(user);
+                    throw new AccessDeniedException("Tài khoản đã bị khóa");
+                }
+
+                userRepository.save(user);
+                log.warn("Failed login attempt for {}: count={}", user.getEmail(), failedAttempts);
+            }
+
             throw ex;
         }
-        
-        // Get user from database if not fetched
+
         if (user == null) {
-            user = userRepository.findByEmailAndDeletedAtIsNull(request.getEmail())
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+            throw new ResourceNotFoundException("User not found");
         }
-        
-        // Check if user is active
+
         if (user.getStatus() == UserStatus.PENDING) {
-            throw new AccessDeniedException("Tài khoản chưa kích hoạt");
-        } else if (user.getStatus() == UserStatus.LOCKED) {
-            throw new AccessDeniedException("Tài khoản đã bị khóa");
-        } else if (user.getStatus() != UserStatus.ACTIVE) {
+            throw new AccessDeniedException("Tài khoản chưa được kích hoạt");
+        }
+        if (user.getStatus() != UserStatus.ACTIVE) {
             throw new BadRequestException("Account is not active. Status: " + user.getStatus());
         }
         
         // Update last login and reset failed login attempts
         user.setLastLoginAt(LocalDateTime.now());
         user.setFailedLoginAttempts(0);
+        user.setLockedUntil(null);
         userRepository.save(user);
         
         log.info("User logged in successfully: {}", user.getEmail());
