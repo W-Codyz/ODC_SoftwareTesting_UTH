@@ -331,6 +331,60 @@ public class MentorPortalController {
         ));
     }
 
+    /** Cập nhật báo cáo - chỉ các trường được gửi lên mới bị thay đổi. */
+    @PutMapping(value = "/reports/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('MENTOR')")
+    public ResponseEntity<ApiResponse<MentorReportDTO>> updateReport(
+            Authentication authentication,
+            @PathVariable long id,
+            @RequestParam(value = "student", required = false) String student,
+            @RequestParam(value = "studentId", required = false) String studentId,
+            @RequestParam(value = "reportName", required = false) String reportName,
+            @RequestParam(value = "submittedDate", required = false) String submittedDate,
+            @RequestParam(value = "dueDate", required = false) String dueDate,
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "summary", required = false) String summary,
+            @RequestPart(value = "file", required = false) MultipartFile file
+    ) {
+        User user = currentUser(authentication);
+        return ResponseEntity.ok(ApiResponse.success(
+                "Report updated successfully",
+                mentorPortalService.updateReport(user, id, student, studentId, reportName, submittedDate, dueDate, status, summary, file)
+        ));
+    }
+
+    /** Nộp báo cáo theo dự án (projectId lấy từ path). */
+    @PostMapping(value = "/projects/{projectId}/reports", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('MENTOR')")
+    public ResponseEntity<ApiResponse<MentorReportDTO>> submitProjectReport(
+            Authentication authentication,
+            @PathVariable Long projectId,
+            @RequestParam("student") String student,
+            @RequestParam("studentId") String studentId,
+            @RequestParam("reportName") String reportName,
+            @RequestParam(value = "submittedDate", required = false) String submittedDate,
+            @RequestParam("dueDate") String dueDate,
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "summary", required = false) String summary,
+            @RequestPart(value = "file", required = false) MultipartFile file
+    ) {
+        User user = currentUser(authentication);
+        return ResponseEntity.ok(ApiResponse.success(
+                mentorPortalService.submitReport(user, projectId, student, studentId, reportName, submittedDate, dueDate, status, summary, file)
+        ));
+    }
+
+    /** Danh sách báo cáo của mentor hiện tại theo dự án. */
+    @GetMapping("/projects/{projectId}/reports")
+    @PreAuthorize("hasRole('MENTOR')")
+    public ResponseEntity<ApiResponse<List<MentorReportDTO>>> projectReports(
+            Authentication authentication,
+            @PathVariable Long projectId
+    ) {
+        User user = currentUser(authentication);
+        return ResponseEntity.ok(ApiResponse.success(mentorPortalService.getProjectReports(user, projectId)));
+    }
+
     @GetMapping("/reports/{id}/file")
     @PreAuthorize("hasRole('MENTOR')")
     public ResponseEntity<Resource> downloadReportFile(Authentication authentication, @PathVariable long id) {

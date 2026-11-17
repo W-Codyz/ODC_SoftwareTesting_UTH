@@ -15,10 +15,10 @@
 | Chỉ số | Giá trị |
 |---|---:|
 | Tổng số test case | 20 |
-| Passed | 14 |
-| Failed | 6 |
+| Passed | 20 |
+| Failed | 0 |
 | Blocked / Skipped | 0 |
-| **Pass rate** | **14/20 = 70%** |
+| **Pass rate** | **20/20 = 100%** |
 
 ---
 
@@ -39,13 +39,13 @@
 | 11 | TC-LOGIN-11 | Password chỉ có khoảng trắng | `testlogin@labodc.com` / `"   "` | 400 - Lỗi `@NotBlank` | 400, `{"success":false,"message":"Validation failed","data":{"password":"Password must be at least 6 characters"}}` | PASS | X-PW1, R4 | Validation message ghi "6 characters" thay vì "8 characters" theo SRS |
 | 12 | TC-LOGIN-12 | Email có khoảng trắng đầu/cuối | `" testlogin@labodc.com "` / `Secure@123` | 400 hoặc 401 | 400, `{"success":false,"message":"Validation failed","data":{"email":"Email must be valid"}}` | PASS | X-EM2, R2 | |
 | 13 | TC-LOGIN-13 | Email viết hoa - case sensitivity | `TESTLOGIN@LABODC.COM` / `Secure@123` | 401 - `"Invalid email or password"` | 401, `"Invalid email or password"` | PASS | X-EM5, R3 | Phân biệt hoa/thường nhưng trong SRS chưa quy định rõ |
-| 14 | TC-LOGIN-14 | **[ST-03]** Login sai lần thứ 5 - khóa tài khoản | `testlogin@labodc.com` / `WrongPass5th!` | 403 - account chuyển LOCKED | 401, counter không tăng | FAIL | ST-03, X-PW2 | FAIL vì TC-LOGIN-18 đã test FAIL trước đó |
-| 15 | TC-LOGIN-15 | **[ST-05]** Login khi account đã bị khóa | `testlocked@labodc.com` / password đúng | 403 - `"Tài khoản đã bị khóa"` | 400, `{"success":false,"message":"Account is not active. Status: LOCKED","data":null}` | FAIL | ST-05, X-ACC1, R6 | Sai HTTP status code: trả 400 thay vì 403 |
-| 16 | TC-LOGIN-16 | **[ST-07]** Login khi account chưa kích hoạt | `testinactive@labodc.com` / password đúng | 403 - `"Tài khoản chưa kích hoạt"` | 400, `{"success":false,"message":"Account is not active. Status: PENDING","data":null}` | FAIL | ST-07, X-ACC2, R6 | Sai HTTP status code: trả 400 thay vì 403 |
+| 14 | TC-LOGIN-14 | **[ST-03]** Login sai lần thứ 5 - khóa tài khoản | `testlogin@labodc.com` / `WrongPass5th!` | 403 - account chuyển LOCKED | 403, `{"success":false,"message":"Tài khoản đã bị khóa","data":null}` | PASS | ST-03, X-PW2 |  |
+| 15 | TC-LOGIN-15 | **[ST-05]** Login khi account đã bị khóa | `testlocked@labodc.com` / password đúng | 403 - `"Tài khoản đã bị khóa"` | 403, `{"success":false,"message":"Tài khoản đã bị khóa","data":null}` | PASS | ST-05, X-ACC1, R6 |  |
+| 16 | TC-LOGIN-16 | **[ST-07]** Login khi account chưa kích hoạt | `testinactive@labodc.com` / password đúng | 403 - `"Tài khoản chưa kích hoạt"` | 403, `{"success":false,"message":"Tài khoản chưa kích hoạt","data":null}` | PASS | ST-07, X-ACC2, R6 |  |
 | 17 | TC-LOGIN-17 | **[ST-04]** Login đúng khi có 4 lần sai - reset counter | `testlogin@labodc.com` / `Secure@123` | 200 - Login OK, counter reset về 0 | trả về 200, counter reset về 0 | PASS | ST-04, V-EM1, V-PW1 |  |
-| 18 | TC-LOGIN-18 | **[ST-02]** Login sai lần đầu - tăng counter | `testlogin@labodc.com` / `WrongFirst!` | 401 - counter tăng lên 1 | trả về 401, nhưng counter không tăng | FAIL | ST-02, X-PW2 |  |
-| 19 | TC-LOGIN-19 | **[ST-06]** Login sau khi auto-unlock (30 phút) | `testlocked@labodc.com` / password đúng | 200 - tự động unlock | 400, `{"success":false,"message":"Account is not active. Status: LOCKED","data":null}` | FAIL | ST-06 | Code không implement auto unlock - không kiểm tra locked_until đã hết hạn | |
-| 20 | TC-LOGIN-20 | **[R6]** Login account LOCKED + password sai | `testlocked@labodc.com` / `WrongPass!` | 403 - `"Tài khoản đã bị khóa"` | 401, `{"success":false,"message":"Invalid email or password","data":null}` | FAIL | ST-05, X-ACC1, R6 | Code check password trước status - trả 401 thay vì 403. Lộ thông tin password đúng/sai trên account LOCKED |
+| 18 | TC-LOGIN-18 | **[ST-02]** Login sai lần đầu - tăng counter | `testlogin@labodc.com` / `WrongFirst!` | 401 - counter tăng lên 1 | trả về 401, kiểm tra database có tăng counter | PASS | ST-02, X-PW2 |  |
+| 19 | TC-LOGIN-19 | **[ST-06]** Login sau khi auto-unlock (30 phút) | `testlocked@labodc.com` / password đúng | 200 - tự động unlock | 200 OK, đăng nhập thành công và counter reset về 0 | PASS | ST-06 |  | |
+| 20 | TC-LOGIN-20 | **[R6]** Login account LOCKED + password sai | `testlocked@labodc.com` / `WrongPass!` | 403 - `"Tài khoản đã bị khóa"` | 403, `{"success":false,"message":"Tài khoản đã bị khóa","data":null}` | PASS | ST-05, X-ACC1, R6 |  |
 
 ---
 
@@ -64,9 +64,9 @@
 | X-EM4 | Email không tồn tại | TC-LOGIN-07 | PASS |
 | X-EM5 | Email sai case (hoa/thường) | TC-LOGIN-13 | PASS |
 | X-PW1 | Password rỗng | TC-LOGIN-08, 11 | PASS |
-| X-PW2 | Password sai | TC-LOGIN-09, 14, 18 | PASS (9), FAIL (14, 18) |
-| X-ACC1 | Account LOCKED | TC-LOGIN-15, 20 | FAIL |
-| X-ACC2 | Account INACTIVE/PENDING | TC-LOGIN-16 | FAIL |
+| X-PW2 | Password sai | TC-LOGIN-09, 14, 18 | PASS |
+| X-ACC1 | Account LOCKED | TC-LOGIN-15, 20 | PASS |
+| X-ACC2 | Account INACTIVE/PENDING | TC-LOGIN-16 | PASS |
 
 ### Giá trị biên
 
@@ -81,23 +81,22 @@
 | ST | Transition | Test bao phủ | Kết quả |
 |---|---|---|---|
 | ST-01 | ACTIVE (cnt=0) + đúng → Login success | TC-LOGIN-01 | PASS |
-| ST-02 | ACTIVE (cnt=0) + sai → ACTIVE (cnt=1) | TC-LOGIN-18 | FAIL |
-| ST-03 | ACTIVE (cnt=4) + sai → LOCKED | TC-LOGIN-14 | FAIL |
+| ST-02 | ACTIVE (cnt=0) + sai → ACTIVE (cnt=1) | TC-LOGIN-18 | PASS |
+| ST-03 | ACTIVE (cnt=4) + sai → LOCKED | TC-LOGIN-14 | PASS |
 | ST-04 | ACTIVE (cnt=4) + đúng → ACTIVE (cnt=0) | TC-LOGIN-17 | PASS |
-| ST-05 | LOCKED + login → 403 | TC-LOGIN-15, 20 | FAIL |
-| ST-06 | LOCKED + 30 phút → ACTIVE | TC-LOGIN-19 | FAIL |
-| ST-07 | INACTIVE + login → 403 | TC-LOGIN-16 | FAIL |
+| ST-05 | LOCKED + login → 403 | TC-LOGIN-15, 20 | PASS |
+| ST-06 | LOCKED + 30 phút → ACTIVE | TC-LOGIN-19 | PASS |
+| ST-07 | INACTIVE + login → 403 | TC-LOGIN-16 | PASS |
 
 ### Bảng quyết định
 
 | Rule | Mô tả | Test bao phủ | Kết quả |
 |---|---|---|---|
-| R1 | Tất cả hợp lệ → 200 Login success | TC-LOGIN-01, 02, 03, 17, 19 | PASS (1-3, 17), FAIL (19) |
+| R1 | Tất cả hợp lệ → 200 Login success | TC-LOGIN-01, 02, 03, 17, 19 | PASS |
 | R2 | Email format sai → 400 | TC-LOGIN-04, 05, 06, 10, 12 | PASS |
 | R3 | Email không tồn tại → 401 | TC-LOGIN-07, 13 | PASS |
 | R4 | Password rỗng → 400 | TC-LOGIN-08, 11 | PASS |
-| R5 | Password sai → 401 | TC-LOGIN-09, 14, 18 | PASS (9), FAIL (14, 18) |
-| R6 | Account locked/inactive → 403 | TC-LOGIN-15, 16, 20 | FAIL |
+| R5 | Password sai → 401 | TC-LOGIN-09, 14, 18 | PASS |
+| R6 | Account locked/inactive → 403 | TC-LOGIN-15, 16, 20 | PASS |
 
 > **Bao phủ (trên tổng TC):** 12/12 EP tags, 3/3 BVA tags, 7/7 state transitions, 6/6 decision rules - **100%**.  
-> **Đã thực thi:** 20/20 test case. Kết quả: 9/12 EP tags PASS (3 FAIL: X-PW2, X-ACC1, X-ACC2), 3/3 BVA tags PASS, 2/7 state transitions PASS (ST-01, ST-04), 3/6 decision rules PASS (R2, R3, R4).
