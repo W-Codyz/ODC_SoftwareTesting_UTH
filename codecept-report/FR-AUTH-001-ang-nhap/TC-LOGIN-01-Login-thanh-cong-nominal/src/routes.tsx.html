@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">51.51% </span>
+                <span class="strong">57.35% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>34/66</span>
+                <span class='fraction'>39/68</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">60% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>3/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">9.37% </span>
+                <span class="strong">12.12% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/32</span>
+                <span class='fraction'>4/33</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">88.88% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>32/36</span>
+                <span class='fraction'>37/37</span>
             </div>
         
             
@@ -230,7 +230,10 @@
 <a name='L165'></a><a href='#L165'>165</a>
 <a name='L166'></a><a href='#L166'>166</a>
 <a name='L167'></a><a href='#L167'>167</a>
-<a name='L168'></a><a href='#L168'>168</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L168'></a><a href='#L168'>168</a>
+<a name='L169'></a><a href='#L169'>169</a>
+<a name='L170'></a><a href='#L170'>170</a>
+<a name='L171'></a><a href='#L171'>171</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -256,14 +259,6 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -274,6 +269,15 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -292,20 +296,22 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -408,7 +414,7 @@ import { ROUTES } from '@/utils/constants';
 // Lazy load pages
 const Login = lazy(() =&gt; import('@/pages/auth/Login'));
 const Register = <span class="fstat-no" title="function not covered" >lazy(() =&gt; <span class="cstat-no" title="statement not covered" >i</span>mport('@/pages/auth/Register'))</span>;
-const HomePage = lazy(() =&gt; import('@/pages/home/HomePage'));
+const HomePage = <span class="fstat-no" title="function not covered" >lazy(() =&gt; <span class="cstat-no" title="statement not covered" >i</span>mport('@/pages/home/HomePage'))</span>;
 &nbsp;
 // Enterprise pages
 const EnterpriseDashboard = <span class="fstat-no" title="function not covered" >lazy(() =&gt; <span class="cstat-no" title="statement not covered" >i</span>mport('@/pages/enterprise/Dashboard'))</span>;
@@ -423,6 +429,7 @@ const BrowseProjects = <span class="fstat-no" title="function not covered" >lazy
 const MyProjects = <span class="fstat-no" title="function not covered" >lazy(() =&gt; <span class="cstat-no" title="statement not covered" >i</span>mport('@/pages/talent/MyProjects'))</span>;
 const Tasks = <span class="fstat-no" title="function not covered" >lazy(() =&gt; <span class="cstat-no" title="statement not covered" >i</span>mport('@/pages/talent/Tasks'))</span>;
 const Profile = <span class="fstat-no" title="function not covered" >lazy(() =&gt; <span class="cstat-no" title="statement not covered" >i</span>mport('@/pages/talent/TalentProfile'))</span>;
+const TalentLeaderDashboard = <span class="fstat-no" title="function not covered" >lazy(() =&gt; <span class="cstat-no" title="statement not covered" >i</span>mport('@/pages/talent/TalentLeaderDashboard'))</span>;
 &nbsp;
 // Mentor pages
 const MentorDashboard = <span class="fstat-no" title="function not covered" >lazy(() =&gt; <span class="cstat-no" title="statement not covered" >i</span>mport('@/pages/mentor/Dashboard'))</span>;
@@ -434,7 +441,7 @@ const MentorReports = <span class="fstat-no" title="function not covered" >lazy(
 const MentorApplications = <span class="fstat-no" title="function not covered" >lazy(() =&gt; <span class="cstat-no" title="statement not covered" >i</span>mport('@/pages/mentor/Applications'))</span>;
 &nbsp;
 // Admin pages
-const AdminDashboard = <span class="fstat-no" title="function not covered" >lazy(() =&gt; <span class="cstat-no" title="statement not covered" >i</span>mport('@/pages/admin/Dashboard'))</span>;
+const AdminDashboard = lazy(() =&gt; import('@/pages/admin/Dashboard'));
 const PendingApprovals = <span class="fstat-no" title="function not covered" >lazy(() =&gt; <span class="cstat-no" title="statement not covered" >i</span>mport('@/pages/admin/Approvals/PendingApprovals'))</span>;
 const EnterpriseManagement = <span class="fstat-no" title="function not covered" >lazy(() =&gt; <span class="cstat-no" title="statement not covered" >i</span>mport('@/pages/admin/EnterpriseManagement'))</span>;
 const ProjectValidation = <span class="fstat-no" title="function not covered" >lazy(() =&gt; <span class="cstat-no" title="statement not covered" >i</span>mport('@/pages/admin/ProjectValidation'))</span>;
@@ -458,18 +465,18 @@ interface ProtectedRouteProps {
   allowedRoles?: string[];
 }
 &nbsp;
-const <span class="fstat-no" title="function not covered" >ProtectedRoute: React.FC&lt;ProtectedRouteProps&gt; = ({</span> children, allowedRoles }) =&gt; {
-  const { isAuthenticated, user } = <span class="cstat-no" title="statement not covered" >useAuth();</span>
+const ProtectedRoute: React.FC&lt;ProtectedRouteProps&gt; = ({ children, allowedRoles }) =&gt; {
+  const { isAuthenticated, user } = useAuth();
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (!isAuthenticated) {</span>
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!isAuthenticated) {
     return &lt;Navigate to={ROUTES.LOGIN} replace /&gt;;
   }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (allowedRoles &amp;&amp; user &amp;&amp; !allowedRoles.includes(user.role)) {</span>
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (allowedRoles &amp;&amp; user &amp;&amp; !allowedRoles.includes(user.role)) {
     return &lt;Navigate to="/" replace /&gt;;
   }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return children;</span>
+  return children;
 };
 &nbsp;
 const AppRoutes: React.FC = () =&gt; {
@@ -512,6 +519,8 @@ const AppRoutes: React.FC = () =&gt; {
           &lt;Route path="my-projects" element={&lt;MyProjects /&gt;} /&gt;
           &lt;Route path="tasks" element={&lt;Tasks /&gt;} /&gt;
           &lt;Route path="profile" element={&lt;Profile /&gt;} /&gt;
+          &lt;Route path="leader/:projectId" element={&lt;TalentLeaderDashboard /&gt;} /&gt;
+          &lt;Route path="leader" element={&lt;TalentLeaderDashboard /&gt;} /&gt;
         &lt;/Route&gt;
 &nbsp;
         {/* Mentor Routes */}
@@ -541,7 +550,7 @@ const AppRoutes: React.FC = () =&gt; {
         &lt;Route
           path="/admin/*"
           element={
-            &lt;ProtectedRoute allowedRoles={['LAB_ADMIN']}&gt;
+            &lt;ProtectedRoute allowedRoles={['LAB_ADMIN', 'SYSTEM_ADMIN']}&gt;
               &lt;MainLayout /&gt;
             &lt;/ProtectedRoute&gt;
           }
@@ -571,7 +580,7 @@ export default AppRoutes;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-11-09T09:37:13.005Z
+                at 2026-11-17T15:17:23.571Z
             </div>
         <script src="../prettify.js"></script>
         <script>

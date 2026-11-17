@@ -128,3 +128,63 @@ Scenario('TC-LOGIN-13 - Email viết hoa - case sensitivity (single fault)', ({ 
   I.waitForText('Invalid email or password', 5);
   I.see('Invalid email or password');
 });
+
+
+Scenario('TC-LOGIN-18 - [ST-02] Login sai lần đầu - tăng counter', ({ I }) => {
+  I.amOnPage('/login');
+  I.fillField('Tên đăng nhập', 'testlogin@labodc.com');
+  I.fillField('Mật khẩu', 'WrongFirst!');
+  I.click('Đăng nhập');
+  // ST-02, X-PW2 → counter DB tăng lên 1 (verify ở DB, ngoài UI scope).
+  // UI chỉ thấy 401 toast "Invalid email or password".
+  I.waitForText('Invalid email or password', 5);
+  I.see('Invalid email or password');
+});
+
+Scenario('TC-LOGIN-15 - [ST-05] Login khi account đã bị khóa (password đúng)', ({ I }) => {
+  I.amOnPage('/login');
+  I.fillField('Tên đăng nhập', 'testlocked1@labodc.com');
+  I.fillField('Mật khẩu', 'Secure@123');
+  I.click('Đăng nhập');
+  // ST-05, X-ACC1, R6 → account LOCKED → 403 bất kể password đúng/sai
+  I.waitForText('Tài khoản đã bị khóa', 5);
+  I.see('Tài khoản đã bị khóa');
+});
+
+Scenario('TC-LOGIN-16 - [ST-07] Login khi account chưa kích hoạt (PENDING)', ({ I }) => {
+  I.amOnPage('/login');
+  I.fillField('Tên đăng nhập', 'testinactive@labodc.com');
+  I.fillField('Mật khẩu', 'Secure@123');
+  I.click('Đăng nhập');
+  // ST-07, X-ACC2, R6 → account PENDING/INACTIVE → 403
+  I.waitForText('Tài khoản chưa kích hoạt', 5);
+  I.see('Tài khoản chưa kích hoạt');
+});
+
+Scenario('TC-LOGIN-20 - [R6] Login account LOCKED + password sai', ({ I }) => {
+  I.amOnPage('/login');
+  I.fillField('Tên đăng nhập', 'testlocked2@labodc.com');
+  I.fillField('Mật khẩu', 'WrongPass!');
+  I.click('Đăng nhập');
+  // ST-05, X-ACC1, R6 → LOCKED check đứng trước password check → 403 "Tài khoản đã bị khóa"
+  I.waitForText('Tài khoản đã bị khóa', 5);
+  I.see('Tài khoản đã bị khóa');
+});
+
+Scenario('TC-LOGIN-14 - [ST-03] Login sai lần thứ 5 - khóa tài khoản', ({ I }) => {
+  for (let i = 1; i <= 6; i++) {
+    I.amOnPage('/login');
+    I.fillField('Tên đăng nhập', 'testlockme@labodc.com');
+    I.fillField('Mật khẩu', `WrongPass${i}!`);
+    I.click('Đăng nhập');
+    I.wait(1.5);
+  }
+  // Attempt cuối cùng trên page sạch → account chắc chắn đã LOCKED → toast ổn định
+  I.amOnPage('/login');
+  I.fillField('Tên đăng nhập', 'testlockme@labodc.com');
+  I.fillField('Mật khẩu', 'FinalWrong!');
+  I.click('Đăng nhập');
+  // ST-03, X-PW2 → sau tối đa 5 lần sai, account phải LOCKED
+  I.waitForText('Tài khoản đã bị khóa', 5);
+  I.see('Tài khoản đã bị khóa');
+});
