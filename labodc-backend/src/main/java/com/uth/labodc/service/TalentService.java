@@ -617,13 +617,6 @@ public class TalentService {
         }
     }
 
-    private String getFileExtension(String filename) {
-        if (filename == null || !filename.contains(".")) {
-            return "";
-        }
-        return filename.substring(filename.lastIndexOf(".") + 1).trim();
-    }
-
     private String storeTalentFile(Long userId, MultipartFile file, String category) {
         validateTalentFile(file, category);
         try {
