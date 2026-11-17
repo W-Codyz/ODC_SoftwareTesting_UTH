@@ -63,8 +63,13 @@ const TalentProfile: React.FC = () => {
       const avatarUrl = await talentService.uploadAvatar(file as File);
       setProfile((prev) => (prev ? { ...prev, avatarUrl } : null));
       message.success('Tải lên ảnh đại diện thành công');
-    } catch (error) {
-      message.error('Không thể tải lên ảnh đại diện');
+    } catch (error: any) {
+      const errorData = error?.response?.data;
+      const errorMsg =
+        (errorData?.data && typeof errorData.data === 'object' ? Object.values(errorData.data)[0] : null) ||
+        errorData?.message ||
+        'Không thể tải lên ảnh đại diện';
+      message.error(String(errorMsg));
     }
   };
 
@@ -275,8 +280,10 @@ const SkillsManagement: React.FC<{
       onUpdate(updated);
       form.resetFields();
       message.success('Đã thêm kỹ năng');
-    } catch (error) {
-      message.error('Không thể thêm kỹ năng');
+    } catch (error: any) {
+      // Đọc trực tiếp error.message đã được chuẩn hoá
+      const errorMsg = error?.message || 'Không thể thêm kỹ năng';
+      message.error(String(errorMsg));
     } finally {
       setAddingSkill(false);
     }
@@ -319,7 +326,7 @@ const SkillsManagement: React.FC<{
             <Form.Item
               label="Tên kỹ năng"
               name="skillName"
-              rules={[{ required: true, message: 'Vui lòng nhập tên kỹ năng' }]}
+              rules={[{ required: true, whitespace: true, message: 'Tên kỹ năng không được để trống' }]}
               style={{ marginBottom: 0 }}
             >
               <Input placeholder="Ví dụ: ReactJS, Python..." style={{ width: '200px' }} />
