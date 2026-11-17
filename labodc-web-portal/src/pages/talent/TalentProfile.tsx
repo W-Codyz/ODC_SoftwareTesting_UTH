@@ -127,6 +127,18 @@ const TalentProfile: React.FC = () => {
                   <Form.Item label="Mã số sinh viên" name="studentId">
                     <Input disabled />
                   </Form.Item>
+                  <Form.Item
+                    label="Số điện thoại"
+                    name="phone"
+                    rules={[
+                      {
+                        pattern: /^0\d{9}$/,
+                        message: 'Số điện thoại phải có đúng 10 chữ số và bắt đầu bằng số 0',
+                      },
+                    ]}
+                  >
+                    <Input placeholder="0xxxxxxxxx" />
+                  </Form.Item>
                   <div style={{ display: 'flex', gap: '16px' }}>
                     <Form.Item label="Khoa" name="faculty" style={{ flex: 1 }}>
                       <Input />
