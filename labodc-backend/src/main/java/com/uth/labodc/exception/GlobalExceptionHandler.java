@@ -122,6 +122,13 @@ public class GlobalExceptionHandler {
                 .badRequest()
                 .body(ApiResponse.error(ex.getMessage()));
     }
+
+    @ExceptionHandler(AccountStateException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAccountState(AccountStateException ex) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(ApiResponse.error(ex.getMessage()));
+    }
     
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex) {

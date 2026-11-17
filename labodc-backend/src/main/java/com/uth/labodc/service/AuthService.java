@@ -3,6 +3,7 @@ package com.uth.labodc.service;
 import com.uth.labodc.dto.auth.AuthResponse;
 import com.uth.labodc.dto.auth.LoginRequest;
 import com.uth.labodc.dto.auth.RegisterRequest;
+import com.uth.labodc.exception.AccountStateException;
 import com.uth.labodc.exception.BadRequestException;
 import com.uth.labodc.exception.ResourceNotFoundException;
 import com.uth.labodc.model.entity.User;
@@ -72,7 +73,11 @@ public class AuthService {
         return buildAuthResponse(user);
     }
     
-    @Transactional(noRollbackFor = {BadCredentialsException.class, AccessDeniedException.class})
+    @Transactional(noRollbackFor = {
+            BadCredentialsException.class,
+            AccessDeniedException.class,
+            AccountStateException.class
+    })
     public AuthResponse login(LoginRequest request) {
         Optional<User> userResult = userRepository.findByEmailAndDeletedAtIsNull(request.getEmail());
         User user = userResult.orElse(null);
@@ -80,7 +85,7 @@ public class AuthService {
 
         if (user != null && user.getStatus() == UserStatus.LOCKED) {
             if (user.getLockedUntil() == null || now.isBefore(user.getLockedUntil())) {
-                throw new AccessDeniedException("Tài khoản đã bị khóa");
+                throw new AccountStateException("Tài khoản đã bị khóa");
             }
 
             user.setStatus(UserStatus.ACTIVE);
@@ -107,7 +112,7 @@ public class AuthService {
                     user.setStatus(UserStatus.LOCKED);
                     user.setLockedUntil(now.plusMinutes(ACCOUNT_LOCK_MINUTES));
                     userRepository.save(user);
-                    throw new AccessDeniedException("Tài khoản đã bị khóa");
+                    throw new AccountStateException("Tài khoản đã bị khóa");
                 }
 
                 userRepository.save(user);
@@ -122,7 +127,7 @@ public class AuthService {
         }
 
         if (user.getStatus() == UserStatus.PENDING) {
-            throw new AccessDeniedException("Tài khoản chưa kích hoạt");
+            throw new AccountStateException("Tài khoản chưa kích hoạt");
         }
         if (user.getStatus() != UserStatus.ACTIVE) {
             throw new BadRequestException("Account is not active. Status: " + user.getStatus());
