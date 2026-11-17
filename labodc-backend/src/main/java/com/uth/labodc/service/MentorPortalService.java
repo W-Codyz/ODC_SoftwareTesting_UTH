@@ -33,6 +33,7 @@ import com.uth.labodc.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,7 +53,9 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.time.format.DateTimeFormatter;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -778,23 +781,29 @@ public class MentorPortalService {
         return toEvaluationDTO(saved, t);
     }
 
+    // ===== FR-MEN-004: Mentor Submit Report =====
+
+    private static final Set<String> ALLOWED_REPORT_STATUSES = Set.of("submitted", "pending", "late", "draft");
+    private static final Set<String> ALLOWED_REPORT_EXTENSIONS = Set.of("pdf", "doc", "docx", "ppt", "pptx");
+    private static final long MAX_REPORT_FILE_SIZE = 20L * 1024 * 1024; // 20MB theo SRS
+    private static final DateTimeFormatter STRICT_DATE =
+            DateTimeFormatter.ofPattern("uuuu-MM-dd").withResolverStyle(ResolverStyle.STRICT);
+    private static final ZoneId REPORT_ZONE = ZoneId.of("Asia/Ho_Chi_Minh");
+
     public List<MentorReportDTO> getReports(User user) {
         Mentor mentor = requireMentor(user);
-        List<MentorReport> reports = mentorReportRepository.findByMentorIdOrderByDueDateDesc(mentor.getId());
-        return reports.stream().map(r -> MentorReportDTO.builder()
-                .id(String.valueOf(r.getId()))
-                .student(r.getStudent())
-                .studentId(r.getStudentId())
-                .reportName(r.getReportName())
-                .status(r.getStatus())
-                .submittedDate(formatDate(r.getSubmittedDate()))
-                .dueDate(formatDate(r.getDueDate()))
-                .score(r.getScore())
-                .fileSize(r.getFileSize())
-                .fileName(extractFileName(r.getFilePath()))
-                .build()).toList();
+        return mentorReportRepository.findByMentorIdOrderByDueDateDesc(mentor.getId())
+                .stream().map(this::toReportDTO).toList();
     }
 
+    public List<MentorReportDTO> getProjectReports(User user, Long projectId) {
+        Mentor mentor = requireMentor(user);
+        requireExistingProject(projectId);
+        return mentorReportRepository.findByMentorIdAndProjectIdOrderByDueDateDesc(mentor.getId(), projectId)
+                .stream().map(this::toReportDTO).toList();
+    }
+
+    @Transactional
     public MentorReportDTO submitReport(
             User user,
             Long projectId,
@@ -808,36 +817,178 @@ public class MentorPortalService {
             MultipartFile file
     ) {
         Mentor mentor = requireMentor(user);
+        requireValidProjectId(projectId);
+
+        // Validate toàn bộ input (400) trước, rồi mới tra cứu DB (404), trước khi ghi file / lưu DB
+        String validStudent = requireReportText(student, "student");
+        String validStudentId = requireReportText(studentId, "studentId");
+        String validReportName = requireReportText(reportName, "reportName");
+        String validStatus = status == null || status.isBlank() ? "submitted" : normalizeReportStatus(status);
+        LocalDate validSubmittedDate = parseStrictDate(submittedDate, "submittedDate");
+        LocalDate validDueDate = parseStrictDate(dueDate, "dueDate");
+        if (validDueDate == null) {
+            throw new BadRequestException("Thiếu tham số bắt buộc: dueDate");
+        }
+        boolean hasFile = file != null && !file.isEmpty();
+        if (hasFile) {
+            validateReportFile(file);
+        }
+        requireExistingProject(projectId);
 
         MentorReport r = new MentorReport();
         r.setMentorId(mentor.getId());
         r.setProjectId(projectId);
-        r.setStudent(requireNonBlank(student, "student"));
-        r.setStudentId(requireNonBlank(studentId, "studentId"));
-        r.setReportName(requireNonBlank(reportName, "reportName"));
-        r.setStatus(status != null && !status.isBlank() ? status : "submitted");
-        r.setSubmittedDate(parseLocalDate(submittedDate));
-        r.setDueDate(requireNonNull(parseLocalDate(dueDate), "dueDate"));
+        r.setStudent(validStudent);
+        r.setStudentId(validStudentId);
+        r.setReportName(validReportName);
+        r.setStatus(validStatus);
+        r.setSubmittedDate(validSubmittedDate);
+        r.setDueDate(validDueDate);
         r.setSummary(summary);
 
-        if (file != null && !file.isEmpty()) {
+        if (hasFile) {
             r.setFileSize(humanSize(file.getSize()));
             r.setFilePath(storeReportFile(mentor.getId(), projectId, file));
         }
 
-        MentorReport saved = mentorReportRepository.save(r);
+        return toReportDTO(mentorReportRepository.save(r));
+    }
+
+    /** Cập nhật báo cáo (PUT /api/mentor/reports/{id}) - chỉ cập nhật các trường được gửi lên. */
+    @Transactional
+    public MentorReportDTO updateReport(
+            User user,
+            long reportId,
+            String student,
+            String studentId,
+            String reportName,
+            String submittedDate,
+            String dueDate,
+            String status,
+            String summary,
+            MultipartFile file
+    ) {
+        Mentor mentor = requireMentor(user);
+        if (reportId <= 0) {
+            throw new BadRequestException("reportId phải là số nguyên dương");
+        }
+        MentorReport r = mentorReportRepository.findById(reportId)
+                .orElseThrow(() -> new ResourceNotFoundException("Report not found"));
+        if (!mentor.getId().equals(r.getMentorId())) {
+            throw new AccessDeniedException("Bạn không có quyền cập nhật báo cáo của Mentor khác");
+        }
+
+        if (student != null) r.setStudent(requireReportText(student, "student"));
+        if (studentId != null) r.setStudentId(requireReportText(studentId, "studentId"));
+        if (reportName != null) r.setReportName(requireReportText(reportName, "reportName"));
+        if (status != null) r.setStatus(normalizeReportStatus(status));
+        if (submittedDate != null) r.setSubmittedDate(parseStrictDate(submittedDate, "submittedDate"));
+        if (dueDate != null) {
+            LocalDate d = parseStrictDate(dueDate, "dueDate");
+            if (d == null) {
+                throw new BadRequestException("dueDate không được để trống");
+            }
+            r.setDueDate(d);
+        }
+        if (summary != null) r.setSummary(summary);
+
+        if (file != null && !file.isEmpty()) {
+            validateReportFile(file);
+            r.setFileSize(humanSize(file.getSize()));
+            r.setFilePath(storeReportFile(mentor.getId(), r.getProjectId(), file));
+        }
+
+        return toReportDTO(mentorReportRepository.save(r));
+    }
+
+    private MentorReportDTO toReportDTO(MentorReport r) {
         return MentorReportDTO.builder()
-                .id(String.valueOf(saved.getId()))
-                .student(saved.getStudent())
-                .studentId(saved.getStudentId())
-                .reportName(saved.getReportName())
-                .status(saved.getStatus())
-                .submittedDate(formatDate(saved.getSubmittedDate()))
-                .dueDate(formatDate(saved.getDueDate()))
-                .score(saved.getScore())
-                .fileSize(saved.getFileSize())
-            .fileName(extractFileName(saved.getFilePath()))
+                .id(String.valueOf(r.getId()))
+                .student(r.getStudent())
+                .studentId(r.getStudentId())
+                .reportName(r.getReportName())
+                .status(r.getStatus())
+                .submittedDate(formatDate(r.getSubmittedDate()))
+                .dueDate(formatDate(r.getDueDate()))
+                .score(r.getScore())
+                .fileSize(r.getFileSize())
+                .fileName(extractFileName(r.getFilePath()))
                 .build();
+    }
+
+    /** 400 nếu projectId null hoặc <= 0. */
+    private void requireValidProjectId(Long projectId) {
+        if (projectId == null) {
+            throw new BadRequestException("Thiếu tham số bắt buộc: projectId");
+        }
+        if (projectId <= 0) {
+            throw new BadRequestException("projectId phải là số nguyên dương");
+        }
+    }
+
+    /** 400 nếu projectId null hoặc <= 0, 404 nếu dự án không tồn tại. */
+    private void requireExistingProject(Long projectId) {
+        requireValidProjectId(projectId);
+        if (!projectRepository.existsById(projectId)) {
+            throw new ResourceNotFoundException("Project not found");
+        }
+    }
+
+    private String requireReportText(String value, String field) {
+        if (value == null || value.isBlank()) {
+            throw new BadRequestException("Thiếu tham số bắt buộc: " + field);
+        }
+        return value.trim();
+    }
+
+    private String normalizeReportStatus(String status) {
+        String v = status == null ? "" : status.trim().toLowerCase(Locale.ROOT);
+        if (!ALLOWED_REPORT_STATUSES.contains(v)) {
+            throw new BadRequestException("status không hợp lệ, chỉ chấp nhận: submitted, pending, late, draft");
+        }
+        return v;
+    }
+
+    /**
+     * Parse ngày nghiêm ngặt (ResolverStyle.STRICT): chấp nhận "yyyy-MM-dd" hoặc ISO-8601 datetime
+     * (frontend gửi Date.toISOString() theo UTC -> quy đổi về ngày theo giờ Việt Nam).
+     * Trả về null nếu rỗng; ném 400 nếu sai định dạng hoặc ngày không tồn tại (vd: 2026-02-29).
+     */
+    private LocalDate parseStrictDate(String value, String field) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        String v = value.trim();
+        try {
+            if (v.length() == 10) {
+                return LocalDate.parse(v, STRICT_DATE);
+            }
+            if (v.endsWith("Z") || v.matches(".*[+-]\\d{2}:\\d{2}$")) {
+                return OffsetDateTime.parse(v, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+                        .atZoneSameInstant(REPORT_ZONE).toLocalDate();
+            }
+            return LocalDateTime.parse(v, DateTimeFormatter.ISO_LOCAL_DATE_TIME).toLocalDate();
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException(field + " không hợp lệ, định dạng đúng: yyyy-MM-dd");
+        }
+    }
+
+    /** Whitelist đuôi file + giới hạn 20MB cho file báo cáo. */
+    private void validateReportFile(MultipartFile file) {
+        if (file.getSize() > MAX_REPORT_FILE_SIZE) {
+            throw new BadRequestException("Dung lượng file báo cáo vượt quá 20MB");
+        }
+        String name = file.getOriginalFilename();
+        String ext = "";
+        if (name != null) {
+            int dot = name.lastIndexOf('.');
+            if (dot >= 0 && dot < name.length() - 1) {
+                ext = name.substring(dot + 1).toLowerCase(Locale.ROOT);
+            }
+        }
+        if (!ALLOWED_REPORT_EXTENSIONS.contains(ext)) {
+            throw new BadRequestException("Định dạng file không hợp lệ, chỉ chấp nhận: pdf, doc, docx, ppt, pptx");
+        }
     }
 
     public Resource getReportFile(User user, long reportId) {
@@ -1236,7 +1387,7 @@ private String storeReportFile(Long mentorId, Long projectId, MultipartFile file
 
     // Chỉ giữ lại chữ cái, chữ số, dấu chấm, gạch ngang, gạch dưới
     // Thay thế tất cả các ký tự khác bằng dấu gạch dưới
-    String safeName = filename.replaceAll("[^a-zA-Z0-9.-_]", "_");
+    String safeName = filename.replaceAll("[^a-zA-Z0-9._-]", "_");
 
     if (safeName.isBlank()) {
         return "report.bin";
