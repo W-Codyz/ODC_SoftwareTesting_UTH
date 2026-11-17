@@ -57,14 +57,37 @@ const TalentProfile: React.FC = () => {
     }
   };
 
+  const beforeAvatarUpload = (file: File) => {
+    // 1. Kiểm tra định dạng file: chỉ cho phép JPG/PNG
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || /\.(jpe?g|png)$/i.test(file.name);
+    if (!isJpgOrPng) {
+      message.error('Định dạng ảnh không hỗ trợ, chỉ chấp nhận JPG/PNG');
+      return Upload.LIST_IGNORE; // Hoặc return false để chặn không gửi request
+    }
+
+    // 2. Kiểm tra dung lượng: không được vượt quá 5MB (5 * 1024 * 1024 bytes)
+    const isLt5M = file.size / 1024 / 1024 <= 5;
+    if (!isLt5M) {
+      message.error('Dung lượng ảnh đại diện vượt quá 5MB');
+      return Upload.LIST_IGNORE;
+    }
+
+    return true;
+  };
+
   const handleAvatarUpload: UploadProps['customRequest'] = async (options) => {
     try {
       const { file } = options;
       const avatarUrl = await talentService.uploadAvatar(file as File);
       setProfile((prev) => (prev ? { ...prev, avatarUrl } : null));
       message.success('Tải lên ảnh đại diện thành công');
-    } catch (error) {
-      message.error('Không thể tải lên ảnh đại diện');
+    } catch (error: any) {
+      const errorData = error?.response?.data;
+      const errorMsg =
+        (errorData?.data && typeof errorData.data === 'object' ? Object.values(errorData.data)[0] : null) ||
+        errorData?.message ||
+        'Không thể tải lên ảnh đại diện';
+      message.error(String(errorMsg));
     }
   };
 
@@ -109,9 +132,10 @@ const TalentProfile: React.FC = () => {
             <Form form={form} layout="vertical" onFinish={handleSave} initialValues={profile}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '24px', marginBottom: '16px' }}>
                 <Upload
+                  beforeUpload={beforeAvatarUpload}
                   customRequest={handleAvatarUpload}
                   showUploadList={false}
-                  accept="image/*"
+                  accept=".jpg,.jpeg,.png"
                 >
                   <div
                     style={{
@@ -275,8 +299,10 @@ const SkillsManagement: React.FC<{
       onUpdate(updated);
       form.resetFields();
       message.success('Đã thêm kỹ năng');
-    } catch (error) {
-      message.error('Không thể thêm kỹ năng');
+    } catch (error: any) {
+      // Đọc trực tiếp error.message đã được chuẩn hoá
+      const errorMsg = error?.message || 'Không thể thêm kỹ năng';
+      message.error(String(errorMsg));
     } finally {
       setAddingSkill(false);
     }
@@ -319,7 +345,7 @@ const SkillsManagement: React.FC<{
             <Form.Item
               label="Tên kỹ năng"
               name="skillName"
-              rules={[{ required: true, message: 'Vui lòng nhập tên kỹ năng' }]}
+              rules={[{ required: true, whitespace: true, message: 'Tên kỹ năng không được để trống' }]}
               style={{ marginBottom: 0 }}
             >
               <Input placeholder="Ví dụ: ReactJS, Python..." style={{ width: '200px' }} />
