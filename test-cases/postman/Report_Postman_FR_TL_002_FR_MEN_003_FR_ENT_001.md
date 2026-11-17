@@ -1,7 +1,7 @@
 # Test Execution Report: FR-TL-002, FR-MEN-003, FR-ENT-001
 
 **Module:** Talent Leader, Mentor Portal, Enterprise Portal
-**Người thực hiện:** Đặng Thành Đình Phát
+**Người thực hiện:** Nguyễn Minh Hiển
 **Ngày chạy:** 17/11/2026
 **Thời gian ghi trong nguồn:** 2026-11-17 08:37:38 UTC (15:37:38, UTC+7)
 **Môi trường test:** Postman local, `http://localhost:8080`
