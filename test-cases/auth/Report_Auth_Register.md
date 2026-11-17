@@ -14,10 +14,10 @@
 | Chỉ số | Giá trị |
 |---|---:|
 | Tổng số test case | 25 |
-| Passed | 20 |
-| Failed | 5 |
+| Passed | 25 |
+| Failed | 0 |
 | Blocked / Skipped | 0 |
-| **Pass rate** | **80%** |
+| **Pass rate** | **100%** |
 
 ---
 
@@ -28,22 +28,22 @@
 | 1 | TC-REG-01 | Đăng ký Talent thành công - happy path | `newtalent@uth.edu.vn` / `SecurePass123!` / `SecurePass123!` / TALENT | 200 - Đăng ký thành công, status ACTIVE | 200 - `{"success":true,"message":"User registered successfully","data":{"token":"","refreshToken":"","tokenType":"Bearer","userId":25,"email":"newtalent@uth.edu.vn","role":"TALENT","status":"ACTIVE","emailVerified":true}}` | PASS | V-EM1, V-PW1, V-CP1, V-RL1, B-PW4, ST-01, R1 |  |
 | 2 | TC-REG-02 | Đăng ký Enterprise thành công - happy path | `newcompany@example.com` / `SecurePass123!` / `SecurePass123!` / ENTERPRISE | 200 - Đăng ký thành công, status ACTIVE | 200 - `{"success":true,"message":"User registered successfully","data":{"token":"","refreshToken":"","tokenType":"Bearer","userId":26,"email":"newcompany@example.com","role":"ENTERPRISE","status":"ACTIVE","emailVerified":true}}` | PASS | V-EM2, V-PW1, V-CP1, V-RL2, ST-02, R1 | |
 | 3 | TC-REG-03 | Email rỗng | `""` / `SecurePass123!` / `SecurePass123!` / TALENT | 400 - "Email is required" | 400 - `{"success":false,"message":"Validation failed","data":{"email":"Email is required"}}` | PASS | X-EM1, R2 | |
-| 4 | TC-REG-04 | Email chỉ có khoảng trắng | `"   "` / `SecurePass123!` / `SecurePass123!` / TALENT | 400 - Lỗi validation email | 400 - `{"success":false,"message":"Validation failed","data":{"email":"Email must be valid"}}` | PASS | X-EM1, R2 | |
+| 4 | TC-REG-04 | Email chỉ có khoảng trắng | `"   "` / `SecurePass123!` / `SecurePass123!` / TALENT | 400 - "Email must be valid" | 400 - `{"success":false,"message":"Validation failed","data":{"email":"Email must be valid"}}` | PASS | X-EM1, R2 | |
 | 5 | TC-REG-05 | Email thiếu @ | `newtalentuth.edu.vn` / `SecurePass123!` / `SecurePass123!` / TALENT | 400 - "Email must be valid" | 400 - `{"success":false,"message":"Validation failed","data":{"email":"Email must be valid"}}` | PASS | X-EM2, R2 | |
 | 6 | TC-REG-06 | Email thiếu domain | `newtalent@` / `SecurePass123!` / `SecurePass123!` / TALENT | 400 - "Email must be valid" | 400 - `{"success":false,"message":"Validation failed","data":{"email":"Email must be valid"}}` | PASS | X-EM3, R2 | |
 | 7 | TC-REG-07 | Email đã tồn tại | `sv1@uth.edu.vn` / `SecurePass123!` / `SecurePass123!` / TALENT | 400 - "Email already registered" | 400 - `{"success":false,"message":"Email already registered","data":null}` | PASS | X-EM4, ST-03, R3 | |
-| 8 | TC-REG-08 | Talent dùng email domain không phải @uth.edu.vn | `talent@gmail.com` / `SecurePass123!` / `SecurePass123!` / TALENT | 400 - "Talent phải dùng email @uth.edu.vn" | 200 - trả về tạo tài khoản thành công | FAIL | X-EM5, R4 | SRS yêu cầu domain validation nhưng code chưa implement |
-| 9 | TC-REG-09 | Password rỗng | `newtalent2@uth.edu.vn` / `""` / `""` / TALENT | 400 - "Password is required" | 400 - `{"success":false,"message":"Validation failed","data":{"password":"Password must be at least 8 characters","confirmPassword":"Confirm password is required"}}` | PASS | X-PW1, R5 | |
-| 10 | TC-REG-10 | Password chỉ có khoảng trắng | `newtalent3@uth.edu.vn` / `"   "` / `"   "` / TALENT | 400 - Lỗi validation password | 400 - `{"success":false,"message":"Validation failed","data":{"password":"Password is required","confirmPassword":"Confirm password is required"}}` | PASS | X-PW1, R5 | |
+| 8 | TC-REG-08 | Talent dùng email domain không phải @uth.edu.vn | `talent@gmail.com` / `SecurePass123!` / `SecurePass123!` / TALENT | 400 - "Talent accounts must use an @uth.edu.vn email address" | 400 - `{"success":false,"message":"Talent accounts must use an @uth.edu.vn email address","data":null}` | PASS | X-EM5, R4 |  |
+| 9 | TC-REG-09 | Password rỗng | `newtalent2@uth.edu.vn` / `""` / `""` / TALENT | 400 - "Password must be at least 8 characters" + "Confirm password is required" | 400 - `{"success":false,"message":"Validation failed","data":{"password":"Password must be at least 8 characters","confirmPassword":"Confirm password is required"}}` | PASS | X-PW1, R5 | |
+| 10 | TC-REG-10 | Password chỉ có khoảng trắng | `newtalent3@uth.edu.vn` / `"   "` / `"   "` / TALENT | 400 - "Password is required" + "Confirm password is required" | 400 - `{"success":false,"message":"Validation failed","data":{"password":"Password is required","confirmPassword":"Confirm password is required"}}` | PASS | X-PW1, R5 | |
 | 11 | TC-REG-11 | Password < 8 ký tự | `newtalent4@uth.edu.vn` / `Ab1!xyz` / `Ab1!xyz` / TALENT | 400 - "Password must be at least 8 characters" | 400 - `{"success":false,"message":"Validation failed","data":{"password":"Password must be at least 8 characters"}}` | PASS | X-PW2, B-PW1, R5 | |
-| 12 | TC-REG-12 | Password thiếu uppercase | `newtalent5@uth.edu.vn` / `securepass123!` / `securepass123!` / TALENT | 400 - Lỗi password không đủ mạnh | 200 - trả về tạo tài khoản thành công | FAIL | X-PW3, R6 |  |
-| 13 | TC-REG-13 | Password thiếu lowercase | `newtalent6@uth.edu.vn` / `SECUREPASS123!` / `SECUREPASS123!` / TALENT | 400 - Lỗi password không đủ mạnh | Không test - cùng root cause TC-REG-12 | FAIL | X-PW4, R6 | Tương tự TC-REG-12 |
-| 14 | TC-REG-14 | Password thiếu số | `newtalent7@uth.edu.vn` / `SecurePass!!!` / `SecurePass!!!` / TALENT | 400 - Lỗi password không đủ mạnh | Không test - cùng root cause TC-REG-12 | FAIL | X-PW5, R6 | Tương tự TC-REG-12 |
-| 15 | TC-REG-15 | Password thiếu ký tự đặc biệt | `newtalent8@uth.edu.vn` / `SecurePass123` / `SecurePass123` / TALENT | 400 - Lỗi password không đủ mạnh | Không test - cùng root cause TC-REG-12 | FAIL | X-PW6, R6 | Tương tự TC-REG-12 |
+| 12 | TC-REG-12 | Password thiếu uppercase | `newtalent5@uth.edu.vn` / `securepass123!` / `securepass123!` / TALENT | 400 - "Password must contain an uppercase letter, a lowercase letter, a number, and a special character" | 400 `{"success":false,"message":"Validation failed","data":{"password":"Password must contain an uppercase letter, a lowercase letter, a number, and a special character"}}` | PASS | X-PW3, R6 |  |
+| 13 | TC-REG-13 | Password thiếu lowercase | `newtalent6@uth.edu.vn` / `SECUREPASS123!` / `SECUREPASS123!` / TALENT | 400 - "Password must contain an uppercase letter, a lowercase letter, a number, and a special character" | 400 - `{"success":false,"message":"Validation failed","data":{"password":"Password must contain an uppercase letter, a lowercase letter, a number, and a special character"}}` | PASS | X-PW4, R6 | Tương tự TC-REG-12 |
+| 14 | TC-REG-14 | Password thiếu số | `newtalent7@uth.edu.vn` / `SecurePass!!!` / `SecurePass!!!` / TALENT | 400 - "Password must contain an uppercase letter, a lowercase letter, a number, and a special character" | 400 - `{"success":false,"message":"Validation failed","data":{"password":"Password must contain an uppercase letter, a lowercase letter, a number, and a special character"}}` | PASS | X-PW5, R6 | Tương tự TC-REG-12 |
+| 15 | TC-REG-15 | Password thiếu ký tự đặc biệt | `newtalent8@uth.edu.vn` / `SecurePass123` / `SecurePass123` / TALENT | 400 - "Password must contain an uppercase letter, a lowercase letter, a number, and a special character" | 400 - `{"success":false,"message":"Validation failed","data":{"password":"Password must contain an uppercase letter, a lowercase letter, a number, and a special character"}}` | PASS | X-PW6, R6 | Tương tự TC-REG-12 |
 | 16 | TC-REG-16 | ConfirmPassword rỗng | `newtalent9@uth.edu.vn` / `SecurePass123!` / `""` / TALENT | 400 - "Confirm password is required" | 400 - `{"success":false,"message":"Validation failed","data":{"confirmPassword":"Confirm password is required"}}` | PASS | X-CP1, R7 | |
 | 17 | TC-REG-17 | ConfirmPassword không khớp | `newtalent10@uth.edu.vn` / `SecurePass123!` / `DifferentPass1!` / TALENT | 400 - "Passwords do not match" | 400 - `{"success":false,"message":"Passwords do not match","data":null}` | PASS | X-CP2, R7 | |
 | 18 | TC-REG-18 | Role null | `newtalent11@uth.edu.vn` / `SecurePass123!` / `SecurePass123!` / `null` | 400 - "Role is required" | 400 - `{"success":false,"message":"Validation failed","data":{"role":"Role is required"}}` | PASS | X-RL1, R8 | |
-| 19 | TC-REG-19 | Role không hợp lệ | `newtalent12@uth.edu.vn` / `SecurePass123!` / `SecurePass123!` / `"STUDENT"` | 400 - Lỗi role không nằm trong enum | 400 - `{"success":false,"message":"JSON parse error: Cannot deserialize value of type `com.uth.labodc.model.enums.UserRole` from String \"STUDENT\": not one of the values accepted for Enum class: [ENTERPRISE, TALENT, LAB_ADMIN, SYSTEM_ADMIN, MENTOR]","data":null}` | PASS| X-RL2, R8 | |
+| 19 | TC-REG-19 | Role không hợp lệ | `newtalent12@uth.edu.vn` / `SecurePass123!` / `SecurePass123!` / `"STUDENT"` | 400 - "JSON parse error: Cannot deserialize value of type UserRole from String \"STUDENT\": not one of the values accepted for Enum class: [ENTERPRISE, TALENT, LAB_ADMIN, SYSTEM_ADMIN, MENTOR]" | 400 - `{"success":false,"message":"JSON parse error: Cannot deserialize value of type `com.uth.labodc.model.enums.UserRole` from String \"STUDENT\": not one of the values accepted for Enum class: [ENTERPRISE, TALENT, LAB_ADMIN, SYSTEM_ADMIN, MENTOR]","data":null}` | PASS| X-RL2, R8 | |
 | 20 | TC-REG-20 | Password = 8 ký tự (min) | `newtalent13@uth.edu.vn` / `Abcdef1!` / `Abcdef1!` / TALENT | 200 - Đăng ký thành công | 200 - `{"success":true,"message":"User registered successfully","data":{"token":"","refreshToken":"","tokenType":"Bearer","userId":28,"email":"newtalent11@uth.edu.vn","role":"TALENT","status":"ACTIVE","emailVerified":true}}` | PASS | V-EM1, V-CP1, V-RL1, B-PW2 | |
 | 21 | TC-REG-21 | Password = 9 ký tự (min+) | `newtalent14@uth.edu.vn` / `Abcdefg1!` / `Abcdefg1!` / TALENT | 200 - Đăng ký thành công | 200 - `{"success":true,"message":"User registered successfully","data":{"token":"","refreshToken":"","tokenType":"Bearer","userId":29,"email":"newtalent14@uth.edu.vn","role":"TALENT","status":"ACTIVE","emailVerified":true}}`| PASS | V-EM1, V-CP1, V-RL1, B-PW3 |  |
 | 22 | TC-REG-22 | Đăng ký trùng email đang ACTIVE | `sv1@uth.edu.vn` / `SecurePass123!` / `SecurePass123!` / TALENT | 400 - "Email already registered" | 400 - `{"success":false,"message":"Email already registered","data":null}` | PASS | ST-03, X-EM4, R3 | |
@@ -69,13 +69,13 @@
 | X-EM2 | Email sai format thiếu @ | TC-REG-05 | PASS |
 | X-EM3 | Email thiếu domain | TC-REG-06 | PASS |
 | X-EM4 | Email đã tồn tại | TC-REG-07, 22 | PASS |
-| X-EM5 | Talent domain sai | TC-REG-08 | FAIL |
+| X-EM5 | Talent domain sai | TC-REG-08 | PASS |
 | X-PW1 | Password rỗng/khoảng trắng | TC-REG-09, 10 | PASS |
 | X-PW2 | Password < 8 ký tự | TC-REG-11 | PASS |
-| X-PW3 | Password thiếu uppercase | TC-REG-12 | FAIL |
-| X-PW4 | Password thiếu lowercase | TC-REG-13 | FAIL |
-| X-PW5 | Password thiếu số | TC-REG-14 | FAIL |
-| X-PW6 | Password thiếu ký tự đặc biệt | TC-REG-15 | FAIL |
+| X-PW3 | Password thiếu uppercase | TC-REG-12 | PASS |
+| X-PW4 | Password thiếu lowercase | TC-REG-13 | PASS |
+| X-PW5 | Password thiếu số | TC-REG-14 | PASS |
+| X-PW6 | Password thiếu ký tự đặc biệt | TC-REG-15 | PASS |
 | X-CP1 | ConfirmPassword rỗng | TC-REG-16 | PASS |
 | X-CP2 | ConfirmPassword không khớp | TC-REG-17 | PASS |
 | X-RL1 | Role null | TC-REG-18 | PASS |
@@ -105,9 +105,9 @@
 | R1 | Tất cả hợp lệ → 200 Đăng ký thành công | TC-REG-01, 02, 20, 21, 25 | PASS |
 | R2 | Email format sai → 400 | TC-REG-03, 04, 05, 06 | PASS |
 | R3 | Email đã tồn tại → 400 | TC-REG-07, 22 | PASS |
-| R4 | Domain sai (Talent) → 400 | TC-REG-08 | FAIL |
+| R4 | Domain sai (Talent) → 400 | TC-REG-08 | PASS |
 | R5 | Password lỗi → 400 | TC-REG-09, 10, 11 | PASS |
-| R6 | Password yếu → 400 | TC-REG-12, 13, 14, 15 | FAIL |
+| R6 | Password yếu → 400 | TC-REG-12, 13, 14, 15 | PASS |
 | R7 | Password không khớp → 400 | TC-REG-16, 17 | PASS |
 | R8 | Role lỗi → 400 | TC-REG-18, 19 | PASS |
 
