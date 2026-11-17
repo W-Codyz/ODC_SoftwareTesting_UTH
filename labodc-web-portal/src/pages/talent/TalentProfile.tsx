@@ -57,6 +57,24 @@ const TalentProfile: React.FC = () => {
     }
   };
 
+  const beforeAvatarUpload = (file: File) => {
+    // 1. Kiểm tra định dạng file: chỉ cho phép JPG/PNG
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || /\.(jpe?g|png)$/i.test(file.name);
+    if (!isJpgOrPng) {
+      message.error('Định dạng ảnh không hỗ trợ, chỉ chấp nhận JPG/PNG');
+      return Upload.LIST_IGNORE; // Hoặc return false để chặn không gửi request
+    }
+
+    // 2. Kiểm tra dung lượng: không được vượt quá 5MB (5 * 1024 * 1024 bytes)
+    const isLt5M = file.size / 1024 / 1024 <= 5;
+    if (!isLt5M) {
+      message.error('Dung lượng ảnh đại diện vượt quá 5MB');
+      return Upload.LIST_IGNORE;
+    }
+
+    return true;
+  };
+
   const handleAvatarUpload: UploadProps['customRequest'] = async (options) => {
     try {
       const { file } = options;
@@ -114,9 +132,10 @@ const TalentProfile: React.FC = () => {
             <Form form={form} layout="vertical" onFinish={handleSave} initialValues={profile}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '24px', marginBottom: '16px' }}>
                 <Upload
+                  beforeUpload={beforeAvatarUpload}
                   customRequest={handleAvatarUpload}
                   showUploadList={false}
-                  accept="image/*"
+                  accept=".jpg,.jpeg,.png"
                 >
                   <div
                     style={{
