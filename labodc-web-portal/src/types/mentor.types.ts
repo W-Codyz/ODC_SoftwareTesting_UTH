@@ -49,6 +49,7 @@ export interface IMentorProjectOption {
 
 export interface IMentorTask {
   id: string;
+  source?: 'mentor' | 'excel';
   projectId?: string | number;
   title: string;
   description: string;
@@ -63,6 +64,7 @@ export interface IMentorTask {
 export interface IMentorTaskSubmission {
   id: number;
   taskId: number;
+  taskSource?: 'mentor' | 'excel';
   talentId: number;
   talentName?: string;
   studentId?: string;

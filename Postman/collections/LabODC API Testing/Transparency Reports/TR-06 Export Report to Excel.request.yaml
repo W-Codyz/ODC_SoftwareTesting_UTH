@@ -1,0 +1,94 @@
+$kind: http-request
+method: GET
+url: '{{base_url}}/api/lab-admin/transparency-reports/{{report_id}}/export/excel'
+order: 6000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{token}}'
+scripts:
+  - type: beforeRequest
+    language: text/javascript
+    code: |-
+      var base_url = pm.environment.get("base_url");
+      pm.sendRequest({
+          url: base_url + "/api/auth/login",
+          method: "POST",
+          header: { "Content-Type": "application/json" },
+          body: { mode: "raw", raw: JSON.stringify({ email: "labadmin2@labodc.com", password: "123123" }) }
+      }, function(err, res) {
+          if (!err && res.code === 200) {
+              var jsonData = res.json();
+              var token = jsonData.token || (jsonData.data && jsonData.data.token);
+              if (token) {
+                  pm.environment.set("token", token);
+                  // Get existing reports to find a valid report_id
+                  pm.sendRequest({
+                      url: base_url + "/api/lab-admin/transparency-reports",
+                      method: "GET",
+                      header: { "Authorization": "Bearer " + token }
+                  }, function(err2, res2) {
+                      if (!err2 && res2.code === 200) {
+                          var reports = res2.json();
+                          var reportList = (reports.data && reports.data.content) || reports.content || (Array.isArray(reports.data) ? reports.data : []);
+                          var setReportAndPublish = function(reportId) {
+                              pm.environment.set("report_id", reportId);
+                              // Ensure the report is in PUBLISHED state before exporting
+                              pm.sendRequest({
+                                  url: base_url + "/api/lab-admin/transparency-reports/" + reportId,
+                                  method: "GET",
+                                  header: { "Authorization": "Bearer " + token }
+                              }, function(err3, res3) {
+                                  if (!err3 && res3.code === 200) {
+                                      var data = res3.json();
+                                      var status = data.data && data.data.status;
+                                      if (status !== "PUBLISHED") {
+                                          pm.sendRequest({
+                                              url: base_url + "/api/lab-admin/transparency-reports/" + reportId + "/publish",
+                                              method: "POST",
+                                              header: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+                                              body: { mode: "raw", raw: JSON.stringify({ publishNote: "Published via automated test" }) }
+                                          }, function(err4, res4) {});
+                                      }
+                                  }
+                              });
+                          };
+                          if (reportList.length > 0) {
+                              setReportAndPublish(reportList[0].reportId || reportList[0].id);
+                          } else {
+                              // Create a new report
+                              var now = new Date();
+                              var period = now.getFullYear() + "-Q" + Math.ceil((now.getMonth()+1)/3) + "-" + (Date.now() % 1000);
+                              pm.sendRequest({
+                                  url: base_url + "/api/lab-admin/transparency-reports",
+                                  method: "POST",
+                                  header: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+                                  body: { mode: "raw", raw: JSON.stringify({ reportType: "QUARTERLY", period: period, autoGenerate: true }) }
+                              }, function(err3, res3) {
+                                  if (!err3 && res3.code === 200) {
+                                      var r = res3.json();
+                                      if (r.data && r.data.reportId) setReportAndPublish(r.data.reportId);
+                                  }
+                              });
+                          }
+                      }
+                  });
+              }
+          }
+      });
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+      pm.test("Response has content (binary file)", function () {
+          // Binary responses may have empty body string but non-zero size
+          var contentLength = pm.response.headers.get("Content-Length");
+          var hasContent = pm.response.responseSize > 0 || (contentLength && parseInt(contentLength) > 0) || pm.response.body.length > 0;
+          pm.expect(hasContent).to.be.true;
+      });
+      pm.test("Response time is under 5000ms", function () {
+          pm.expect(pm.response.responseTime).to.be.below(5000);
+      });

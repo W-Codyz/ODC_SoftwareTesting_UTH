@@ -30,6 +30,7 @@ const TalentLeaderDashboard = lazy(() => import('@/pages/talent/TalentLeaderDash
 const MentorDashboard = lazy(() => import('@/pages/mentor/Dashboard'));
 const ProjectInvitations = lazy(() => import('@/pages/mentor/ProjectInvitations'));
 const TaskManagement = lazy(() => import('@/pages/mentor/TaskManagement'));
+const TaskExcelManagement = lazy(() => import('@/pages/mentor/TaskExcelManagement'));
 const Evaluation = lazy(() => import('@/pages/mentor/Evaluation'));
 const ReportSubmission = lazy(() => import('@/pages/mentor/ReportSubmission'));
 const MentorReports = lazy(() => import('@/pages/mentor/Reports'));
@@ -136,6 +137,7 @@ const AppRoutes: React.FC = () => {
 
           {/* Backward/route-param versions */}
           <Route path="projects/:id/tasks" element={<TaskManagement />} />
+          <Route path="projects/:id/task-template" element={<TaskExcelManagement />} />
           <Route path="projects/:id/team" element={<Evaluation />} />
           <Route path="reports" element={<MentorReports />} />
           <Route path="reports/new" element={<ReportSubmission />} />

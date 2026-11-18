@@ -1,0 +1,40 @@
+name: Member 5 - Local Testing
+values:
+  - key: base_url
+    value: 'http://localhost:8080'
+  - key: mentor_email
+    value: 'mentor.nguyenquang@uth.edu.vn'
+  - key: mentor_password
+    value: '123123'
+  - key: mentor_token
+    value: ''
+  - key: talent_email
+    value: 'nguyenvana@student.uth.edu.vn'
+  - key: talent_password
+    value: '123123'
+  - key: talent_token
+    value: ''
+  - key: enterprise_email
+    value: 'contact@techcorp.vn'
+  - key: enterprise_password
+    value: '123123'
+  - key: enterprise_token
+    value: ''
+  - key: project_id
+    value: '1'
+  - key: talent_id
+    value: '1'
+  - key: evaluation_period
+    value: '2026-11'
+  - key: reporting_period
+    value: '2026-11'
+  - key: report_id
+    value: ''
+  - key: test_company_name
+    value: 'TechCorp Vietnam Test'
+  - key: test_company_address
+    value: '123 Nguyen Van Linh, Da Nang'
+  - key: test_company_phone
+    value: '0901234567'
+  - key: test_company_industry
+    value: 'Technology'

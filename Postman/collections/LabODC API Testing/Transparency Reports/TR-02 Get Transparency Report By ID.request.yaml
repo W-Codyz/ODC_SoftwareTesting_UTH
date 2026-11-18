@@ -1,0 +1,74 @@
+$kind: http-request
+method: GET
+url: '{{base_url}}/api/lab-admin/transparency-reports/{{report_id}}'
+order: 2000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{token}}'
+scripts:
+  - type: beforeRequest
+    language: text/javascript
+    code: |-
+      var base_url = pm.environment.get("base_url");
+      pm.sendRequest({
+          url: base_url + "/api/auth/login",
+          method: "POST",
+          header: { "Content-Type": "application/json" },
+          body: { mode: "raw", raw: JSON.stringify({ email: "labadmin2@labodc.com", password: "123123" }) }
+      }, function(err, res) {
+          if (!err && res.code === 200) {
+              var jsonData = res.json();
+              var token = jsonData.token || (jsonData.data && jsonData.data.token);
+              if (token) {
+                  pm.environment.set("token", token);
+                  // Get existing reports to find a valid report_id
+                  pm.sendRequest({
+                      url: base_url + "/api/lab-admin/transparency-reports",
+                      method: "GET",
+                      header: { "Authorization": "Bearer " + token }
+                  }, function(err2, res2) {
+                      if (!err2 && res2.code === 200) {
+                          var reports = res2.json();
+                          var reportList = (reports.data && reports.data.content) || reports.content || (Array.isArray(reports.data) ? reports.data : []);
+                          if (reportList.length > 0) {
+                              pm.environment.set("report_id", reportList[0].reportId || reportList[0].id);
+                          } else {
+                              // Create a new report
+                              var now = new Date();
+                              var period = now.getFullYear() + "-Q" + Math.ceil((now.getMonth()+1)/3) + "-" + (Date.now() % 1000);
+                              pm.sendRequest({
+                                  url: base_url + "/api/lab-admin/transparency-reports",
+                                  method: "POST",
+                                  header: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+                                  body: { mode: "raw", raw: JSON.stringify({ reportType: "QUARTERLY", period: period, autoGenerate: true }) }
+                              }, function(err3, res3) {
+                                  if (!err3 && res3.code === 200) {
+                                      var r = res3.json();
+                                      if (r.data && r.data.reportId) pm.environment.set("report_id", r.data.reportId);
+                                  }
+                              });
+                          }
+                      }
+                  });
+              }
+          }
+      });
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+      pm.test("Response success is true", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.success).to.eql(true);
+      });
+      pm.test("Report data exists", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.data).to.not.be.null;
+      });
+      pm.test("Response time is under 2000ms", function () {
+          pm.expect(pm.response.responseTime).to.be.below(2000);
+      });

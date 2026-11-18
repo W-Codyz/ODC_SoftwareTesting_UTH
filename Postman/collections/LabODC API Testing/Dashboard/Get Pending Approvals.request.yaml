@@ -1,0 +1,26 @@
+$kind: http-request
+url: '{{base_url}}/api/dashboard/approvals?limit=10'
+method: GET
+queryParams:
+  - key: limit
+    value: '10'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Status code is 200', function () {
+          pm.response.to.have.status(200);
+      });
+      pm.test('Response success is true', function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.success).to.eql(true);
+      });
+      pm.test('Approvals data exists', function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.data).to.not.be.null;
+      });
+      pm.test('Response time is under 2000ms', function () {
+          pm.expect(pm.response.responseTime).to.be.below(2000);
+      });
+settings: {}
+order: 3000

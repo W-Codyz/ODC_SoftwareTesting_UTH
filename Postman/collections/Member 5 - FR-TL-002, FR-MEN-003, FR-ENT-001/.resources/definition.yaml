@@ -1,0 +1,2 @@
+$kind: collection
+description: Manual API test collection for Member 5. Import the matching environment and fill in local test credentials/IDs. Some routes are specified in the SRS but are currently absent from the backend. Requests marked WRITE change persistent data; send them individually and only against test data.

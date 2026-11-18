@@ -243,6 +243,9 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, isMobile = false }) => {
     if (path.includes('/invitations')) return 'invitations';
     if (path.includes('/mentor/applications')) return 'applications';
     if (path.includes('/mentor/tasks')) return 'mentor-tasks';
+    if (path.includes('/mentor/projects/') && (path.includes('/tasks') || path.includes('/task-template'))) {
+      return 'mentor-tasks';
+    }
     if (path.includes('/mentor/evaluation')) return 'mentor-evaluation';
 
     // Reports (multiple roles use this)

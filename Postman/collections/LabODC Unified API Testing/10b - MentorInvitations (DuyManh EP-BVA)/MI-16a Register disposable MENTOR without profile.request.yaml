@@ -1,0 +1,34 @@
+$kind: http-request
+description: Before sending, generate a unique email. This creates a disposable user without a mentors row. Account cleanup SQL is documented in this request.
+url: "{{base_url}}/api/auth/register"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "{{mi_no_profile_email}}",
+      "password": "TempTest123!",
+      "confirmPassword": "TempTest123!",
+      "role": "MENTOR"
+    }
+auth:
+  type: noauth
+scripts:
+  - type: beforeRequest
+    code: |-
+      var email = 'qa-mi-noprofile-' + pm.variables.replaceIn('{{$guid}}') + '@example.test';
+      pm.environment.set('mi_no_profile_email', email);
+    language: text/javascript
+  - type: afterResponse
+    code: |-
+      pm.test('Registration returns 200', () => pm.response.to.have.status(200));
+
+      const body = pm.response.json();
+      if (body.data && body.data.token) {
+          pm.environment.set('mi_no_profile_token', body.data.token);
+      }
+      // Email already set in prerequest, no need to read from response
+    language: text/javascript
+order: 7000

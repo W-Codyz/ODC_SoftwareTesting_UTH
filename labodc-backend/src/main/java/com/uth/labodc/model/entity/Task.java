@@ -60,6 +60,9 @@ public class Task {
     @Column(name = "estimated_hours")
     private Integer estimatedHours;
 
+    @Column(name = "progress_percentage")
+    private Integer progressPercentage;
+
     @Column(name = "dependencies")
     private String dependencies;
 

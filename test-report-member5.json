@@ -1,0 +1,266 @@
+{
+  "reportTitle": "Test Report - Member 5",
+  "collection": "Member 5 - FR-TL-002, FR-MEN-003, FR-ENT-001",
+  "environment": "Member 5 - Local Testing",
+  "executedAt": "2026-11-17T08:37:38Z",
+  "summary": {
+    "total": 15,
+    "passed": 3,
+    "failed": 12,
+    "passRate": "20.00%"
+  },
+  "loginRequests": [
+    {
+      "name": "Login Enterprise",
+      "httpStatus": 400,
+      "note": "JDBC error: column u1_0.last_login_ip does not exist. Backend schema mismatch."
+    },
+    {
+      "name": "Login Mentor",
+      "httpStatus": 400,
+      "note": "JDBC error: column u1_0.last_login_ip does not exist. Backend schema mismatch."
+    },
+    {
+      "name": "Login Talent Leader",
+      "httpStatus": 400,
+      "note": "JDBC error: column u1_0.last_login_ip does not exist. Backend schema mismatch."
+    }
+  ],
+  "modules": [
+    {
+      "moduleId": "FR-TL-002",
+      "moduleName": "Submit Team Report",
+      "testCases": [
+        {
+          "id": "TC-TL002-PM-01",
+          "name": "Get team reports",
+          "httpStatus": 401,
+          "responseTimeMs": null,
+          "assertions": [
+            {
+              "name": "SRS route is available (expected HTTP 200)",
+              "passed": false
+            }
+          ],
+          "result": "FAIL",
+          "failureDetail": "HTTP 401 Unauthorized — token not populated because Login failed (backend JDBC error). Response body: empty."
+        },
+        {
+          "id": "TC-TL002-PM-02",
+          "name": "[WRITE] Submit a valid team report",
+          "httpStatus": 401,
+          "responseTimeMs": null,
+          "assertions": [
+            {
+              "name": "SRS valid report is accepted (expected HTTP 201)",
+              "passed": false
+            }
+          ],
+          "result": "FAIL",
+          "failureDetail": "HTTP 401 Unauthorized — token not populated because Login failed (backend JDBC error). Response body: empty."
+        },
+        {
+          "id": "TC-TL002-PM-03",
+          "name": "Get report by ID",
+          "httpStatus": 401,
+          "responseTimeMs": null,
+          "assertions": [
+            {
+              "name": "SRS detail route is available (expected HTTP 200)",
+              "passed": false
+            }
+          ],
+          "result": "FAIL",
+          "failureDetail": "HTTP 401 Unauthorized — token not populated because Login failed (backend JDBC error). Response body: empty."
+        },
+        {
+          "id": "TC-TL002-PM-04",
+          "name": "Reject progress below zero",
+          "httpStatus": 401,
+          "responseTimeMs": null,
+          "assertions": [
+            {
+              "name": "Invalid progress is rejected (expected HTTP 400)",
+              "passed": false
+            }
+          ],
+          "result": "FAIL",
+          "failureDetail": "HTTP 401 Unauthorized — token not populated because Login failed (backend JDBC error). Expected HTTP 400 but got 401. Response body: empty."
+        },
+        {
+          "id": "TC-TL002-PM-05",
+          "name": "No token",
+          "httpStatus": 401,
+          "responseTimeMs": null,
+          "assertions": [
+            {
+              "name": "Unauthenticated request is rejected (expected HTTP 401)",
+              "passed": true
+            }
+          ],
+          "result": "PASS"
+        }
+      ]
+    },
+    {
+      "moduleId": "FR-MEN-003",
+      "moduleName": "Evaluate Talents",
+      "testCases": [
+        {
+          "id": "TC-MEN003-PM-01",
+          "name": "Get mentor projects",
+          "httpStatus": 401,
+          "responseTimeMs": null,
+          "assertions": [
+            {
+              "name": "Mentor projects returns HTTP 200",
+              "passed": false
+            }
+          ],
+          "result": "FAIL",
+          "failureDetail": "HTTP 401 Unauthorized — mentor_token not populated because Login Mentor failed (backend JDBC error). Response body: empty."
+        },
+        {
+          "id": "TC-MEN003-PM-02",
+          "name": "Get talents in project",
+          "httpStatus": 401,
+          "responseTimeMs": null,
+          "assertions": [
+            {
+              "name": "Project talents returns HTTP 200",
+              "passed": false
+            }
+          ],
+          "result": "FAIL",
+          "failureDetail": "HTTP 401 Unauthorized — mentor_token not populated because Login Mentor failed (backend JDBC error). Response body: empty."
+        },
+        {
+          "id": "TC-MEN003-PM-03",
+          "name": "Get project evaluations",
+          "httpStatus": 401,
+          "responseTimeMs": null,
+          "assertions": [
+            {
+              "name": "Project evaluations returns HTTP 200",
+              "passed": false
+            }
+          ],
+          "result": "FAIL",
+          "failureDetail": "HTTP 401 Unauthorized — mentor_token not populated because Login Mentor failed (backend JDBC error). Response body: empty."
+        },
+        {
+          "id": "TC-MEN003-PM-04",
+          "name": "[WRITE] Submit valid evaluation",
+          "httpStatus": 401,
+          "responseTimeMs": null,
+          "assertions": [
+            {
+              "name": "Valid evaluation is accepted (expected HTTP 200)",
+              "passed": false
+            }
+          ],
+          "result": "FAIL",
+          "failureDetail": "HTTP 401 Unauthorized — mentor_token not populated because Login Mentor failed (backend JDBC error). Response body: empty."
+        },
+        {
+          "id": "TC-MEN003-PM-05",
+          "name": "Reject overallScore below zero",
+          "httpStatus": 401,
+          "responseTimeMs": null,
+          "assertions": [
+            {
+              "name": "Score below zero is rejected (expected HTTP 400)",
+              "passed": false
+            }
+          ],
+          "result": "FAIL",
+          "failureDetail": "HTTP 401 Unauthorized — mentor_token not populated because Login Mentor failed (backend JDBC error). Expected HTTP 400 but got 401. Response body: empty."
+        },
+        {
+          "id": "TC-MEN003-PM-06",
+          "name": "No token",
+          "httpStatus": 401,
+          "responseTimeMs": null,
+          "assertions": [
+            {
+              "name": "Unauthenticated request is rejected (expected HTTP 401)",
+              "passed": true
+            }
+          ],
+          "result": "PASS"
+        }
+      ]
+    },
+    {
+      "moduleId": "FR-ENT-001",
+      "moduleName": "Manage Enterprise Profile",
+      "testCases": [
+        {
+          "id": "TC-ENT001-PM-01",
+          "name": "Get enterprise profile",
+          "httpStatus": 401,
+          "responseTimeMs": null,
+          "assertions": [
+            {
+              "name": "SRS profile route is available (expected HTTP 200)",
+              "passed": false
+            }
+          ],
+          "result": "FAIL",
+          "failureDetail": "HTTP 401 Unauthorized — enterprise_token not populated because Login Enterprise failed (backend JDBC error). Response body: empty."
+        },
+        {
+          "id": "TC-ENT001-PM-02",
+          "name": "[WRITE] Update enterprise profile",
+          "httpStatus": 401,
+          "responseTimeMs": null,
+          "assertions": [
+            {
+              "name": "SRS profile update is accepted (expected HTTP 200)",
+              "passed": false
+            }
+          ],
+          "result": "FAIL",
+          "failureDetail": "HTTP 401 Unauthorized — enterprise_token not populated because Login Enterprise failed (backend JDBC error). Response body: empty."
+        },
+        {
+          "id": "TC-ENT001-PM-03",
+          "name": "[WRITE] Upload enterprise logo",
+          "httpStatus": 401,
+          "responseTimeMs": null,
+          "assertions": [
+            {
+              "name": "SRS logo upload route is available (expected HTTP 200)",
+              "passed": false
+            }
+          ],
+          "result": "FAIL",
+          "failureDetail": "HTTP 401 Unauthorized — enterprise_token not populated because Login Enterprise failed (backend JDBC error). Response body: empty."
+        },
+        {
+          "id": "TC-ENT001-PM-04",
+          "name": "No token",
+          "httpStatus": 401,
+          "responseTimeMs": null,
+          "assertions": [
+            {
+              "name": "Unauthenticated request is rejected (expected HTTP 401)",
+              "passed": true
+            }
+          ],
+          "result": "PASS"
+        }
+      ]
+    }
+  ],
+  "rootCauseAnalysis": {
+    "primaryFailureCause": "All 3 Login requests returned HTTP 400 due to a backend database schema mismatch. The SQL query references column 'u1_0.last_login_ip' which does not exist in the PostgreSQL database. This prevented all authentication tokens (talent_token, mentor_token, enterprise_token) from being populated in the environment.",
+    "cascadeEffect": "Because no tokens were set, all 12 authenticated test cases (TC-TL002-PM-01 through PM-04, TC-MEN003-PM-01 through PM-05, TC-ENT001-PM-01 through PM-03) received HTTP 401 Unauthorized instead of their expected responses.",
+    "passedTests": [
+      "TC-TL002-PM-05 (No token) — correctly returned 401 as expected",
+      "TC-MEN003-PM-06 (No token) — correctly returned 401 as expected",
+      "TC-ENT001-PM-04 (No token) — correctly returned 401 as expected"
+    ],
+    "recommendation": "Fix the backend database schema: add the missing 'last_login_ip' column to the 'users' table, or update the JPA entity/query to remove the reference to that column. Once login is fixed, re-run the full collection."
+  }
+}

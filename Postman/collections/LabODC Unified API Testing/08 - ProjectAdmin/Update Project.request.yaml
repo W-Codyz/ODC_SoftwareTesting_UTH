@@ -1,0 +1,58 @@
+$kind: http-request
+url: "{{base_url}}/api/lab-admin/projects/{{project_id}}"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "projectName": "Updated Project {{test_suffix}}",
+      "description": "Updated by Postman",
+      "budget": 60000000
+    }
+scripts:
+  - type: beforeRequest
+    code: |-
+      var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');
+      pm.sendRequest({
+          url: base_url + '/api/auth/login',
+          method: 'POST',
+          header: { 'Content-Type': 'application/json' },
+          body: { mode: 'raw', raw: JSON.stringify({ email: 'labadmin2@labodc.com', password: '123123' }) }
+      }, function(err, res) {
+          if (!err && res.code === 200) {
+              var jsonData = res.json();
+              var token = jsonData.token || (jsonData.data && jsonData.data.token);
+              if (token) { pm.environment.set('token', token); }
+          }
+      });
+
+      // Generate dynamic dates
+      var now = new Date();
+      var start = new Date(now.getTime() + 7*24*60*60*1000);
+      var end = new Date(now.getTime() + 90*24*60*60*1000);
+      pm.environment.set('project_start_date', start.toISOString().split('T')[0]);
+      pm.environment.set('project_end_date', end.toISOString().split('T')[0]);
+    language: text/javascript
+  - type: afterResponse
+    code: |-
+      pm.test('Status code is 200', function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test('Response success is true', function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.success).to.eql(true);
+      });
+
+      pm.test('Response data exists', function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.data).to.not.be.null;
+      });
+
+      pm.test('Response time is under 2000ms', function () {
+          pm.expect(pm.response.responseTime).to.be.below(2000);
+      });
+    language: text/javascript
+order: 4000

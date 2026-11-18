@@ -1,0 +1,22 @@
+name: LabODC Local
+values:
+  - key: base_url
+    value: 'http://localhost:8080'
+  - key: token
+    value: ''
+  - key: mentor_id
+    value: ''
+  - key: talent_id
+    value: ''
+  - key: test_email
+    value: ''
+  - key: test_skill_name
+    value: ''
+  - key: skill_id
+    value: ''
+  - key: report_period
+    value: ''
+  - key: report_id
+    value: ''
+  - key: test_suffix
+    value: ''

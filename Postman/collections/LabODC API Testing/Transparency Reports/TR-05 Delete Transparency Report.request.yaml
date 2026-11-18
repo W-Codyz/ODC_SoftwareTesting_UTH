@@ -1,0 +1,64 @@
+$kind: http-request
+method: DELETE
+url: '{{base_url}}/api/lab-admin/transparency-reports/{{report_id}}'
+order: 5000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{token}}'
+scripts:
+  - type: beforeRequest
+    language: text/javascript
+    code: |-
+      // Create a fresh report to delete so this test is idempotent
+      var base_url = pm.environment.get("base_url");
+      var token = pm.environment.get("token");
+      pm.sendRequest({
+          url: base_url + "/api/auth/login",
+          method: "POST",
+          header: { "Content-Type": "application/json" },
+          body: {
+              mode: "raw",
+              raw: JSON.stringify({ email: "labadmin2@labodc.com", password: "123123" })
+          }
+      }, function(err, res) {
+          if (!err && res.code === 200) {
+              var loginData = res.json();
+              var adminToken = loginData.token || (loginData.data && loginData.data.token);
+              if (adminToken) {
+                  pm.environment.set("token", adminToken);
+                  // Create a new report to delete (unique period to avoid conflicts)
+                  var period = "DELETE-TEST-" + Date.now();
+                  pm.sendRequest({
+                      url: base_url + "/api/lab-admin/transparency-reports",
+                      method: "POST",
+                      header: { "Content-Type": "application/json", "Authorization": "Bearer " + adminToken },
+                      body: {
+                          mode: "raw",
+                          raw: JSON.stringify({ reportType: "QUARTERLY", period: period, autoGenerate: true })
+                      }
+                  }, function(err2, res2) {
+                      if (!err2 && res2.code === 200) {
+                          var reportData = res2.json();
+                          if (reportData.data && reportData.data.reportId) {
+                              pm.environment.set("report_id", reportData.data.reportId);
+                          }
+                      }
+                  });
+              }
+          }
+      });
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+      pm.test("Response success is true", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.success).to.eql(true);
+      });
+      pm.test("Response time is under 2000ms", function () {
+          pm.expect(pm.response.responseTime).to.be.below(2000);
+      });

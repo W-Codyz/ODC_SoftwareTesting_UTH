@@ -1,0 +1,78 @@
+$kind: http-request
+url: "{{base_url}}/api/lab-admin/talents"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"fullName\": \"Tran Test Talent\",\r
+
+    \  \"studentId\": \"TEST001\",\r
+
+    \  \"university\": \"UTH\",\r
+
+    \  \"major\": \"Information Technology\",\r
+
+    \  \"yearOfStudy\": 3,\r
+
+    \  \"bio\": \"Test talent student\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "var res = pm.response.json();\r
+
+      var id = res.id || (res.data && res.data.id);\r
+
+      if (id) {\r
+
+      \    pm.environment.set(\"talent_id\", id);\r
+
+      }\r
+
+      pm.test(\"Talent created\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });"
+    language: text/javascript
+  - type: beforeRequest
+    code: "const loginRequest = {\r
+
+      \    url: pm.environment.get(\"base_url\") + \"/api/auth/login\",\r
+
+      \    method: \"POST\",\r
+
+      \    header: { \"Content-Type\": \"application/json\" },\r
+
+      \    body: {\r
+
+      \        mode: \"raw\",\r
+
+      \        raw: JSON.stringify({\r
+
+      \            email: \"admin@labodc.com\",\r
+
+      \            password: \"123123\"\r
+
+      \        })\r
+
+      \    }\r
+
+      };\r
+
+      \r
+
+      pm.sendRequest(loginRequest, function (err, res) {\r
+
+      \    var data = res.json();\r
+
+      \    if (data.data && data.data.token) {\r
+
+      \        pm.environment.set(\"token\", data.data.token);\r
+
+      \    }\r
+
+      });"
+    language: text/javascript
+order: 3000

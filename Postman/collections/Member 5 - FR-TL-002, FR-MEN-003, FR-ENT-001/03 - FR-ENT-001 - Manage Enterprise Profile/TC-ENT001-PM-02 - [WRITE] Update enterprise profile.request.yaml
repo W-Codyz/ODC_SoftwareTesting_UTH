@@ -1,0 +1,23 @@
+$kind: http-request
+url: "{{base_url}}/api/enterprise/profile"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "companyName": "{{test_company_name}}",
+      "address": "{{test_company_address}}",
+      "phone": "{{test_company_phone}}",
+      "industry": "{{test_company_industry}}"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{enterprise_token}}"
+scripts:
+  - type: afterResponse
+    code: pm.test("SRS profile update is accepted (expected HTTP 200)", function () { pm.response.to.have.status(200); });
+    language: text/javascript
+order: 2000

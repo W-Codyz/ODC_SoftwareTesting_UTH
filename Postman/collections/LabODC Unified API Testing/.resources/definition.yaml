@@ -1,0 +1,105 @@
+$kind: collection
+description: |-
+  Unified Postman collection for LabODC API Testing.
+  Merged from all team members' collections.
+  Updated: includes EnterprisePortal, ProjectValidation, and variant endpoints.
+
+  Test accounts (password: 123123):
+  - SYSTEM_ADMIN: admin@labodc.com
+  - LAB_ADMIN: labadmin2@labodc.com
+  - ENTERPRISE: enterprise1@example.com / contact@techcorp.vn
+  - MENTOR: mentor1@labodc.com
+  - TALENT: talent1@labodc.com
+variables:
+  - key: base_url
+    value: http://localhost:8080
+    disabled: false
+    secret: false
+  - key: token
+    value: ""
+    disabled: false
+    secret: false
+  - key: system_admin_token
+    value: ""
+    disabled: false
+    secret: false
+  - key: lab_admin_token
+    value: ""
+    disabled: false
+    secret: false
+  - key: enterprise_token
+    value: ""
+    disabled: false
+    secret: false
+  - key: mentor_token
+    value: ""
+    disabled: false
+    secret: false
+  - key: talent_token
+    value: ""
+    disabled: false
+    secret: false
+  - key: enterprise_id
+    value: "1"
+    disabled: false
+    secret: false
+  - key: project_id
+    value: "1"
+    disabled: false
+    secret: false
+  - key: mentor_id
+    value: "1"
+    disabled: false
+    secret: false
+  - key: talent_id
+    value: "1"
+    disabled: false
+    secret: false
+  - key: task_id
+    value: ""
+    disabled: false
+    secret: false
+  - key: submission_id
+    value: ""
+    disabled: false
+    secret: false
+  - key: invitation_id
+    value: ""
+    disabled: false
+    secret: false
+  - key: report_id
+    value: ""
+    disabled: false
+    secret: false
+  - key: report_period
+    value: 2026-Q3
+    disabled: false
+    secret: false
+  - key: test_suffix
+    value: ""
+    disabled: false
+    secret: false
+  - key: bearer_token_01t0
+    secret: true
+    disabled: false
+scripts:
+  - type: http:beforeRequest
+    code: |-
+      // Generate dynamic test suffix for unique data
+      if (!pm.environment.get('test_suffix')) {
+          pm.environment.set('test_suffix', '-test-' + Date.now());
+      }
+    language: text/javascript
+  - type: http:afterResponse
+    code: |-
+      // Collection-level: verify all responses return HTTP 2xx
+      pm.test('Response status is 2xx', function () {
+          pm.expect(pm.response.code).to.be.within(200, 299);
+      });
+    language: text/javascript
+auth:
+  - id: 28cac177-6c02-48fa-b7d3-1b658ef957df
+    type: bearer
+    name: bearer auth
+    credentials:
+      token: "{{token}}"

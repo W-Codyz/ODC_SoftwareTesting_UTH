@@ -1,0 +1,98 @@
+$kind: http-request
+url: "{{base_url}}/api/talent/profile"
+method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \  \"fullName\": \"Nguyen Van A\",\r
+
+    \  \"studentId\": \"2020600001\",\r
+
+    \  \"faculty\": \"Computer Science\",\r
+
+    \  \"major\": \"Software Engineering\",\r
+
+    \  \"yearOfStudy\": 3,\r
+
+    \  \"email\": \"nguyenvana@student.uth.edu.vn\",\r
+
+    \  \"portfolioUrl\": \"https://nguyenvana.dev\",\r
+
+    \  \"githubUrl\": \"https://github.com/nguyenvana\",\r
+
+    \  \"linkedinUrl\": \"https://linkedin.com/in/nguyenvana\"\r
+
+    }\r\n"
+scripts:
+  - type: beforeRequest
+    code: |-
+      // Auto-login as Talent user to get correct role token
+      var base_url = pm.environment.get("base_url");
+      pm.sendRequest({
+          url: base_url + "/api/auth/login",
+          method: "POST",
+          header: { "Content-Type": "application/json" },
+          body: {
+              mode: "raw",
+              raw: JSON.stringify({
+                  email: "nguyenvana@student.uth.edu.vn",
+                  password: "123123"
+              })
+          }
+      }, function(err, res) {
+          if (!err && res.code === 200) {
+              var jsonData = res.json();
+              var token = jsonData.token || (jsonData.data && jsonData.data.token);
+              if (token) {
+                  pm.environment.set("token", token);
+              }
+          }
+      });
+    language: text/javascript
+  - type: afterResponse
+    code: "// Kiểm tra status code\r
+
+      pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      // Kiểm tra response có trường data\r
+
+      pm.test(\"Response has data object\", function () {\r
+
+      \    var jsonData = pm.response.json();\r
+
+      \    pm.expect(jsonData).to.have.property(\"data\");\r
+
+      });\r
+
+      \r
+
+      // Kiểm tra email đúng\r
+
+      pm.test(\"Email matches\", function () {\r
+
+      \    var jsonData = pm.response.json();\r
+
+      \    pm.expect(jsonData.data.email).to.eql(\"nguyenvana@student.uth.edu.vn\");\r
+
+      });\r
+
+      \r
+
+      // Kiểm tra fullName đúng\r
+
+      pm.test(\"Full name matches\", function () {\r
+
+      \    var jsonData = pm.response.json();\r
+
+      \    pm.expect(jsonData.data.fullName).to.eql(\"Nguyen Van A\");\r
+
+      });\r\n"
+    language: text/javascript
+order: 5000

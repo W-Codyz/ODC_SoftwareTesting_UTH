@@ -1,0 +1,22 @@
+$kind: http-request
+description: Mentor 3 has exactly one assigned project in the current seed data.
+url: "{{base_url}}/api/auth/login"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "mentor.lehong@uth.edu.vn",
+      "password": "123123"
+    }
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Login returns 200', () => pm.response.to.have.status(200));
+      pm.environment.set('token_mentor_single', pm.response.json().data.token);
+    language: text/javascript
+order: 4000

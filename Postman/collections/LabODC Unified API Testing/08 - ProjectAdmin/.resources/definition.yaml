@@ -1,0 +1,3 @@
+$kind: collection
+description: Lab Admin manages projects via /api/lab-admin/projects. Requires LAB_ADMIN token.
+order: 9000

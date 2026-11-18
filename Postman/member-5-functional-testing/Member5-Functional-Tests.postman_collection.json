@@ -1,0 +1,642 @@
+{
+  "info": {
+    "_postman_id": "2a3e040a-a03a-4f90-bd7f-4ef0998f0f15",
+    "name": "Member 5 - FR-TL-002, FR-MEN-003, FR-ENT-001",
+    "description": "Manual API test collection for Member 5. Import the matching environment and fill in local test credentials/IDs. Some routes are specified in the SRS but are currently absent from the backend. Requests marked WRITE change persistent data; send them individually and only against test data.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "00 - Authentication",
+      "item": [
+        {
+          "name": "Login Mentor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{mentor_email}}\",\n  \"password\": \"{{mentor_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+            }
+            },
+            "url": "{{base_url}}/api/auth/login"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Login returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "var json = pm.response.json();",
+                  "var data = json.data || json;",
+                  "var token = data.token || data.accessToken;",
+                  "pm.test(\"Login response contains a token\", function () { pm.expect(token).to.be.a(\"string\").and.not.empty; });",
+                  "if (token) pm.environment.set(\"mentor_token\", token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login Talent Leader",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{talent_email}}\",\n  \"password\": \"{{talent_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/auth/login"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Login returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "var json = pm.response.json();",
+                  "var data = json.data || json;",
+                  "var token = data.token || data.accessToken;",
+                  "pm.test(\"Login response contains a token\", function () { pm.expect(token).to.be.a(\"string\").and.not.empty; });",
+                  "if (token) pm.environment.set(\"talent_token\", token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login Enterprise",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{enterprise_email}}\",\n  \"password\": \"{{enterprise_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/auth/login"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Login returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "var json = pm.response.json();",
+                  "var data = json.data || json;",
+                  "var token = data.token || data.accessToken;",
+                  "pm.test(\"Login response contains a token\", function () { pm.expect(token).to.be.a(\"string\").and.not.empty; });",
+                  "if (token) pm.environment.set(\"enterprise_token\", token);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "01 - FR-TL-002 - Submit Team Report",
+      "description": "SRS routes under /api/talent-leader are not currently present in TalentController. Successful-path tests may return 404; capture that response as evidence instead of treating it as a Postman setup issue.",
+      "item": [
+        {
+          "name": "TC-TL002-PM-01 - Get team reports",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{talent_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": "{{base_url}}/api/talent-leader/projects/{{project_id}}/reports"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"SRS route is available (expected HTTP 200)\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TC-TL002-PM-02 - [WRITE] Submit a valid team report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{talent_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reportType\": \"MONTHLY\",\n  \"reportingPeriod\": \"{{reporting_period}}\",\n  \"overallProgress\": 45,\n  \"tasksCompleted\": [],\n  \"tasksInProgress\": [],\n  \"issues\": [],\n  \"nextMonthPlan\": [],\n  \"teamPerformance\": {\n    \"collaboration\": 4.5,\n    \"communication\": 4.0,\n    \"productivity\": 4.2,\n    \"codeQuality\": 4.3\n  },\n  \"attachments\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/talent-leader/projects/{{project_id}}/reports"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"SRS valid report is accepted (expected HTTP 201)\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) { var json = pm.response.json(); var data = json.data || {}; var id = data.reportId || data.id; if (id) pm.environment.set(\"report_id\", String(id)); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TC-TL002-PM-03 - Get report by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{talent_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": "{{base_url}}/api/talent-leader/projects/{{project_id}}/reports/{{report_id}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"SRS detail route is available (expected HTTP 200)\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TC-TL002-PM-04 - Reject progress below zero",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{talent_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reportType\": \"MONTHLY\",\n  \"reportingPeriod\": \"{{reporting_period}}\",\n  \"overallProgress\": -1,\n  \"tasksCompleted\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/talent-leader/projects/{{project_id}}/reports"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Invalid progress is rejected (expected HTTP 400)\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TC-TL002-PM-05 - No token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": "{{base_url}}/api/talent-leader/projects/{{project_id}}/reports"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Unauthenticated request is rejected (expected HTTP 401)\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 - FR-MEN-003 - Evaluate Talents",
+      "description": "The create-evaluation request writes persistent data. Choose a valid, unused evaluation_period and run it only once for the initial test.",
+      "item": [
+        {
+          "name": "TC-MEN003-PM-01 - Get mentor projects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{mentor_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": "{{base_url}}/api/mentor/projects"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Mentor projects returns HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TC-MEN003-PM-02 - Get talents in project",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{mentor_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": "{{base_url}}/api/mentor/projects/{{project_id}}/talents"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Project talents returns HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TC-MEN003-PM-03 - Get project evaluations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{mentor_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": "{{base_url}}/api/mentor/projects/{{project_id}}/evaluations"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Project evaluations returns HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TC-MEN003-PM-04 - [WRITE] Submit valid evaluation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{mentor_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"talentId\": {{talent_id}},\n  \"evaluationPeriod\": \"{{evaluation_period}}\",\n  \"overallScore\": 8.5,\n  \"technicalSkills\": { \"score\": 9.0, \"comment\": \"Postman test\" },\n  \"problemSolving\": { \"score\": 8.5, \"comment\": \"Postman test\" },\n  \"teamwork\": { \"score\": 8.0, \"comment\": \"Postman test\" },\n  \"communication\": { \"score\": 8.5, \"comment\": \"Postman test\" },\n  \"codeQuality\": { \"score\": 9.0, \"comment\": \"Postman test\" },\n  \"punctuality\": { \"score\": 9.5, \"comment\": \"Postman test\" },\n  \"strengths\": [\"Test entry\"],\n  \"weaknesses\": [],\n  \"recommendations\": [],\n  \"tasksCompleted\": 1,\n  \"tasksTotal\": 1,\n  \"hoursWorked\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/mentor/projects/{{project_id}}/evaluations"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Valid evaluation is accepted (expected HTTP 200)\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TC-MEN003-PM-05 - Reject overallScore below zero",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{mentor_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"talentId\": {{talent_id}},\n  \"evaluationPeriod\": \"{{evaluation_period}}\",\n  \"overallScore\": -0.1,\n  \"technicalSkills\": { \"score\": 8.0 },\n  \"problemSolving\": { \"score\": 8.0 },\n  \"teamwork\": { \"score\": 8.0 },\n  \"communication\": { \"score\": 8.0 },\n  \"codeQuality\": { \"score\": 8.0 },\n  \"punctuality\": { \"score\": 8.0 }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/mentor/projects/{{project_id}}/evaluations"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Score below zero is rejected (expected HTTP 400)\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TC-MEN003-PM-06 - No token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": "{{base_url}}/api/mentor/projects/{{project_id}}/evaluations"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Unauthenticated request is rejected (expected HTTP 401)\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 - FR-ENT-001 - Manage Enterprise Profile",
+      "description": "The SRS profile routes are not currently present in EnterprisePortalController. PUT changes profile data permanently if implemented; use a test account, save the original profile, and restore it after testing.",
+      "item": [
+        {
+          "name": "TC-ENT001-PM-01 - Get enterprise profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{enterprise_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": "{{base_url}}/api/enterprise/profile"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"SRS profile route is available (expected HTTP 200)\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TC-ENT001-PM-02 - [WRITE] Update enterprise profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{enterprise_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companyName\": \"{{test_company_name}}\",\n  \"address\": \"{{test_company_address}}\",\n  \"phone\": \"{{test_company_phone}}\",\n  \"industry\": \"{{test_company_industry}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/api/enterprise/profile"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"SRS profile update is accepted (expected HTTP 200)\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TC-ENT001-PM-03 - [WRITE] Upload enterprise logo",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{enterprise_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            },
+            "url": "{{base_url}}/api/enterprise/profile/logo"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"SRS logo upload route is available (expected HTTP 200)\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TC-ENT001-PM-04 - No token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": "{{base_url}}/api/enterprise/profile"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Unauthenticated request is rejected (expected HTTP 401)\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

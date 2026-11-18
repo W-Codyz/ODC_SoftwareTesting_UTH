@@ -1,0 +1,70 @@
+$kind: http-request
+url: '{{base_url}}/api/talent/skills'
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "skillName": "{{test_skill_name}}",
+      "skillCategory": "Programming",
+      "proficiencyLevel": "INTERMEDIATE",
+      "yearsOfExperience": 1.5
+    }
+scripts:
+  - type: beforeRequest
+    language: text/javascript
+    code: |-
+      // Auto-login as Talent user to get correct role token
+      var base_url = pm.environment.get('base_url');
+      pm.sendRequest({
+          url: base_url + '/api/auth/login',
+          method: 'POST',
+          header: { 'Content-Type': 'application/json' },
+          body: {
+              mode: 'raw',
+              raw: JSON.stringify({
+                  email: 'nguyenvana@student.uth.edu.vn',
+                  password: '123123'
+              })
+          }
+      }, function(err, res) {
+          if (!err && res.code === 200) {
+              var jsonData = res.json();
+              var token = jsonData.token || (jsonData.data && jsonData.data.token);
+              if (token) {
+                  pm.environment.set('token', token);
+              }
+          }
+      });
+      // Generate unique skill name to avoid duplicate errors
+      var skillName = 'Skill_' + Date.now();
+      pm.environment.set('test_skill_name', skillName);
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Status code is 200 or 201', function () {
+          pm.expect([200, 201]).to.include(pm.response.code);
+      });
+      pm.test('Response success is true', function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.success).to.eql(true);
+      });
+      pm.test('Skill name is not null', function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.data.skillName).to.not.be.null;
+      });
+      pm.test('Proficiency level is valid', function () {
+          var jsonData = pm.response.json();
+          pm.expect(['BEGINNER', 'INTERMEDIATE', 'ADVANCED', 'EXPERT']).to.include(jsonData.data.proficiencyLevel);
+      });
+      pm.test('Skill ID saved to environment', function () {
+          var jsonData = pm.response.json();
+          if (jsonData.data && jsonData.data.id) {
+              pm.environment.set('skill_id', jsonData.data.id);
+          }
+          pm.expect(jsonData.data.id).to.not.be.null;
+      });
+order: 6000

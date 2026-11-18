@@ -25,8 +25,8 @@ CREATE TYPE invitation_status_enum AS ENUM ('PENDING', 'ACCEPTED', 'REJECTED', '
 
 -- Project related enums
 CREATE TYPE project_status_enum AS ENUM ('DRAFT', 'PENDING_VALIDATION', 'VALIDATED', 'REJECTED', 'RECRUITING', 'IN_PROGRESS', 'ON_HOLD', 'COMPLETED', 'CANCELLED', 'ARCHIVED');
-CREATE TYPE project_member_role_enum AS ENUM ('MEMBER', 'LEADER');
-CREATE TYPE project_member_status_enum AS ENUM ('ACTIVE', 'LEFT', 'REMOVED');
+CREATE TYPE project_member_role_enum AS ENUM ('MEMBER', 'LEADER', 'CO_LEADER');
+CREATE TYPE project_member_status_enum AS ENUM ('PENDING', 'APPROVED', 'REJECTED', 'ACTIVE', 'LEFT', 'REMOVED', 'INACTIVE');
 CREATE TYPE milestone_status_enum AS ENUM ('PENDING', 'IN_PROGRESS', 'COMPLETED', 'DELAYED');
 CREATE TYPE change_request_type_enum AS ENUM ('SCOPE_CHANGE', 'TIMELINE_CHANGE', 'BUDGET_CHANGE', 'CANCELLATION');
 CREATE TYPE change_request_status_enum AS ENUM ('PENDING', 'APPROVED', 'REJECTED', 'CANCELLED');

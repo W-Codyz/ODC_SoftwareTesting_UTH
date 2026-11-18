@@ -1,0 +1,20 @@
+$kind: http-request
+description: Stores token_no_pending; verify this account has no PENDING invitations.
+url: "{{base_url}}/api/auth/login"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "mentor.lehong@uth.edu.vn",
+      "password": "123123"
+    }
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: pm.test('Login returns 200',()=>pm.response.to.have.status(200)); const b=pm.response.json(); pm.environment.set('token_no_pending',b.data.token);
+    language: text/javascript
+order: 3000

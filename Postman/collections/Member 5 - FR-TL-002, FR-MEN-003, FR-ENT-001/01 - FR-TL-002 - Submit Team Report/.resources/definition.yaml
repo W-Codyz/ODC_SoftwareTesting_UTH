@@ -1,0 +1,3 @@
+$kind: collection
+description: SRS routes under /api/talent-leader are not currently present in TalentController. Successful-path tests may return 404; capture that response as evidence instead of treating it as a Postman setup issue.
+order: 2000

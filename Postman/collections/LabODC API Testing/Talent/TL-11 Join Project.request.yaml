@@ -1,0 +1,65 @@
+$kind: http-request
+name: 'TL-11 Join Project'
+method: POST
+url: '{{base_url}}/api/talent/projects/{{project_id}}/join'
+order: 11000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{token}}'
+pathVariables:
+  - key: project_id
+    value: '2'
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "message": "I am interested in joining this project and have relevant skills."
+    }
+scripts:
+  - type: beforeRequest
+    language: text/javascript
+    code: |-
+      // Auto-login as Talent user to get correct role token
+      var base_url = pm.environment.get("base_url");
+      pm.sendRequest({
+          url: base_url + "/api/auth/login",
+          method: "POST",
+          header: { "Content-Type": "application/json" },
+          body: {
+              mode: "raw",
+              raw: JSON.stringify({
+                  email: "nguyenvana@student.uth.edu.vn",
+                  password: "123123"
+              })
+          }
+      }, function(err, res) {
+          if (!err && res.code === 200) {
+              var jsonData = res.json();
+              var token = jsonData.token || (jsonData.data && jsonData.data.token);
+              if (token) {
+                  pm.environment.set("token", token);
+              }
+          }
+      });
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 200 or 201 or 400 (already applied is acceptable)", function () {
+          pm.expect([200, 201, 400]).to.include(pm.response.code);
+      });
+      pm.test("Response has success field", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData).to.have.property('success');
+      });
+      pm.test("Response has message field", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData).to.have.property('message');
+      });
+      pm.test("Response time is under 2000ms", function () {
+          pm.expect(pm.response.responseTime).to.be.below(2000);
+      });

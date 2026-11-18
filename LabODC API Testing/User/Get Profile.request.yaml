@@ -1,0 +1,22 @@
+$kind: http-request
+url: "{{base_url}}/api/user/profile"
+method: GET
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response has user email\", function () {\r
+
+      \    var res = pm.response.json();\r
+
+      \    pm.expect(res.data).to.have.property(\"email\");\r
+
+      });"
+    language: text/javascript
+order: 1000

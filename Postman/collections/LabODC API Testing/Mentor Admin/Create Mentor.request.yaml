@@ -1,0 +1,84 @@
+$kind: http-request
+url: '{{base_url}}/api/lab-admin/mentors'
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "fullName": "Test API Mentor",
+      "title": "Mr.",
+      "currentPosition": "Senior Developer",
+      "currentCompany": "Tech Corp",
+      "yearsOfExperience": 5,
+      "bio": "Experienced developer",
+      "expertise": ["Java", "Spring Boot"],
+      "hourlyRate": 50.0,
+      "currency": "USD",
+      "maxConcurrentProjects": 3,
+      "available": true
+    }
+scripts:
+  - type: beforeRequest
+    language: text/javascript
+    code: |-
+      var base_url = pm.environment.get("base_url");
+      // Login as admin
+      pm.sendRequest({
+          url: base_url + "/api/auth/login",
+          method: "POST",
+          header: { "Content-Type": "application/json" },
+          body: { mode: "raw", raw: JSON.stringify({ email: "labadmin2@labodc.com", password: "123123" }) }
+      }, function(err, res) {
+          if (!err && res.code === 200) {
+              var jsonData = res.json();
+              var token = jsonData.token || (jsonData.data && jsonData.data.token);
+              if (token) {
+                  pm.environment.set("token", token);
+                  // Get all mentors to find labadmin2's mentor profile
+                  pm.sendRequest({
+                      url: base_url + "/api/lab-admin/mentors?page=0&size=20",
+                      method: "GET",
+                      header: { "Authorization": "Bearer " + token }
+                  }, function(err2, res2) {
+                      if (!err2 && res2.code === 200) {
+                          var mentors = res2.json();
+                          var content = mentors.content || mentors;
+                          if (Array.isArray(content)) {
+                              content.forEach(function(mentor) {
+                                  if (mentor.userEmail === "labadmin2@labodc.com") {
+                                      // Delete this mentor profile
+                                      pm.sendRequest({
+                                          url: base_url + "/api/lab-admin/mentors/" + mentor.id,
+                                          method: "DELETE",
+                                          header: { "Authorization": "Bearer " + token }
+                                      }, function() {});
+                                  }
+                              });
+                          }
+                      }
+                  });
+              }
+          }
+      });
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Mentor created", function () {
+          pm.expect([200, 201]).to.include(pm.response.code);
+      });
+      pm.test("Mentor ID saved to environment", function () {
+          var jsonData = pm.response.json();
+          if (jsonData.id) {
+              pm.environment.set("mentor_id", jsonData.id);
+          }
+          pm.expect(jsonData.id).to.not.be.null;
+      });
+      pm.test("Mentor fullName is not null", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.fullName).to.not.be.null;
+      });
+      pm.test("Response time is under 2000ms", function () {
+          pm.expect(pm.response.responseTime).to.be.below(2000);
+      });
+settings: {}
+order: 5000

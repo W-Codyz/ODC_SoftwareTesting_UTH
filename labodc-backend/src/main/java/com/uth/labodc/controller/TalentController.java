@@ -223,9 +223,10 @@ public class TalentController {
     public ResponseEntity<ApiResponse<TalentTaskSubmissionDTO>> submitTaskReport(
             Authentication authentication,
             @PathVariable Long taskId,
+            @RequestParam(value = "source", required = false) String source,
             @RequestParam("file") MultipartFile file) {
         User user = currentUser(authentication);
-        TalentTaskSubmissionDTO result = talentService.submitTaskReport(user.getId(), taskId, file);
+        TalentTaskSubmissionDTO result = talentService.submitTaskReport(user.getId(), taskId, file, source);
         return ResponseEntity.ok(ApiResponse.success("Submitted", result));
     }
 
