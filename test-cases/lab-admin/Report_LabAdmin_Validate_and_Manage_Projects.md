@@ -1,12 +1,14 @@
 # Test Execution Report: FR-LAB-001 - Xác thực Doanh nghiệp (Enterprise Validation)
 
 **Module:** Lab Administrator  
-**Chức năng:** Validate Enterprise (`GET /api/lab-admin/enterprises/pending`, `POST /api/lab-admin/enterprises/{id}/approve`, `POST /api/lab-admin/enterprises/{id}/reject`, `POST /api/lab-admin/enterprises/{id}/request-info`)  
+**Chức năng:** Validate Enterprise (`GET /api/lab-admin/enterprises/pending`, `GET /api/lab-admin/enterprises/{id}`, `POST /api/lab-admin/enterprises/{id}/verify`, `DELETE /api/lab-admin/enterprises/{id}?reason={reason}`)  
+**Giao diện:** Quản lý → Doanh nghiệp (`/admin/enterprises-crud`)  
 **Người thực hiện:** Nguyễn Thành Nhân  
 **Ngày thực hiện:** 08/11/2026  
-**Môi trường test:** Postman (Windows), Backend Localhost (:8080), PostgreSQL 16 (Docker)  
-**Tham chiếu test case:** `test-cases/labadmin/FR-LAB-001_TestCases.md`  
-**Mã Task Jira:** `LABODC-46`
+**Ngày cập nhật:** 17/11/2026 
+**Môi trường test:** Postman, Frontend Localhost (:3000), Backend Localhost (:8080), PostgreSQL 16 (Docker)  
+**Script automation:** `e2e-tests/lab-admin/enterprise_validation_test.js`  
+**Tham chiếu test case:** `test-cases/lab-admin/TC_LabAdmin_Validate_and_Manage_Projects.md`
 
 ---
 
@@ -14,34 +16,37 @@
 
 | Chỉ số | Giá trị |
 |---|---:|
-| Tổng số test case | 14 |
-| Passed | 0 |
-| Failed | 14 |
-| Blocked / Skipped | 0 |
-| **Pass rate** | **0/14 = 0%** |
+| Tổng số test case | 17 |
+| Passed | 17 |
+| Failed | 0 |
+| **Pass rate** | **17/17 = 100%** |
 
 ---
 
 ## 2. Kết quả chi tiết thực thi (Detail Execution Log)
 
-| STT | TC ID | Tên test case | Input (TaxCode / Reason / Action) | Expected HTTP & Result | Actual HTTP & Result | Status | Tag / ST / Rule | Ghi chú |
+| STT | TC ID | Tên test case | Input (Reason / Action) | Expected HTTP & Result | Actual HTTP & Result | Status | Tag / ST / Rule | Ghi chú |
 |---:|---|---|---|---|---|:---:|---|---|
-| 1 | TC-LAB-01 | Xem danh sách Doanh nghiệp chờ xác thực | Bearer Token của `LAB_ADMIN` | 200 - Trả về danh sách Doanh nghiệp PENDING | 403 Forbidden - Response Body: {"success": false, "message": "Access Denied", "data": null}. | FAIL | V-LAB-ENTERPRISE, ST-LAB-01, R1 | |
-| 2 | TC-LAB-02 | Phê duyệt Doanh nghiệp với MST 10 số | `taxCode: "0123456789"`, `action: "APPROVED"` | 200 - Phê duyệt thành công | HTTP 500/404 No static resource | FAIL | V-LAB-TAX1, V-LAB-ACT1, B-TAX2, R1, ST-LAB-01 | |
-| 3 | TC-LAB-03 | Phê duyệt Doanh nghiệp với MST 13 số | `taxCode: "0123456789012"`, `action: "APPROVED"` | 200 - Phê duyệt thành công |  HTTP 500/404 No static resource | FAIL | V-LAB-TAX2, V-LAB-ACT1, B-TAX5, R1 | |
-| 4 | TC-LAB-04 | Từ chối Doanh nghiệp có lý do hợp lệ | `reason: "Mã số thuế không tồn tại"` | 200 - Từ chối thành công | HTTP 500/404 No static resource | FAIL | V-LAB-ACT2, V-LAB-RSN1, B-RSN4, R1, ST-LAB-02 | |
-| 5 | TC-LAB-05 | Từ chối Doanh nghiệp với lý do 1 ký tự | `reason: "K"` | 200 - Từ chối thành công | HTTP 500/404 No static resource | FAIL | B-RSN2, V-LAB-ACT2, R1 | |
-| 6 | TC-LAB-06 | Từ chối Doanh nghiệp với lý do 500 ký tự | `reason: "[500 ký tự A]"` | 200 - Từ chối thành công | HTTP 500/404 No static resource | FAIL | B-RSN6, V-LAB-ACT2, R1 | |
-| 7 | TC-LAB-07 | Yêu cầu bổ sung thông tin Doanh nghiệp | `note: "Yêu cầu bổ sung GPKD sao y"` | 200 - Gửi yêu cầu bổ sung thành công | HTTP 500/404 No static resource | FAIL | V-LAB-ACT3, R1, ST-LAB-03 | |
-| 8 | TC-LAB-08 | MST ít hơn 10 chữ số (9 số) | `taxCode: "012345678"` | 400 - Lỗi validation MST | HTTP 500/404 No static resource | FAIL | X-LAB-TAX1, B-TAX1, R2 | |
-| 9 | TC-LAB-09 | MST nhiều hơn 13 chữ số (14 số) | `taxCode: "01234567890123"` | 400 - Lỗi validation MST | HTTP 500/404 No static resource | FAIL | X-LAB-TAX2, B-TAX6, R2 | |
-| 10 | TC-LAB-10 | MST chứa ký tự chữ | `taxCode: "012345678a"` | 400 - Lỗi validation MST | HTTP 500/404 No static resource | FAIL | X-LAB-TAX3, R2 | |
-| 11 | TC-LAB-11 | Từ chối Doanh nghiệp nhưng để trống lý do | `reason: ""` | 400 - Lỗi lý do trống | HTTP 500/404 No static resource | FAIL | X-LAB-RSN1, B-RSN1, R4 | |
-| 12 | TC-LAB-12 | Lý do từ chối quá dài (501 ký tự) | `reason: "[501 ký tự A]"` | 400 - Lỗi độ dài lý do | HTTP 500/404 No static resource | FAIL | X-LAB-RSN2, B-RSN7, R4 | |
-| 13 | TC-LAB-13 | Phê duyệt lại Doanh nghiệp đã được Approve | ID 123 đang ở trạng thái `APPROVED` | 400 - Doanh nghiệp đã duyệt | HTTP 500/404 No static resource | FAIL | ST-LAB-04, R1 | |
-| 14 | TC-LAB-14 | Sinh viên gọi API xác thực Doanh nghiệp | Token của vai trò `TALENT` | 403 - Forbidden | HTTP 500/404 No static resource | FAIL | R5 | |
+| 1 | TC-LAB-01 | Xem danh sách doanh nghiệp PENDING | UI: lọc "Chờ xác minh"; API: `GET /api/lab-admin/enterprises/pending` | `200` - Chỉ trả về doanh nghiệp `PENDING` | `HTTP 200` - chỉ trả về enterprise `PENDING` | PASS | FR-LAB-001 - GET pending enterprises | |
+| 2 | TC-LAB-02 | Xem chi tiết Doanh nghiệp | Enterprise `APPROVED` (seed); UI: lọc "Đã duyệt", mở "Chỉnh sửa"; API: `GET /api/lab-admin/enterprises/{id}` | `200` - Trả về thông tin enterprise | `HTTP 200` - trả về đúng thông tin enterprise | PASS | GET detail | |
+| 3 | TC-LAB-03 | Verify doanh nghiệp đang PENDING | Enterprise `PENDING` (seed); bấm "Duyệt" trên UI | `200` - Enterprise `APPROVED` | `HTTP 200` - enterprise chuyển `APPROVED` | PASS | V-LAB-ACT1, ST-LAB-01 | |
+| 4 | TC-LAB-04 | Reject doanh nghiệp với reason hợp lệ | Enterprise `PENDING` (seed); UI: lý do "Mã số thuế không hợp lệ" | `200` - Enterprise `REJECTED` | `HTTP 200` - enterprise chuyển `REJECTED` | PASS | V-LAB-RSN1, B-RSN4, V-LAB-ACT2, ST-LAB-02 | |
+| 5 | TC-LAB-05 | Reject với reason rỗng | API: `reason=`; UI: để trống lý do rồi bấm OK | `400` - Không reject; UI báo lỗi bắt buộc, không gửi request | `HTTP 400` - "Reason is required and cannot be empty".| PASS | X-LAB-RSN1, B-RSN1 | |
+| 6 | TC-LAB-06 | Reject với reason dài 501 ký tự | UI: lý do 501 ký tự | `400` - Lý do không vượt quá 500 ký tự | `HTTP 400` - Reason for not exceeding 500 characters | PASS | X-LAB-RSN2, B-RSN7 | |
+| 7 | TC-LAB-07 | Verify lại doanh nghiệp đã APPROVED | Enterprise `APPROVED` (seed) | `409` - Trạng thái không đổi | `HTTP 409` - giữ nguyên `APPROVED` | PASS | ST-LAB-03 | |
+| 8 | TC-LAB-08 | Reject với reason tại biên min (1 ký tự) | UI: lý do `A` | `200` - Enterprise `REJECTED` | `HTTP 200` - enterprise chuyển `REJECTED` | PASS | V-LAB-RSN1, B-RSN2, R1 | |
+| 9 | TC-LAB-09 | Reject với reason ngay trên min (2 ký tự) | UI: lý do `AB` | `200` - Enterprise `REJECTED` | `HTTP 200` - enterprise chuyển `REJECTED` | PASS | V-LAB-RSN1, B-RSN3, R1 | |
+| 10 | TC-LAB-10 | Reject với reason ngay dưới max (499 ký tự) | UI: lý do 499 ký tự | `200` - Enterprise `REJECTED` | `HTTP 200` - enterprise chuyển `REJECTED` | PASS | V-LAB-RSN1, B-RSN5, R1 | |
+| 11 | TC-LAB-11 | Reject với reason tại biên max (500 ký tự) | UI: lý do 500 ký tự | `200` - Enterprise `REJECTED` | `HTTP 200` - enterprise chuyển `REJECTED` | PASS | V-LAB-RSN1, B-RSN6, R1 | |
+| 12 | TC-LAB-12 | Reject với reason chỉ chứa khoảng trắng | UI: lý do `"   "` | `400` - Giữ nguyên `PENDING` | `HTTP 400` - "Reason is required and cannot be empty". | PASS | X-LAB-RSN3, R4 | |
+| 13 | TC-LAB-13 | Verify doanh nghiệp đã bị REJECTED | Enterprise `REJECTED`; Postman: `POST /api/lab-admin/enterprises/{rejectedId}/verify` | `409` - Không verify, giữ nguyên `REJECTED` | `HTTP 409` - "Enterprise is not in PENDING status (current status: REJECTED)" | PASS | X-LAB-ID3, ST-LAB-04, R3 | |
+| 14 | TC-LAB-14 | Reject doanh nghiệp đã APPROVED | Enterprise `APPROVED`; Postman: `DELETE /api/lab-admin/enterprises/{approvedId}?reason=Test reject` | `409` - Không reject, giữ nguyên `APPROVED` | `HTTP 409` - "Enterprise is not in PENDING status (current status: APPROVED)" | PASS | X-LAB-ID3, ST-LAB-05, R3 | |
+| 15 | TC-LAB-15 | Verify doanh nghiệp không tồn tại | Postman: `POST /api/lab-admin/enterprises/99999/verify` | `404` - Báo lỗi không tìm thấy enterprise | `HTTP 404` - "Enterprise not found with id: 99999" | PASS | X-LAB-ID1, R2 | |
+| 16 | TC-LAB-16 | Tài khoản không phải admin gọi API verify | Enterprise `PENDING`; Postman: `POST /verify` với token `ENTERPRISE` | `401` (Unauthorized - Chưa xác thực) | `HTTP 401` - Invalid or expired token | PASS | R5 | |
+| 17 | TC-LAB-17 | Gọi API verify không có token | Enterprise `PENDING`; Postman: `POST /verify` không có header `Authorization` | `401` - Từ chối truy cập, giữ nguyên `PENDING` | `HTTP 401` - "Invalid or expired token" | PASS | R6 | |
 
 ---
+
 
 ## 3. Kiểm tra độ bao phủ Tag (Coverage Verification)
 
@@ -49,52 +54,51 @@
 
 | Tag | Mô tả | Test Case bao phủ | Kết quả thực tế |
 |---|---|---|---|
-| V-LAB-TAX1 | MST hợp lệ 10 số | TC-LAB-02 | FAIL |
-| V-LAB-TAX2 | MST hợp lệ 13 số | TC-LAB-03 | FAIL |
-| V-LAB-ACT1 | Action = APPROVED | TC-LAB-02, TC-LAB-03 | FAIL |
-| V-LAB-ACT2 | Action = REJECTED | TC-LAB-04, TC-LAB-05, TC-LAB-06 | FAIL |
-| V-LAB-ACT3 | Action = INFO_REQUESTED | TC-LAB-07 | FAIL |
-| V-LAB-RSN1 | Lý do từ chối hợp lệ (1-500 ký tự) | TC-LAB-04, TC-LAB-05, TC-LAB-06 | FAIL |
-| X-LAB-TAX1 | MST < 10 chữ số | TC-LAB-08 | FAIL |
-| X-LAB-TAX2 | MST > 13 chữ số | TC-LAB-09 | FAIL |
-| X-LAB-TAX3 | MST chứa ký tự chữ | TC-LAB-10 | FAIL |
-| X-LAB-RSN1 | Lý do từ chối rỗng | TC-LAB-11 | FAIL |
-| X-LAB-RSN2 | Lý do từ chối > 500 ký tự | TC-LAB-12 | FAIL |
+| V-LAB-ACT1 | Action = APPROVED | TC-LAB-03 | PASS |
+| V-LAB-ACT2 | Action = REJECTED | TC-LAB-04 | PASS |
+| V-LAB-RSN1 | Lý do từ chối hợp lệ (1-500 ký tự) | TC-LAB-04, 08, 09, 10, 11 | PASS |
+| X-LAB-RSN1 | Lý do từ chối rỗng | TC-LAB-05 | PASS |
+| X-LAB-RSN2 | Lý do từ chối > 500 ký tự | TC-LAB-06 | PASS |
+| X-LAB-RSN3 | Lý do từ chối chỉ chứa khoảng trắng | TC-LAB-12 | PASS |
+| V-LAB-ID1 | Enterprise tồn tại và `PENDING` | TC-LAB-03, 04 | PASS |
+| X-LAB-ID1 | Enterprise không tồn tại | TC-LAB-15 | PASS |
+| X-LAB-ID3 | Enterprise không ở `PENDING` | TC-LAB-07, 13, 14 | PASS - `409` |
+
 
 ### 3.2 Giá trị biên (BVA)
 
 | Tag | Điểm biên | Test Case bao phủ | Kết quả |
 |---|---|---|---|
-| B-TAX1 | min- = 9 chữ số | TC-LAB-08 | FAIL |
-| B-TAX2 | min = 10 chữ số | TC-LAB-02 | FAIL |
-| B-TAX5 | max = 13 chữ số | TC-LAB-03 | FAIL |
-| B-TAX6 | max+ = 14 chữ số | TC-LAB-09 | FAIL |
-| B-RSN1 | min- = 0 ký tự (rỗng) | TC-LAB-11 | FAIL |
-| B-RSN2 | min = 1 ký tự | TC-LAB-05 | FAIL |
-| B-RSN4 | nominal = 250 ký tự | TC-LAB-04 | FAIL |
-| B-RSN6 | max = 500 ký tự | TC-LAB-06 | FAIL |
-| B-RSN7 | max+ = 501 ký tự | TC-LAB-12 | FAIL |
+| B-RSN1 | min- = 0 ký tự | TC-LAB-05 | PASS - `400` |
+| B-RSN2 | min = 1 ký tự | TC-LAB-08 | PASS - `200` |
+| B-RSN3 | min+ = 2 ký tự | TC-LAB-09 | PASS - `200` |
+| B-RSN4 | nominal | TC-LAB-04 | PASS - `200` |
+| B-RSN5 | max- = 499 ký tự | TC-LAB-10 | PASS - `200` |
+| B-RSN6 | max = 500 ký tự | TC-LAB-11 | PASS - `200` |
+| B-RSN7 | max+ = 501 ký tự | TC-LAB-06 | PASS - `400` |
 
 ### 3.3 Chuyển đổi trạng thái (ST) & Bảng quyết định (Decision Table)
 
-**State Transitions (ST-LAB-01 đến ST-LAB-05):**
+**State Transitions:**
 
 | ST | Test Case | Kết quả |
 |---|---|:---:|
-| ST-LAB-01 | TC-LAB-01, TC-LAB-02 | FAIL |
-| ST-LAB-02 | TC-LAB-04 | FAIL |
-| ST-LAB-03 | TC-LAB-07 | FAIL |
-| ST-LAB-04 | TC-LAB-13 | FAIL |
-| ST-LAB-05 | Chưa có test case | Chưa kiểm thử |
+| ST-LAB-01 | TC-LAB-03 | PASS |
+| ST-LAB-02 | TC-LAB-04 | PASS |
+| ST-LAB-03 | TC-LAB-07 | PASS - `409` |
+| ST-LAB-04 | TC-LAB-13 | PASS - `409` |
+| ST-LAB-05 | TC-LAB-14 | PASS - `409` |
 
 **Decision Table Rules:**
 
 | Rule | Test Case | Kết quả |
 |---|---|:---:|
-| R1 (Phê duyệt hợp lệ) | TC-LAB-01 đến TC-LAB-07, TC-LAB-13 | FAIL |
-| R2 (Lỗi Mã số thuế) | TC-LAB-08 đến TC-LAB-10 | FAIL |
-| R3 | Chưa có test case | Chưa kiểm thử |
-| R4 (Lỗi Lý do từ chối) | TC-LAB-11, TC-LAB-12 | FAIL |
-| R5 (Lỗi Phân quyền) | TC-LAB-14 | FAIL |
+| R1 (Xử lý hợp lệ - 200) | TC-LAB-03, 04, TC-LAB-08 → 11 | PASS |
+| R2 (Enterprise không tồn tại - 404) | TC-LAB-15 | PASS - `404` |
+| R3 (Enterprise không ở PENDING - 409) | TC-LAB-07, 13, 14 | PASS - `409` |
+| R4 (Request không hợp lệ - 400) | TC-LAB-05, 06, 12 | PASS - `400` |
+| R5 (Không có quyền admin - 401) | TC-LAB-16 | PASS - `401` |
+| R6 (Chưa xác thực - 401) | TC-LAB-17 | PASS - `401` |
 
 ---
+
