@@ -21,6 +21,9 @@ public class MentorTaskSubmission {
     @Column(name = "task_id", nullable = false)
     private Long taskId;
 
+    @Column(name = "task_source", nullable = false)
+    private String taskSource = "mentor";
+
     @Column(name = "talent_id", nullable = false)
     private Long talentId;
 

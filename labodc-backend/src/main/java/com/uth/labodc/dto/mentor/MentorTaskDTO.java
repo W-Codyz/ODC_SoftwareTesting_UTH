@@ -13,6 +13,7 @@ import java.util.List;
 @Builder
 public class MentorTaskDTO {
     private String id;
+    private String source;
     private Long projectId;
     private String title;
     private String description;

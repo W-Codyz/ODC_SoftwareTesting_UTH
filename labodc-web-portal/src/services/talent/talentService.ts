@@ -35,6 +35,7 @@ export interface TalentDashboard {
 
 export interface TalentTask {
   id: number;
+  source?: 'mentor' | 'excel';
   projectId?: number;
   title: string;
   description?: string;
@@ -186,10 +187,13 @@ class TalentService {
     return response.data.data;
   }
 
-  async submitTaskReport(taskId: number, file: File): Promise<{ id: number; fileName: string }> {
+  async submitTaskReport(taskId: number, file: File, excelTask = false): Promise<{ id: number; fileName: string }> {
     const formData = new FormData();
     formData.append('file', file);
-    const response = await axiosInstance.post(`${this.basePath}/tasks/${taskId}/submit`, formData);
+    const response = await axiosInstance.post(
+      `${this.basePath}/tasks/${taskId}/submit${excelTask ? '?source=excel' : ''}`,
+      formData
+    );
     return response.data.data;
   }
 
