@@ -1,0 +1,13 @@
+$kind: http-request
+description: "Run after MI-16a. Afterward, remove the disposable user in pgAdmin: DELETE FROM users u WHERE u.email = '<mi_no_profile_email>' AND NOT EXISTS (SELECT 1 FROM mentors m WHERE m.user_id=u.id);"
+url: "{{base_url}}/api/mentor/invitations"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{mi_no_profile_token}}"
+scripts:
+  - type: afterResponse
+    code: pm.test('Missing Mentor profile returns 404',()=>pm.response.to.have.status(404));
+    language: text/javascript
+order: 8000

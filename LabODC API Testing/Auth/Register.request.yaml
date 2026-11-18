@@ -1,0 +1,25 @@
+$kind: http-request
+url: "{{base_url}}/api/auth/register"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"email\": \"testuser@mail.com\",\r
+
+    \  \"password\": \"test123123\",\r
+
+    \  \"confirmPassword\": \"test123123\",\r
+
+    \  \"role\": \"TALENT\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });"
+    language: text/javascript
+order: 2000

@@ -1,0 +1,68 @@
+$kind: http-request
+name: TC23.1 - POST - /reports-thành công
+url: "{{base_url}}/api/mentor/reports"
+method: POST
+body:
+  type: formdata
+  content:
+    - type: text
+      key: projectId
+      value: "{{projectId}}"
+    - type: text
+      key: student
+      value: Nguyen Van A
+    - type: text
+      key: studentId
+      value: "\tSV001"
+    - type: text
+      key: reportName
+      value: Bao cao tuan 1
+    - type: text
+      key: dueDate
+      value: 2026-12-31
+    - type: text
+      key: summary
+      value: Tom tat
+    - type: file
+      key: file
+      src:
+        - RJ3dVu6lB/bao_cao_test.txt
+    - type: text
+      key: status
+      value: SUBMITTED
+scripts:
+  - type: beforeRequest
+    code: |-
+      var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');
+      pm.sendRequest({
+          url: base_url + '/api/auth/login',
+          method: 'POST',
+          header: { 'Content-Type': 'application/json' },
+          body: {
+              mode: 'raw',
+              raw: JSON.stringify({ email: 'mentor1@labodc.com', password: '123123' })
+          }
+      }, function(err, res) {
+          if (!err && res.code === 200) {
+              var jsonData = res.json();
+              var token = jsonData.token || (jsonData.data && jsonData.data.token);
+              if (token) { pm.environment.set('token', token); }
+          }
+      });
+    language: text/javascript
+  - type: afterResponse
+    code: "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r
+
+      pm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r
+
+      pm.test(\"success = true\", () => pm.expect(pm.response.json().success).to.eql(true));\r
+
+      pm.test(\"data có id\", () => pm.expect(pm.response.json().data).to.have.property(\"id\"));\r
+
+      \r
+
+      const d = pm.response.json().data;\r
+
+      if (d && d.id) pm.environment.set(\"newReportId\", d.id);"
+    language: text/javascript
+order: 27000

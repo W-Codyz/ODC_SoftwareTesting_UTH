@@ -1,0 +1,12 @@
+$kind: http-request
+url: "{{base_url}}/api/lab-admin/mentors/{{mentor_id}}"
+method: DELETE
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Mentor deleted\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });"
+    language: text/javascript
+order: 7000

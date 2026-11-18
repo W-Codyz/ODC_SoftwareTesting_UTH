@@ -1,0 +1,30 @@
+name: LabODC Unified Environment
+values:
+  - key: base_url
+    value: 'http://localhost:8080'
+  - key: token
+    value: ''
+  - key: enterprise_id
+    value: '1'
+  - key: project_id
+    value: '1'
+  - key: mentor_id
+    value: '1'
+  - key: talent_id
+    value: '1'
+  - key: task_id
+    value: ''
+  - key: submission_id
+    value: ''
+  - key: invitation_id
+    value: ''
+  - key: report_id
+    value: ''
+  - key: report_period
+    value: 2026-Q3
+  - key: member_id
+    value: '1'
+  - key: project_start_date
+    value: '2026-01-01'
+  - key: project_end_date
+    value: '2026-12-31'

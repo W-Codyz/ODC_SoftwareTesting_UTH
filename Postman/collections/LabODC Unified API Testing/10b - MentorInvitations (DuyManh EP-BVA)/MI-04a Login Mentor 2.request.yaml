@@ -1,0 +1,20 @@
+$kind: http-request
+description: Stores token_mentor_b for isolation check.
+url: "{{base_url}}/api/auth/login"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "mentor.tranminh@uth.edu.vn",
+      "password": "123123"
+    }
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: pm.test('Login returns 200',()=>pm.response.to.have.status(200)); const b=pm.response.json(); pm.environment.set('token_mentor_b',b.data.token);
+    language: text/javascript
+order: 5000

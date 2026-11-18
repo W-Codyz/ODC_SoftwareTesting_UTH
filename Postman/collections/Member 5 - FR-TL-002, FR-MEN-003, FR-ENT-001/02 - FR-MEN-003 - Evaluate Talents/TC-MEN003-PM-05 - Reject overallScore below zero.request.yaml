@@ -1,0 +1,28 @@
+$kind: http-request
+url: "{{base_url}}/api/mentor/projects/{{project_id}}/evaluations"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "talentId": {{talent_id}},
+      "evaluationPeriod": "{{evaluation_period}}",
+      "overallScore": -0.1,
+      "technicalSkills": { "score": 8.0 },
+      "problemSolving": { "score": 8.0 },
+      "teamwork": { "score": 8.0 },
+      "communication": { "score": 8.0 },
+      "codeQuality": { "score": 8.0 },
+      "punctuality": { "score": 8.0 }
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{mentor_token}}"
+scripts:
+  - type: afterResponse
+    code: pm.test("Score below zero is rejected (expected HTTP 400)", function () { pm.response.to.have.status(400); });
+    language: text/javascript
+order: 5000

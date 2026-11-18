@@ -1,0 +1,3 @@
+$kind: collection
+description: Mentor portal endpoints. 24 test cases (TC01-TC24). Requires MENTOR token.
+order: 11000

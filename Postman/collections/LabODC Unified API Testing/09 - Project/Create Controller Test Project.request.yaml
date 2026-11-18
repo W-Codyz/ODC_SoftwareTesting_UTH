@@ -1,0 +1,52 @@
+$kind: http-request
+url: "{{base_url}}/api/projects"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Postman Controller Test {{project_test_suffix}}",
+      "description": "Test project created by the ProjectController Postman collection.",
+      "objectives": ["Verify ProjectController endpoints"],
+      "requirements": "Postman API test data",
+      "startDate": "{{project_start_date}}",
+      "endDate": "{{project_end_date}}",
+      "budget": 10000000,
+      "requiredTalents": 3,
+      "technologies": ["Java", "Postman"],
+      "requiredSkills": ["API testing"],
+      "enterpriseId": {{enterprise_id}},
+      "allowApplications": true
+    }
+scripts:
+  - type: beforeRequest
+    code: |-
+      var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');
+      pm.sendRequest({
+          url: base_url + '/api/auth/login',
+          method: 'POST',
+          header: { 'Content-Type': 'application/json' },
+          body: {
+              mode: 'raw',
+              raw: JSON.stringify({ email: 'enterprise1@example.com', password: '123123' })
+          }
+      }, function(err, res) {
+          if (!err && res.code === 200) {
+              var jsonData = res.json();
+              var token = jsonData.token || (jsonData.data && jsonData.data.token);
+              if (token) { pm.environment.set('token', token); }
+          }
+      });
+    language: text/javascript
+  - type: afterResponse
+    code: |-
+      var res = pm.response.json();
+      var project = res.data || res;
+      pm.test("Tạo project controller và lưu ID", function () {
+          pm.expect(project).to.have.property("id");
+          pm.environment.set("project_controller_test_id", String(project.id));
+      });
+    language: text/javascript
+order: 15000

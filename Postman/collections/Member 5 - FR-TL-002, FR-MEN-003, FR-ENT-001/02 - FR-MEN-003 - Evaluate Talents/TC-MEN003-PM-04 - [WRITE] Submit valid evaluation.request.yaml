@@ -1,0 +1,34 @@
+$kind: http-request
+url: "{{base_url}}/api/mentor/projects/{{project_id}}/evaluations"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "talentId": {{talent_id}},
+      "evaluationPeriod": "{{evaluation_period}}",
+      "overallScore": 8.5,
+      "technicalSkills": { "score": 9.0, "comment": "Postman test" },
+      "problemSolving": { "score": 8.5, "comment": "Postman test" },
+      "teamwork": { "score": 8.0, "comment": "Postman test" },
+      "communication": { "score": 8.5, "comment": "Postman test" },
+      "codeQuality": { "score": 9.0, "comment": "Postman test" },
+      "punctuality": { "score": 9.5, "comment": "Postman test" },
+      "strengths": ["Test entry"],
+      "weaknesses": [],
+      "recommendations": [],
+      "tasksCompleted": 1,
+      "tasksTotal": 1,
+      "hoursWorked": 1
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{mentor_token}}"
+scripts:
+  - type: afterResponse
+    code: pm.test("Valid evaluation is accepted (expected HTTP 200)", function () { pm.response.to.have.status(200); });
+    language: text/javascript
+order: 4000

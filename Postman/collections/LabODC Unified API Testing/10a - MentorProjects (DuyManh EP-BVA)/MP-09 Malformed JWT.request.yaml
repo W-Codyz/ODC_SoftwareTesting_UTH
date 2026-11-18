@@ -1,0 +1,13 @@
+$kind: http-request
+description: "TC-MP-09: expected 401. Current API returns 500."
+url: "{{base_url}}/api/mentor/projects"
+method: GET
+headers:
+  Authorization: "{{bearer_token_01t0}}"
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: pm.test('Expected 401 for malformed JWT',()=>pm.response.to.have.status(401));
+    language: text/javascript
+order: 12000

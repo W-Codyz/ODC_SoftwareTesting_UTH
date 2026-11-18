@@ -1,0 +1,35 @@
+$kind: http-request
+url: "{{base_url}}/api/talent-leader/projects/{{project_id}}/reports"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "reportType": "MONTHLY",
+      "reportingPeriod": "{{reporting_period}}",
+      "overallProgress": 45,
+      "tasksCompleted": [],
+      "tasksInProgress": [],
+      "issues": [],
+      "nextMonthPlan": [],
+      "teamPerformance": {
+        "collaboration": 4.5,
+        "communication": 4.0,
+        "productivity": 4.2,
+        "codeQuality": 4.3
+      },
+      "attachments": []
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{talent_token}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("SRS valid report is accepted (expected HTTP 201)", function () { pm.response.to.have.status(201); });
+      if (pm.response.code === 201) { var json = pm.response.json(); var data = json.data || {}; var id = data.reportId || data.id; if (id) pm.environment.set("report_id", String(id)); }
+    language: text/javascript
+order: 2000

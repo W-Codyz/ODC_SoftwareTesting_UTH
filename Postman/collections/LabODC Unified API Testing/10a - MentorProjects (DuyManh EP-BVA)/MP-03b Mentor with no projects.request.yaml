@@ -1,0 +1,13 @@
+$kind: http-request
+description: "TC-MP-03: expected an empty array for the fixture Mentor."
+url: "{{base_url}}/api/mentor/projects"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{token_mentor_empty}}"
+scripts:
+  - type: afterResponse
+    code: pm.test('Returns empty project array',()=>{pm.response.to.have.status(200);const b=pm.response.json();pm.expect(b.success).to.eql(true);pm.expect(b.data).to.eql([]);});
+    language: text/javascript
+order: 7000

@@ -1,0 +1,13 @@
+$kind: http-request
+description: Expected 200 and an empty data array for Mentor 3.
+url: "{{base_url}}/api/mentor/invitations"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{token_no_pending}}"
+scripts:
+  - type: afterResponse
+    code: pm.test('Returns 200',()=>pm.response.to.have.status(200)); const b=pm.response.json(); pm.test('No pending invitations',()=>{pm.expect(b.success).to.eql(true);pm.expect(b.data).to.eql([]);});
+    language: text/javascript
+order: 4000

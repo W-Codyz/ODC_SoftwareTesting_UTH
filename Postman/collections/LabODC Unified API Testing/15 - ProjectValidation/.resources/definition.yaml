@@ -1,0 +1,3 @@
+$kind: collection
+description: "Project validation workflow endpoints. Requires LAB_ADMIN token. Covers: list pending projects, view stats, approve/reject projects, assign mentors."
+order: 18000

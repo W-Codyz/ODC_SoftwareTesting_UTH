@@ -31,9 +31,9 @@ CREATE TYPE project_status_enum AS ENUM (
     'RECRUITING', 'IN_PROGRESS', 'ON_HOLD', 'COMPLETED', 'CANCELLED', 'ARCHIVED'
 );
 
-CREATE TYPE project_member_role_enum AS ENUM ('MEMBER', 'LEADER');
+CREATE TYPE project_member_role_enum AS ENUM ('MEMBER', 'LEADER', 'CO_LEADER');
 
-CREATE TYPE project_member_status_enum AS ENUM ('ACTIVE', 'LEFT', 'REMOVED');
+CREATE TYPE project_member_status_enum AS ENUM ('PENDING', 'APPROVED', 'REJECTED', 'ACTIVE', 'LEFT', 'REMOVED', 'INACTIVE');
 
 CREATE TYPE payment_status_enum AS ENUM (
     'PENDING', 'PROCESSING', 'COMPLETED', 'FAILED', 'CANCELLED', 'REFUNDED', 'EXPIRED'

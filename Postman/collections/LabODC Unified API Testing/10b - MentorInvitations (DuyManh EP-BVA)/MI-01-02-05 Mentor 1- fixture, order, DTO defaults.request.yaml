@@ -1,0 +1,23 @@
+$kind: http-request
+name: "MI-01/02/05 Mentor 1: fixture, order, DTO defaults"
+description: Requires the QA-POSTMAN-MI fixtures from scripts/postman_mentor_invitations_fixtures.sql. Checks Mentor 1 sees both of its pending rows, newest first, all DTO fields, and normalization of fixture B.
+url: "{{base_url}}/api/mentor/invitations"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{token}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Returns 200', function () { pm.response.to.have.status(200); });
+      const body = pm.response.json(); const data = body.data || [];
+      pm.test('Success envelope contains array', function () { pm.expect(body.success).to.eql(true); pm.expect(data).to.be.an('array'); });
+      pm.test('Fixture A is visible', function () { pm.expect(data.some(x => x.groupName === 'QA-POSTMAN-MI-A')).to.eql(true); });
+      const fixtures = data.filter(x => /^QA-POSTMAN-MI-[AB]$/.test(x.groupName));
+      pm.test('Two fixtures sorted by receivedDate descending', function () { pm.expect(fixtures.length).to.eql(2); const dates=fixtures.map(x=>x.receivedDate); pm.expect(dates).to.eql([...dates].sort().reverse()); });
+      pm.test('All DTO fields are present', function () { fixtures.forEach(x => ['id','projectName','groupName','studentCount','description','deadline','skills','receivedDate','priority'].forEach(k => pm.expect(x).to.have.property(k))); });
+      const b=fixtures.find(x=>x.groupName==='QA-POSTMAN-MI-B');
+      pm.test('Fixture B null/default values are normalized', function () { pm.expect(b.description).to.eql(''); pm.expect(b.skills).to.eql([]); pm.expect(b.priority).to.eql('medium'); pm.expect(b.deadline).to.be.a('string').and.not.empty; });
+    language: text/javascript
+order: 1000

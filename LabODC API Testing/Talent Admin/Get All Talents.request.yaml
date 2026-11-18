@@ -1,0 +1,7 @@
+$kind: http-request
+url: "{{base_url}}/api/lab-admin/talents?page=0&size=10"
+method: GET
+queryParams:
+  page: "0"
+  size: "10"
+order: 1000

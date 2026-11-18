@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{base_url}}/api/lab-admin/mentors/expertise/all"
+method: GET
+order: 3000

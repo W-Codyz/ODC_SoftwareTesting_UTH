@@ -1,0 +1,30 @@
+$kind: http-request
+url: '{{base_url}}/api/lab-admin/talents/{{talent_id}}'
+method: PUT
+body:
+  type: json
+  content: |-
+    {
+      "fullName": "Tran Updated Talent",
+      "studentId": "TEST001",
+      "university": "UTH",
+      "major": "Software Engineering",
+      "yearOfStudy": 4,
+      "bio": "Updated bio"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Status code is 200', function () {
+          pm.response.to.have.status(200);
+      });
+      pm.test('Updated talent data exists', function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData).to.not.be.null;
+      });
+      pm.test('Response time is under 2000ms', function () {
+          pm.expect(pm.response.responseTime).to.be.below(2000);
+      });
+settings: {}
+order: 4000

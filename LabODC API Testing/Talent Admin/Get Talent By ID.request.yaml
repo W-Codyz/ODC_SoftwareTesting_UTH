@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{base_url}}/api/lab-admin/talents/11"
+method: GET
+order: 2000

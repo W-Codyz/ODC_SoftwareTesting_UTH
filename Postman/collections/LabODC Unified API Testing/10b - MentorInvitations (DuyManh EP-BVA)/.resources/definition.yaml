@@ -1,0 +1,6 @@
+$kind: collection
+description: |-
+  Equivalence Partitioning + BVA test cases for GET /api/mentor/invitations.
+  Covers: fixture data + ordering + DTO, no-token auth, no pending invitations, data isolation between mentors, and mentor without profile.
+  Source: DuyManh - LabODC_API_Testing
+order: 13000

@@ -1,0 +1,36 @@
+$kind: http-request
+name: TC09.1 - GET - /tasks/{taskId}/submissions/{submissionId}/file
+url: "{{base_url}}/api/mentor/tasks/14/submissions/1/file"
+method: GET
+scripts:
+  - type: beforeRequest
+    code: |-
+      var base_url = pm.environment.get('base_url') || pm.environment.get('base_url');
+      pm.sendRequest({
+          url: base_url + '/api/auth/login',
+          method: 'POST',
+          header: { 'Content-Type': 'application/json' },
+          body: {
+              mode: 'raw',
+              raw: JSON.stringify({ email: 'mentor1@labodc.com', password: '123123' })
+          }
+      }, function(err, res) {
+          if (!err && res.code === 200) {
+              var jsonData = res.json();
+              var token = jsonData.token || (jsonData.data && jsonData.data.token);
+              if (token) { pm.environment.set('token', token); }
+          }
+      });
+    language: text/javascript
+  - type: afterResponse
+    code: "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r
+
+      pm.test(\"Thời gian < 2s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));\r
+
+      pm.test(\"Có header attachment\", () => {\r
+
+      \    pm.expect(pm.response.headers.get(\"Content-Disposition\") || \"\").to.include(\"attachment\");\r
+
+      });"
+    language: text/javascript
+order: 25000

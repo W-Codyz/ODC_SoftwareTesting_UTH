@@ -1,0 +1,24 @@
+$kind: http-request
+url: '{{base_url}}/api/lab-admin/mentors/1'
+method: GET
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Status code is 200', function () {
+          pm.response.to.have.status(200);
+      });
+      pm.test('Mentor data exists', function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData).to.not.be.null;
+          pm.expect(jsonData.id).to.not.be.null;
+      });
+      pm.test('Mentor has fullName', function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.fullName).to.not.be.null;
+      });
+      pm.test('Response time is under 2000ms', function () {
+          pm.expect(pm.response.responseTime).to.be.below(2000);
+      });
+settings: {}
+order: 2000

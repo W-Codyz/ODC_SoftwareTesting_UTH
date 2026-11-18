@@ -1,0 +1,6 @@
+$kind: collection
+description: |-
+  Equivalence Partitioning + BVA test cases for GET /api/mentor/projects.
+  Covers: multi-project mentor, single-project mentor, no-project mentor, data isolation, progress boundaries (0/1/99/100), auth negative cases (no token, empty bearer, malformed JWT, expired JWT, invalid signature, wrong roles: TALENT/ENTERPRISE/LAB_ADMIN/SYSTEM_ADMIN), and mentor without profile.
+  Source: DuyManh - LabODC_API_Testing
+order: 12000
