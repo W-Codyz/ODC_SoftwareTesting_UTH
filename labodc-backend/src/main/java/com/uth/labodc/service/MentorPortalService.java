@@ -10,6 +10,7 @@ import com.uth.labodc.model.entity.MentorInvitation;
 import com.uth.labodc.model.entity.MentorReport;
 import com.uth.labodc.model.entity.MentorTask;
 import com.uth.labodc.model.entity.MentorTaskSubmission;
+import com.uth.labodc.model.entity.ExcelTaskSubmission;
 import com.uth.labodc.model.entity.Project;
 import com.uth.labodc.model.entity.ProjectMember;
 import com.uth.labodc.model.entity.Talent;
@@ -23,6 +24,7 @@ import com.uth.labodc.repository.MentorReportRepository;
 import com.uth.labodc.repository.MentorRepository;
 import com.uth.labodc.repository.MentorTaskRepository;
 import com.uth.labodc.repository.MentorTaskSubmissionRepository;
+import com.uth.labodc.repository.ExcelTaskSubmissionRepository;
 import com.uth.labodc.repository.ProjectRepository;
 import com.uth.labodc.repository.TalentEvaluationRepository;
 import com.uth.labodc.repository.TalentRepository;
@@ -78,6 +80,7 @@ public class MentorPortalService {
     private final MentorTaskRepository mentorTaskRepository;
     private final MentorReportRepository mentorReportRepository;
     private final MentorTaskSubmissionRepository mentorTaskSubmissionRepository;
+    private final ExcelTaskSubmissionRepository excelTaskSubmissionRepository;
     private final ProjectRepository projectRepository;
     private final TalentRepository talentRepository;
     private final TalentEvaluationRepository talentEvaluationRepository;
@@ -90,7 +93,8 @@ public class MentorPortalService {
 
     private static final String[] TASK_TEMPLATE_HEADERS = {
             "Task ID", "Task Name", "Description", "Assigned To", "Priority",
-            "Start Date", "Due Date", "Estimated Hours", "Status", "Dependencies", "Tags"
+            "Start Date", "Due Date", "Estimated Hours", "Status", "Dependencies", "Tags",
+            "Progress (%)"
     };
 
     public List<MentorProjectOptionDTO> getProjects(User user) {
@@ -206,7 +210,16 @@ public class MentorPortalService {
     public List<MentorTaskDTO> getTasks(User user) {
         Mentor mentor = requireMentor(user);
         List<MentorTask> tasks = mentorTaskRepository.findByMentorIdOrderByDueDateAsc(mentor.getId());
-        return tasks.stream().map(this::toTaskDTO).toList();
+        List<MentorTaskDTO> result = new ArrayList<>(tasks.stream().map(this::toTaskDTO).toList());
+        List<Long> projectIds = projectRepository.findByMentorId(mentor.getId()).stream()
+                .map(Project::getId).toList();
+        if (!projectIds.isEmpty()) {
+            Map<Long, String> titles = loadProjectTitles(projectIds);
+            taskRepository.findByProjectIdInOrderByDueDateAsc(projectIds).stream()
+                    .map(task -> toTaskDTO(task, titles.getOrDefault(task.getProjectId(), "")))
+                    .forEach(result::add);
+        }
+        return result;
     }
 
     public List<MentorTalentOptionDTO> getProjectTalents(User user, long projectId) {
@@ -246,8 +259,15 @@ public class MentorPortalService {
 
     public List<MentorTaskDTO> getProjectTasks(User user, long projectId) {
         Mentor mentor = requireMentor(user);
-        List<MentorTask> tasks = mentorTaskRepository.findByMentorIdAndProjectIdOrderByDueDateAsc(mentor.getId(), projectId);
-        return tasks.stream().map(this::toTaskDTO).toList();
+        requireMentorProject(user, projectId);
+        List<MentorTaskDTO> result = new ArrayList<>(mentorTaskRepository
+                .findByMentorIdAndProjectIdOrderByDueDateAsc(mentor.getId(), projectId)
+                .stream().map(this::toTaskDTO).toList());
+        String projectName = resolveProjectTitle(projectId);
+        taskRepository.findByProjectIdInOrderByDueDateAsc(List.of(projectId)).stream()
+                .map(task -> toTaskDTO(task, projectName))
+                .forEach(result::add);
+        return result;
     }
 
     public byte[] generateTaskTemplate(User user, long projectId) {
@@ -346,6 +366,10 @@ public class MentorPortalService {
         }
         Integer estimatedHours = optionalInteger(row, 7, "Estimated Hours");
         TaskStatus status = parseStatus(cellText(row, 8), "Status");
+        Integer progressPercentage = optionalInteger(row, 11, "Progress (%)");
+        if (progressPercentage != null && progressPercentage > 100) {
+            throw new BadRequestException("Progress (%) phải nằm trong khoảng 0 đến 100");
+        }
 
         Task task = new Task();
         task.setProjectId(projectId);
@@ -359,6 +383,7 @@ public class MentorPortalService {
         task.setStartDate(startDate);
         task.setDueDate(dueDate);
         task.setEstimatedHours(estimatedHours);
+        task.setProgressPercentage(progressPercentage);
         task.setDependencies(optionalText(row, 9));
         task.setTags(optionalText(row, 10));
         task.setCreatedAt(LocalDateTime.now());
@@ -616,7 +641,41 @@ public class MentorPortalService {
         return toTaskDTO(saved);
     }
 
-    public MentorTaskDTO updateTask(User user, long projectId, long taskId, MentorTaskUpsertRequest request) {
+    public MentorTaskDTO updateTask(User user, long projectId, long taskId, MentorTaskUpsertRequest request, String source) {
+    if ("excel".equalsIgnoreCase(source)) {
+        requireMentorProject(user, projectId);
+        Task task = taskRepository.findById(taskId)
+                .filter(item -> item.getProjectId().equals(projectId))
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+        LocalDate nextStartDate = task.getStartDate();
+        LocalDate nextDueDate = request.getDueDate() != null ? parseLocalDate(request.getDueDate()) : task.getDueDate();
+        if (nextStartDate != null && nextDueDate != null && nextDueDate.isBefore(nextStartDate)) {
+            throw new BadRequestException("Hạn chót không được trước ngày bắt đầu " + nextStartDate);
+        }
+        if (request.getTitle() != null && !request.getTitle().isBlank()) task.setTaskName(request.getTitle());
+        if (request.getDescription() != null) task.setDescription(request.getDescription());
+        if (request.getStatus() != null) task.setStatus(toExcelTaskStatus(request.getStatus()));
+        if (request.getProgress() != null) task.setProgressPercentage(normalizeProgress(request.getProgress()));
+        if (request.getAssignedTo() != null) {
+            if (request.getAssignedTo().isEmpty()) {
+                task.setAssignedTo(null);
+            } else {
+                try {
+                    task.setAssignedTo(Long.valueOf(request.getAssignedTo().get(0)));
+                } catch (NumberFormatException e) {
+                    throw new BadRequestException("Invalid talent id in Assigned To");
+                }
+            }
+        }
+        if (request.getDueDate() != null) task.setDueDate(nextDueDate);
+        if (request.getPriority() != null) task.setPriority(toExcelTaskPriority(request.getPriority()));
+        task.setUpdatedAt(LocalDateTime.now());
+        Task saved = taskRepository.save(task);
+        return toTaskDTO(saved, resolveProjectTitle(projectId));
+    }
+    if (source != null && !source.isBlank() && !"mentor".equalsIgnoreCase(source)) {
+        throw new BadRequestException("Nguồn công việc không hợp lệ");
+    }
     MentorTask task = validateMentorTaskPermission(user, taskId);
 
     // validateMentorTaskPermission chỉ check mentorId, nên cần check thêm projectId
@@ -651,14 +710,58 @@ public class MentorPortalService {
     return toTaskDTO(saved);
 }
 
-    public void deleteTask(User user, long projectId, long taskId) {
-    MentorTask task = validateMentorTaskPermission(user, taskId);
-
-    if (task.getProjectId() != null && task.getProjectId() != projectId) {
-        throw new ResourceNotFoundException("Task not found");
+    private TaskStatus toExcelTaskStatus(String status) {
+        return switch (status.trim().toLowerCase()) {
+            case "completed" -> TaskStatus.COMPLETED;
+            case "in-progress" -> TaskStatus.IN_PROGRESS;
+            case "pending" -> TaskStatus.TODO;
+            default -> throw new BadRequestException("Trạng thái công việc không hợp lệ");
+        };
     }
 
-    mentorTaskRepository.delete(task);
+    private TaskPriority toExcelTaskPriority(String priority) {
+        return switch (priority.trim().toLowerCase()) {
+            case "low" -> TaskPriority.LOW;
+            case "medium" -> TaskPriority.MEDIUM;
+            case "high" -> TaskPriority.HIGH;
+            default -> throw new BadRequestException("Mức ưu tiên không hợp lệ");
+        };
+    }
+
+    public void deleteTask(User user, long projectId, long taskId, String source) {
+    if ("excel".equalsIgnoreCase(source)) {
+        requireMentorProject(user, projectId);
+        Task task = taskRepository.findById(taskId)
+                .filter(item -> item.getProjectId().equals(projectId))
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+        taskRepository.delete(task);
+        return;
+    }
+    if ("mentor".equalsIgnoreCase(source)) {
+        MentorTask task = validateMentorTaskPermission(user, taskId);
+        if (task.getProjectId() != null && task.getProjectId() != projectId) {
+            throw new ResourceNotFoundException("Task not found");
+        }
+        mentorTaskRepository.delete(task);
+        return;
+    }
+
+    MentorTask mentorTask = mentorTaskRepository.findById(taskId).orElse(null);
+    if (mentorTask != null) {
+        MentorTask task = validateMentorTaskPermission(user, taskId);
+
+        if (task.getProjectId() != null && task.getProjectId() != projectId) {
+            throw new ResourceNotFoundException("Task not found");
+        }
+        mentorTaskRepository.delete(task);
+        return;
+    }
+
+    requireMentorProject(user, projectId);
+    Task task = taskRepository.findById(taskId)
+            .filter(item -> item.getProjectId().equals(projectId))
+            .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+    taskRepository.delete(task);
 }
 
     public List<MentorTalentEvaluationDTO> getEvaluations(User user, Long projectId) {
@@ -830,14 +933,32 @@ public class MentorPortalService {
         }
     }
 
-    public List<MentorTaskSubmissionDTO> getTaskSubmissions(User user, long taskId) {
-    validateMentorTaskPermission(user, taskId);
-
-    List<MentorTaskSubmission> submissions = mentorTaskSubmissionRepository
-            .findByTaskIdOrderBySubmittedAtDesc(taskId);
-    if (submissions.isEmpty()) {
-        return List.of();
+    public List<MentorTaskSubmissionDTO> getTaskSubmissions(User user, long taskId, String source) {
+    List<MentorTaskSubmissionDTO> result = new ArrayList<>();
+    if ("excel".equalsIgnoreCase(source)) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+        requireMentorProject(user, task.getProjectId());
+        List<ExcelTaskSubmission> excelSubmissions = excelTaskSubmissionRepository.findByTaskIdOrderBySubmittedAtDesc(taskId);
+        List<Long> excelTalentIds = excelSubmissions.stream().map(ExcelTaskSubmission::getTalentId).distinct().toList();
+        Map<Long, Talent> excelTalentMap = talentRepository.findAllById(excelTalentIds).stream()
+                .collect(java.util.stream.Collectors.toMap(Talent::getId, t -> t, (a, b) -> a));
+        return excelSubmissions.stream().map(s -> {
+            Talent talent = excelTalentMap.get(s.getTalentId());
+            return MentorTaskSubmissionDTO.builder().id(s.getId()).taskId(s.getTaskId()).taskSource("excel")
+                    .talentId(s.getTalentId()).talentName(talent != null ? talent.getFullName() : null)
+                    .studentId(talent != null ? talent.getStudentId() : null).fileName(s.getFileName())
+                    .fileSize(s.getFileSize()).submittedAt(s.getSubmittedAt() != null ? s.getSubmittedAt().toString() : null)
+                    .build();
+        }).toList();
     }
+    if (source != null && !source.isBlank() && !"mentor".equalsIgnoreCase(source)) {
+        throw new BadRequestException("Task source is invalid");
+    }
+    validateMentorTaskPermission(user, taskId);
+    List<MentorTaskSubmission> submissions = mentorTaskSubmissionRepository
+            .findByTaskIdAndTaskSourceOrderBySubmittedAtDesc(taskId, "mentor");
+    if (submissions.isEmpty()) return List.of();
 
     List<Long> talentIds = submissions.stream()
             .map(MentorTaskSubmission::getTalentId)
@@ -863,25 +984,45 @@ public class MentorPortalService {
             .toList();
 }
 
-    public Resource getTaskSubmissionFile(User user, long taskId, long submissionId) {
-    validateMentorTaskPermission(user, taskId);
+    public Resource getTaskSubmissionFile(User user, long taskId, long submissionId, String source) {
+    boolean excelTask = "excel".equalsIgnoreCase(source);
+    if (excelTask) {
+        Task task = taskRepository.findById(taskId).orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+        requireMentorProject(user, task.getProjectId());
+    } else {
+        validateMentorTaskPermission(user, taskId);
+    }
 
-    MentorTaskSubmission submission = mentorTaskSubmissionRepository.findById(submissionId)
-            .orElseThrow(() -> new ResourceNotFoundException("File not found"));
+    String filePath;
+    Long talentId;
+    if (excelTask) {
+        ExcelTaskSubmission submission = excelTaskSubmissionRepository.findById(submissionId)
+                .filter(s -> s.getTaskId().equals(taskId))
+                .orElseThrow(() -> new ResourceNotFoundException("File not found"));
+        filePath = submission.getFilePath();
+        talentId = submission.getTalentId();
+    } else {
+        MentorTaskSubmission submission = mentorTaskSubmissionRepository.findById(submissionId)
+                .filter(s -> s.getTaskId().equals(taskId) && "mentor".equals(s.getTaskSource()))
+                .orElseThrow(() -> new ResourceNotFoundException("File not found"));
+        filePath = submission.getFilePath();
+        talentId = submission.getTalentId();
+    }
 
-    if (submission.getFilePath() == null || submission.getFilePath().isBlank()) {
+    if (filePath == null || filePath.isBlank()) {
         throw new ResourceNotFoundException("File not found");
     }
 
     try {
-        Path file = Paths.get(submission.getFilePath()).toAbsolutePath().normalize();
+        Path file = Paths.get(filePath).toAbsolutePath().normalize();
         String base = System.getProperty("java.io.tmpdir");
         Path allowedBase = Path.of(
                 base,
                 "labodc",
                 "task-submissions",
+                excelTask ? "excel" : "mentor",
                 String.valueOf(taskId),
-                String.valueOf(submission.getTalentId())
+                String.valueOf(talentId)
         ).toAbsolutePath().normalize();
 
         if (!file.startsWith(allowedBase)) {
@@ -950,6 +1091,7 @@ public class MentorPortalService {
     private MentorTaskDTO toTaskDTO(MentorTask t) {
         return MentorTaskDTO.builder()
                 .id(String.valueOf(t.getId()))
+                .source("mentor")
                 .projectId(t.getProjectId())
                 .title(t.getTitle())
                 .description(t.getDescription() != null ? t.getDescription() : "")
@@ -959,6 +1101,28 @@ public class MentorPortalService {
                 .dueDate(formatDate(t.getDueDate()))
                 .priority(normalizePriority(t.getPriority()))
                 .projectName(t.getProjectName() != null ? t.getProjectName() : "")
+                .build();
+    }
+
+    private MentorTaskDTO toTaskDTO(Task t, String projectName) {
+        String status = t.getStatus() == null ? "pending" : switch (t.getStatus()) {
+            case TODO -> "pending";
+            case IN_PROGRESS, IN_REVIEW -> "in-progress";
+            case COMPLETED -> "completed";
+            case BLOCKED, CANCELLED -> "pending";
+        };
+        return MentorTaskDTO.builder()
+                .id("excel-" + t.getId())
+                .source("excel")
+                .projectId(t.getProjectId())
+                .title(t.getTaskName())
+                .description(t.getDescription() == null ? "" : t.getDescription())
+                .status(status)
+                .progress(t.getProgressPercentage() == null ? 0 : t.getProgressPercentage())
+                .assignedTo(t.getAssignedTo() == null ? List.of() : List.of(String.valueOf(t.getAssignedTo())))
+                .dueDate(formatDate(t.getDueDate()))
+                .priority(t.getPriority() == null ? "medium" : t.getPriority().name().toLowerCase())
+                .projectName(projectName)
                 .build();
     }
 

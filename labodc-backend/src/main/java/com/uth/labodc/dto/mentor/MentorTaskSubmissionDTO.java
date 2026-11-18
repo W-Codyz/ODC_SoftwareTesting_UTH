@@ -8,6 +8,7 @@ import lombok.Data;
 public class MentorTaskSubmissionDTO {
     private Long id;
     private Long taskId;
+    private String taskSource;
     private Long talentId;
     private String talentName;
     private String studentId;
