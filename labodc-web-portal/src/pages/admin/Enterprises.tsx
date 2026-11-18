@@ -15,6 +15,7 @@ const Enterprises: React.FC = () => {
   const [selectedEnterprise, setSelectedEnterprise] = useState<EnterpriseDTO | null>(null);
   const [form] = Form.useForm();
   const [createForm] = Form.useForm();
+  const [rejectForm] = Form.useForm<{ reason: string }>();
   
   // User search states
   const [userSearchOptions, setUserSearchOptions] = useState<Array<{ value: string; label: string; userId: number }>>([]);
@@ -159,19 +160,28 @@ const Enterprises: React.FC = () => {
   };
 
   const handleDelete = async (id: number) => {
+    rejectForm.resetFields();
     Modal.confirm({
       title: 'Từ chối doanh nghiệp',
       content: (
-        <Form>
-          <Form.Item label="Lý do từ chối" name="reason" rules={[{ required: true }]}>
+        <Form form={rejectForm} layout="vertical">
+          <Form.Item
+            label="Lý do từ chối"
+            name="reason"
+            rules={[
+              { required: true, whitespace: true, message: 'Vui lòng nhập lý do từ chối' },
+              { max: 500, message: 'Lý do từ chối không được vượt quá 500 ký tự' },
+            ]}
+          >
             <Input.TextArea rows={4} id="reason" />
           </Form.Item>
         </Form>
       ),
       onOk: async () => {
+        // Lý do không hợp lệ -> validateFields reject -> modal giữ nguyên, không gửi request
+        const { reason } = await rejectForm.validateFields();
         try {
-          const reason = (document.getElementById('reason') as HTMLTextAreaElement)?.value || 'Không phù hợp';
-          await enterpriseAdminService.deleteEnterprise(id, reason);
+          await enterpriseAdminService.deleteEnterprise(id, reason.trim());
           messageApi.success('Từ chối doanh nghiệp thành công');
           fetchEnterprises(pagination.current - 1, pagination.pageSize);
         } catch (error) {
