@@ -39,6 +39,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/lab-admin/**")
+                        .hasAnyRole("LAB_ADMIN", "SYSTEM_ADMIN")
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/api/public/**",
