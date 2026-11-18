@@ -1,0 +1,23 @@
+$kind: http-request
+url: "{{base_url}}/api/auth/login"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "mentor.nguyenquang@uth.edu.vn",
+      "password": "123123"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Login returns HTTP 200", function () { pm.response.to.have.status(200); });
+      var json = pm.response.json();
+      var data = json.data || json;
+      var token = data.token || data.accessToken;
+      pm.test("Login response contains a token", function () { pm.expect(token).to.be.a("string").and.not.empty; });
+      if (token) pm.environment.set("mentor_token", token);
+    language: text/javascript
+order: 1000

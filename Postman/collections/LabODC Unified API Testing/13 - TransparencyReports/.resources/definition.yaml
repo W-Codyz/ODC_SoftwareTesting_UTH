@@ -1,0 +1,3 @@
+$kind: collection
+description: Transparency report CRUD + export/publish/archive/download. Requires LAB_ADMIN token.
+order: 16000

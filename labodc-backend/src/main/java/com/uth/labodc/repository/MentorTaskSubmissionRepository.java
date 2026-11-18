@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface MentorTaskSubmissionRepository extends JpaRepository<MentorTaskSubmission, Long> {
     List<MentorTaskSubmission> findByTaskIdOrderBySubmittedAtDesc(Long taskId);
+    List<MentorTaskSubmission> findByTaskIdAndTaskSourceOrderBySubmittedAtDesc(Long taskId, String taskSource);
 }

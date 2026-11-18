@@ -1,0 +1,13 @@
+$kind: http-request
+description: "MP-15: expected 403. Current API returns 400 Access Denied."
+url: "{{base_url}}/api/mentor/projects"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{token_system_admin}}"
+scripts:
+  - type: afterResponse
+    code: pm.test('Expected 403 for non-MENTOR role',()=>pm.response.to.have.status(403));
+    language: text/javascript
+order: 22000

@@ -1,0 +1,13 @@
+$kind: http-request
+description: "TC-MP-11: set mp_bad_signature_token to a well-formed JWT signed with a different key. Expected 401; current API returns 500."
+url: "{{base_url}}/api/mentor/projects"
+method: GET
+headers:
+  Authorization: Bearer {{mp_bad_signature_token}}
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: pm.test('Expected 401 for invalid signature',()=>pm.response.to.have.status(401));
+    language: text/javascript
+order: 14000

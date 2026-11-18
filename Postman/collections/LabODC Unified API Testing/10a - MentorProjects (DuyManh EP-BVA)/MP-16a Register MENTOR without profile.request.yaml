@@ -1,0 +1,33 @@
+$kind: http-request
+description: Pre-request script creates a unique email. Run MP-16b next. Clean the disposable account with cleanup_postman_mentor_projects_fixtures.sql.
+url: "{{base_url}}/api/auth/register"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "{{mp_no_profile_email}}",
+      "password": "TempTest123!",
+      "confirmPassword": "TempTest123!",
+      "role": "MENTOR"
+    }
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Registration returns 200', () => pm.response.to.have.status(200));
+
+      const body = pm.response.json();
+      if (body.data && body.data.token) {
+          pm.environment.set('token_mentor_no_profile', body.data.token);
+      }
+    language: text/javascript
+  - type: beforeRequest
+    code: |-
+      var email = 'qa-postman-mp-noprofile-' + pm.variables.replaceIn('{{$guid}}') + '@example.test';
+      pm.environment.set('mp_no_profile_email', email);
+    language: text/javascript
+order: 23000

@@ -6,6 +6,7 @@ import com.uth.labodc.dto.mentor.MentorApplicationDTO;
 import com.uth.labodc.dto.mentor.MentorApplicationDecisionRequest;
 import com.uth.labodc.dto.mentor.MentorDashboardDTO;
 import com.uth.labodc.dto.mentor.MentorInvitationDTO;
+import com.uth.labodc.dto.mentor.MentorInvitationListDTO;
 import com.uth.labodc.dto.mentor.MentorProjectOptionDTO;
 import com.uth.labodc.dto.mentor.MentorReportDTO;
 import com.uth.labodc.dto.mentor.MentorTaskDTO;
@@ -52,9 +53,24 @@ public class MentorPortalController {
 
     @GetMapping("/invitations")
     @PreAuthorize("hasRole('MENTOR')")
-    public ResponseEntity<ApiResponse<List<MentorInvitationDTO>>> invitations(Authentication authentication) {
+    public ResponseEntity<ApiResponse<MentorInvitationListDTO>> invitations(
+            Authentication authentication,
+            @RequestParam(required = false, defaultValue = "PENDING") String status,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int limit
+    ) {
         User user = currentUser(authentication);
-        return ResponseEntity.ok(ApiResponse.success(mentorPortalService.getInvitations(user)));
+        return ResponseEntity.ok(ApiResponse.success(mentorPortalService.getInvitations(user, status, page, limit)));
+    }
+
+    @GetMapping("/invitations/{id}")
+    @PreAuthorize("hasRole('MENTOR')")
+    public ResponseEntity<ApiResponse<MentorInvitationDTO>> invitationDetails(
+            Authentication authentication,
+            @PathVariable long id
+    ) {
+        User user = currentUser(authentication);
+        return ResponseEntity.ok(ApiResponse.success(mentorPortalService.getInvitationDetails(user, id)));
     }
 
     @GetMapping("/projects")
@@ -131,10 +147,11 @@ public class MentorPortalController {
     @PreAuthorize("hasRole('MENTOR')")
     public ResponseEntity<ApiResponse<List<MentorTaskSubmissionDTO>>> taskSubmissions(
             Authentication authentication,
-            @PathVariable long taskId
+            @PathVariable long taskId,
+            @RequestParam(value = "source", required = false) String source
     ) {
         User user = currentUser(authentication);
-        return ResponseEntity.ok(ApiResponse.success(mentorPortalService.getTaskSubmissions(user, taskId)));
+        return ResponseEntity.ok(ApiResponse.success(mentorPortalService.getTaskSubmissions(user, taskId, source)));
     }
 
     @GetMapping("/tasks/{taskId}/submissions/{submissionId}/file")
@@ -142,10 +159,11 @@ public class MentorPortalController {
     public ResponseEntity<Resource> downloadTaskSubmissionFile(
             Authentication authentication,
             @PathVariable long taskId,
-            @PathVariable long submissionId
+            @PathVariable long submissionId,
+            @RequestParam(value = "source", required = false) String source
     ) {
         User user = currentUser(authentication);
-        Resource resource = mentorPortalService.getTaskSubmissionFile(user, taskId, submissionId);
+        Resource resource = mentorPortalService.getTaskSubmissionFile(user, taskId, submissionId, source);
 
         String filename = "submission";
         try {
@@ -238,10 +256,11 @@ public class MentorPortalController {
             Authentication authentication,
             @PathVariable long projectId,
             @PathVariable long taskId,
+            @RequestParam(value = "source", required = false) String source,
             @RequestBody MentorTaskUpsertRequest request
     ) {
         User user = currentUser(authentication);
-        return ResponseEntity.ok(ApiResponse.success(mentorPortalService.updateTask(user, projectId, taskId, request)));
+        return ResponseEntity.ok(ApiResponse.success(mentorPortalService.updateTask(user, projectId, taskId, request, source)));
     }
 
     @DeleteMapping("/projects/{projectId}/tasks/{taskId}")
@@ -249,10 +268,11 @@ public class MentorPortalController {
     public ResponseEntity<ApiResponse<String>> deleteTask(
             Authentication authentication,
             @PathVariable long projectId,
-            @PathVariable long taskId
+            @PathVariable long taskId,
+            @RequestParam(value = "source", required = false) String source
     ) {
         User user = currentUser(authentication);
-        mentorPortalService.deleteTask(user, projectId, taskId);
+        mentorPortalService.deleteTask(user, projectId, taskId, source);
         return ResponseEntity.ok(ApiResponse.success("Deleted", null));
     }
 
@@ -313,6 +333,60 @@ public class MentorPortalController {
         return ResponseEntity.ok(ApiResponse.success(
                 mentorPortalService.submitReport(user, projectId, student, studentId, reportName, submittedDate, dueDate, status, summary, file)
         ));
+    }
+
+    /** Cập nhật báo cáo - chỉ các trường được gửi lên mới bị thay đổi. */
+    @PutMapping(value = "/reports/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('MENTOR')")
+    public ResponseEntity<ApiResponse<MentorReportDTO>> updateReport(
+            Authentication authentication,
+            @PathVariable long id,
+            @RequestParam(value = "student", required = false) String student,
+            @RequestParam(value = "studentId", required = false) String studentId,
+            @RequestParam(value = "reportName", required = false) String reportName,
+            @RequestParam(value = "submittedDate", required = false) String submittedDate,
+            @RequestParam(value = "dueDate", required = false) String dueDate,
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "summary", required = false) String summary,
+            @RequestPart(value = "file", required = false) MultipartFile file
+    ) {
+        User user = currentUser(authentication);
+        return ResponseEntity.ok(ApiResponse.success(
+                "Report updated successfully",
+                mentorPortalService.updateReport(user, id, student, studentId, reportName, submittedDate, dueDate, status, summary, file)
+        ));
+    }
+
+    /** Nộp báo cáo theo dự án (projectId lấy từ path). */
+    @PostMapping(value = "/projects/{projectId}/reports", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('MENTOR')")
+    public ResponseEntity<ApiResponse<MentorReportDTO>> submitProjectReport(
+            Authentication authentication,
+            @PathVariable Long projectId,
+            @RequestParam("student") String student,
+            @RequestParam("studentId") String studentId,
+            @RequestParam("reportName") String reportName,
+            @RequestParam(value = "submittedDate", required = false) String submittedDate,
+            @RequestParam("dueDate") String dueDate,
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "summary", required = false) String summary,
+            @RequestPart(value = "file", required = false) MultipartFile file
+    ) {
+        User user = currentUser(authentication);
+        return ResponseEntity.ok(ApiResponse.success(
+                mentorPortalService.submitReport(user, projectId, student, studentId, reportName, submittedDate, dueDate, status, summary, file)
+        ));
+    }
+
+    /** Danh sách báo cáo của mentor hiện tại theo dự án. */
+    @GetMapping("/projects/{projectId}/reports")
+    @PreAuthorize("hasRole('MENTOR')")
+    public ResponseEntity<ApiResponse<List<MentorReportDTO>>> projectReports(
+            Authentication authentication,
+            @PathVariable Long projectId
+    ) {
+        User user = currentUser(authentication);
+        return ResponseEntity.ok(ApiResponse.success(mentorPortalService.getProjectReports(user, projectId)));
     }
 
     @GetMapping("/reports/{id}/file")

@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -30,12 +32,14 @@ public class ProjectMember {
     @Column(name = "talent_id", nullable = false)
     private Long talentId;
     
-    @Column(name = "status", nullable = false)
+    @Column(name = "status", nullable = false, columnDefinition = "project_member_status_enum")
     @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     private MemberStatus status = MemberStatus.PENDING;
-    
-    @Column(name = "role")
+
+    @Column(name = "role", columnDefinition = "project_member_role_enum")
     @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     private MemberRole role = MemberRole.MEMBER;
     
     @Column(name = "join_message", columnDefinition = "TEXT")

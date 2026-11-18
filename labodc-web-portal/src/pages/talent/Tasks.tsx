@@ -80,14 +80,14 @@ const Tasks: React.FC = () => {
     return tasks.filter((t) => Number(t.projectId) === Number(projectId));
   }, [tasks, projectId]);
 
-  const uploadProps = (taskId: number) => ({
+  const uploadProps = (taskId: number, excelTask = false) => ({
     showUploadList: false,
     accept: '.pdf,.doc,.docx,.zip',
     customRequest: async (options: any) => {
       const { file, onSuccess, onError } = options;
       setUploadingTaskId(taskId);
       try {
-        await talentService.submitTaskReport(taskId, file as File);
+        await talentService.submitTaskReport(taskId, file as File, excelTask);
         message.success('Đã nộp báo cáo nhiệm vụ');
         onSuccess?.(null);
         void loadTasks(projectId);
@@ -159,7 +159,7 @@ const Tasks: React.FC = () => {
             </div>
 
             <div style={{ marginTop: 12 }}>
-              <Upload {...uploadProps(task.id)}>
+              <Upload {...uploadProps(task.id, task.source === 'excel')}>
                 <Button loading={uploadingTaskId === task.id}>Nộp báo cáo</Button>
               </Upload>
             </div>

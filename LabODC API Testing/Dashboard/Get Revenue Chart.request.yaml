@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{base_url}}/api/dashboard/revenue?months=6"
+method: GET
+queryParams:
+  months: "6"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });"
+    language: text/javascript
+order: 4000

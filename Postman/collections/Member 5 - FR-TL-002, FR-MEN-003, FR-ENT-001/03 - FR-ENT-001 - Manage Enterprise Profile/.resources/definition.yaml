@@ -1,0 +1,3 @@
+$kind: collection
+description: The SRS profile routes are not currently present in EnterprisePortalController. PUT changes profile data permanently if implemented; use a test account, save the original profile, and restore it after testing.
+order: 4000

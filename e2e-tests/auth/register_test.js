@@ -154,6 +154,19 @@ Scenario('TC-REG-07 - Email đã tồn tại (single fault)', ({ I }) => {
   I.see('Email already registered');
 });
 
+Scenario('TC-REG-08 - Talent dùng email domain không phải @uth.edu.vn (single fault)', ({ I }) => {
+  I.amOnPage('/register');
+  I.fillField('Email', 'talent@gmail.com');
+  I.fillField('Mật khẩu', 'SecurePass123!');
+  I.fillField('Xác nhận mật khẩu', 'SecurePass123!');
+  I.click({css: '#register_role'});
+  I.click('Người tài năng');
+  I.click('Đăng ký');
+  // X-EM5, R4 → backend validate Talent phải dùng @uth.edu.vn
+  I.waitForText('Talent accounts must use an @uth.edu.vn email address', 5);
+  I.see('Talent accounts must use an @uth.edu.vn email address');
+});
+
 // === 5.3 Password không hợp lệ ===
 
 Scenario('TC-REG-09 - Password rỗng (single fault)', ({ I }) => {
@@ -190,6 +203,58 @@ Scenario('TC-REG-11 - Password < 8 ký tự (BVA min-)', ({ I }) => {
   I.click('Người tài năng');
   I.click('Đăng ký');
   // X-PW2, B-PW1, R5 → @Size(min=8) → API trả về toast "Validation failed"
+  I.waitForText('Validation failed', 5);
+  I.see('Validation failed');
+});
+
+Scenario('TC-REG-12 - Password thiếu uppercase (single fault)', ({ I }) => {
+  I.amOnPage('/register');
+  I.fillField('Email', 'newtalent5@uth.edu.vn');
+  I.fillField('Mật khẩu', 'securepass123!');
+  I.fillField('Xác nhận mật khẩu', 'securepass123!');
+  I.click({css: '#register_role'});
+  I.click('Người tài năng');
+  I.click('Đăng ký');
+  // X-PW3, R6 → backend @Pattern validate password strength
+  I.waitForText('Validation failed', 5);
+  I.see('Validation failed');
+});
+
+Scenario('TC-REG-13 - Password thiếu lowercase (single fault)', ({ I }) => {
+  I.amOnPage('/register');
+  I.fillField('Email', 'newtalent6@uth.edu.vn');
+  I.fillField('Mật khẩu', 'SECUREPASS123!');
+  I.fillField('Xác nhận mật khẩu', 'SECUREPASS123!');
+  I.click({css: '#register_role'});
+  I.click('Người tài năng');
+  I.click('Đăng ký');
+  // X-PW4, R6 → backend @Pattern validate password strength
+  I.waitForText('Validation failed', 5);
+  I.see('Validation failed');
+});
+
+Scenario('TC-REG-14 - Password thiếu số (single fault)', ({ I }) => {
+  I.amOnPage('/register');
+  I.fillField('Email', 'newtalent7@uth.edu.vn');
+  I.fillField('Mật khẩu', 'SecurePass!!!');
+  I.fillField('Xác nhận mật khẩu', 'SecurePass!!!');
+  I.click({css: '#register_role'});
+  I.click('Người tài năng');
+  I.click('Đăng ký');
+  // X-PW5, R6 → backend @Pattern validate password strength
+  I.waitForText('Validation failed', 5);
+  I.see('Validation failed');
+});
+
+Scenario('TC-REG-15 - Password thiếu ký tự đặc biệt (single fault)', ({ I }) => {
+  I.amOnPage('/register');
+  I.fillField('Email', 'newtalent8@uth.edu.vn');
+  I.fillField('Mật khẩu', 'SecurePass123');
+  I.fillField('Xác nhận mật khẩu', 'SecurePass123');
+  I.click({css: '#register_role'});
+  I.click('Người tài năng');
+  I.click('Đăng ký');
+  // X-PW6, R6 → backend @Pattern validate password strength
   I.waitForText('Validation failed', 5);
   I.see('Validation failed');
 });
@@ -234,6 +299,10 @@ Scenario('TC-REG-18 - Role null / không chọn (single fault)', ({ I }) => {
   I.waitForText('Vui lòng chọn vai trò!', 5);
   I.see('Vui lòng chọn vai trò!');
 });
+
+// TC-REG-19 - Role không hợp lệ ("STUDENT"): không testable qua UI
+// (dropdown chỉ expose TALENT/ENTERPRISE) → đã được verify ở Postman, bỏ qua E2E.
+xScenario('TC-REG-19 - Role không hợp lệ (API-only, UI dropdown không expose)', ({ I }) => {});
 
 // === 5.6 Boundary Value Analysis - Độ dài password ===
 

@@ -58,10 +58,21 @@ axiosInstance.interceptors.response.use(
     }
 
     // Handle other errors
-    const errorResponse: IApiError = {
+    const backendData = error.response?.data as any;
+    let errorMessage = backendData?.message || 'Đã xảy ra lỗi. Vui lòng thử lại!';
+    // Nếu backend trả về map validation lỗi trong data (vd: { skillName: "Tên kỹ năng tối đa 100 ký tự" })
+    if (backendData?.data && typeof backendData.data === 'object') {
+      const firstError = Object.values(backendData.data)[0];
+      if (typeof firstError === 'string') {
+        errorMessage = firstError;
+      }
+    }
+    const errorResponse: any = {
       success: false,
-      message: error.response?.data?.message || 'Đã xảy ra lỗi. Vui lòng thử lại!',
-      errors: error.response?.data?.errors,
+      message: errorMessage,
+      data: backendData?.data,
+      errors: backendData?.errors || backendData?.data,
+      response: error.response,
       timestamp: new Date().toISOString(),
     };
 

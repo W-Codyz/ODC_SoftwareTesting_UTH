@@ -39,6 +39,25 @@ export const mentorService = {
   getProjects: async (): Promise<IMentorProjectOption[]> =>
     fetchData(axiosInstance.get<IApiResponse<IMentorProjectOption[]>>('/mentor/projects')),
 
+  downloadTaskTemplate: async (projectId: string | number): Promise<Blob> => {
+    const response = await axiosInstance.get<Blob>(
+      `/mentor/projects/${projectId}/task-template`,
+      { responseType: 'blob' }
+    );
+    return response.data;
+  },
+
+  uploadTaskExcel: async (projectId: string | number, file: File): Promise<number> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return fetchData(
+      axiosInstance.post<IApiResponse<number>>(
+        `/mentor/projects/${projectId}/tasks/upload`,
+        formData
+      )
+    );
+  },
+
   closeRecruiting: async (projectId: string | number): Promise<void> => {
     await axiosInstance.post(`/mentor/projects/${projectId}/close-recruiting`);
   },
@@ -70,26 +89,30 @@ export const mentorService = {
   updateTask: async (
     projectId: string | number,
     taskId: string,
-    taskData: Partial<IMentorTask>
+    taskData: Partial<IMentorTask>,
+    excelTask = false
   ): Promise<IMentorTask> =>
     fetchData(
       axiosInstance.put<IApiResponse<IMentorTask>>(
-        `/mentor/projects/${projectId}/tasks/${taskId}`,
+        `/mentor/projects/${projectId}/tasks/${taskId}${excelTask ? '?source=excel' : ''}`,
         taskData
       )
     ),
 
-  deleteTask: async (projectId: string | number, taskId: string): Promise<void> => {
-    await axiosInstance.delete(`/mentor/projects/${projectId}/tasks/${taskId}`);
+  deleteTask: async (projectId: string | number, taskId: string, excelTask = false): Promise<void> => {
+    const url = `/mentor/projects/${projectId}/tasks/${taskId}`;
+    await axiosInstance.delete(excelTask ? `${url}?source=excel` : url);
   },
 
-  getTaskSubmissions: async (taskId: string | number): Promise<IMentorTaskSubmission[]> =>
+  getTaskSubmissions: async (taskId: string | number, excelTask = false): Promise<IMentorTaskSubmission[]> =>
     fetchData(
-      axiosInstance.get<IApiResponse<IMentorTaskSubmission[]>>(`/mentor/tasks/${taskId}/submissions`)
+      axiosInstance.get<IApiResponse<IMentorTaskSubmission[]>>(
+        `/mentor/tasks/${taskId}/submissions${excelTask ? '?source=excel' : ''}`
+      )
     ),
 
-  downloadTaskSubmissionFile: async (taskId: string | number, submissionId: string | number) =>
-    axiosInstance.get(`/mentor/tasks/${taskId}/submissions/${submissionId}/file`, {
+  downloadTaskSubmissionFile: async (taskId: string | number, submissionId: string | number, excelTask = false) =>
+    axiosInstance.get(`/mentor/tasks/${taskId}/submissions/${submissionId}/file${excelTask ? '?source=excel' : ''}`, {
       responseType: 'blob',
     }),
 

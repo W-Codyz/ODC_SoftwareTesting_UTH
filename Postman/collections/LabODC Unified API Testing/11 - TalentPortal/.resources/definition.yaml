@@ -1,0 +1,3 @@
+$kind: collection
+description: Talent-facing endpoints. 14 test cases (TL-01 to TL-14). Requires TALENT token.
+order: 14000

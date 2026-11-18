@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class TalentTaskDTO {
     private Long id;
+    private String source;
     private Long projectId;
     private String title;
     private String description;

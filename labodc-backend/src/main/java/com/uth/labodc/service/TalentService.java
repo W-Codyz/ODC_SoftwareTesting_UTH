@@ -3,6 +3,7 @@ import com.uth.labodc.dto.ApiResponse;
 import com.uth.labodc.dto.talent.*;
 import com.uth.labodc.model.entity.*;
 import com.uth.labodc.model.entity.ProjectMember.MemberStatus;
+import com.uth.labodc.model.enums.TaskStatus;
 import com.uth.labodc.repository.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,7 +37,9 @@ public class TalentService {
     private final EnterpriseRepository enterpriseRepository;
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final MentorTaskRepository mentorTaskRepository;
+    private final TaskRepository taskRepository;
     private final MentorTaskSubmissionRepository mentorTaskSubmissionRepository;
+    private final ExcelTaskSubmissionRepository excelTaskSubmissionRepository;
     private final ObjectMapper objectMapper;
     // private final CloudinaryService cloudinaryService;
     
@@ -68,6 +72,23 @@ public class TalentService {
             talent.setPortfolioUrl(portfolio);
         }
         
+        // Validate profile data
+        if (profileDTO.getGpa() != null) {
+            if (profileDTO.getGpa().compareTo(BigDecimal.ZERO) < 0 || profileDTO.getGpa().compareTo(BigDecimal.valueOf(4.0)) > 0) {
+                throw new IllegalArgumentException("GPA must be between 0.0 and 4.0");
+            }
+        }
+        if (profileDTO.getYearOfStudy() != null) {
+            if (profileDTO.getYearOfStudy() < 1 || profileDTO.getYearOfStudy() > 5) {
+                throw new IllegalArgumentException("Year of study must be between 1 and 5");
+            }
+        }
+        if (profileDTO.getHoursPerWeek() != null) {
+            if (profileDTO.getHoursPerWeek() < 1 || profileDTO.getHoursPerWeek() > 40) {
+                throw new IllegalArgumentException("Hours per week must be between 1 and 40");
+            }
+        }
+
         // Update basic info
         if (profileDTO.getFullName() != null) talent.setFullName(profileDTO.getFullName());
         if (profileDTO.getFaculty() != null) talent.setFaculty(profileDTO.getFaculty());
@@ -145,6 +166,15 @@ public class TalentService {
     
     @Transactional
     public TalentCertificationDTO addCertification(Long userId, TalentCertificationDTO certDTO) {
+        if (certDTO.getIssueDate() != null && certDTO.getIssueDate().isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("Issue date cannot be in the future");
+        }
+        
+        if (certDTO.getIssueDate() != null && certDTO.getExpiryDate() != null 
+                && certDTO.getExpiryDate().isBefore(certDTO.getIssueDate())) {
+            throw new IllegalArgumentException("Expiry date must be after issue date");
+        }
+        
         Talent talent = getTalentByUserId(userId);
         
         TalentCertification cert = TalentCertification.builder()
@@ -235,25 +265,25 @@ public class TalentService {
         User user = userService.getUserById(talent.getUserId());
 
         List<ProjectMember> memberships = projectMemberRepository.findByTalentId(talent.getId());
-        List<Long> activeProjectIds = memberships.stream()
-                .filter(m -> m.getStatus() == MemberStatus.ACTIVE)
+        List<Long> memberProjectIds = memberships.stream()
+                .filter(m -> m.getStatus() == MemberStatus.ACTIVE || m.getStatus() == MemberStatus.APPROVED)
                 .map(ProjectMember::getProjectId)
                 .distinct()
                 .toList();
 
-        if (projectId != null) {
-            if (!activeProjectIds.contains(projectId)) {
-                return List.of();
-            }
-        }
-
-        List<MentorTask> tasks = (projectId != null)
-                ? mentorTaskRepository.findByProjectIdOrderByDueDateAsc(projectId)
-                : (activeProjectIds.isEmpty() ? List.of() : mentorTaskRepository.findByProjectIdInOrderByDueDateAsc(activeProjectIds));
-
-        if (tasks.isEmpty()) {
+        List<Long> visibleProjectIds = projectId == null
+                ? memberProjectIds
+                : memberProjectIds.contains(projectId) ? List.of(projectId) : List.of();
+        if (visibleProjectIds.isEmpty()) {
+            log.info("Talent task query returned no member projects: talentId={}, requestedProjectId={}, memberships={}",
+                    talent.getId(), projectId, memberships.stream()
+                            .map(m -> m.getProjectId() + ":" + m.getStatus()).toList());
             return List.of();
         }
+
+        List<MentorTask> mentorTasks = projectId != null
+                ? mentorTaskRepository.findByProjectIdOrderByDueDateAsc(projectId)
+                : mentorTaskRepository.findByProjectIdInOrderByDueDateAsc(visibleProjectIds);
 
         List<String> identifiers = List.of(
                 String.valueOf(talent.getId()),
@@ -262,28 +292,46 @@ public class TalentService {
                 user.getEmail()
         );
 
-        return tasks.stream()
+        List<TalentTaskDTO> result = mentorTasks.stream()
                 .filter(task -> isAssignedToTalent(task, identifiers))
                 .map(this::toTalentTaskDTO)
-                .toList();
+                .collect(Collectors.toList());
+
+        List<Task> excelTasks = taskRepository.findByProjectIdInOrderByDueDateAsc(visibleProjectIds);
+        excelTasks.stream()
+                .map(task -> toTalentTaskDTO(task, projectRepository.findById(task.getProjectId())
+                        .map(Project::getTitle).orElse("Project #" + task.getProjectId())))
+                .forEach(result::add);
+        log.info("Talent task query: talentId={}, requestedProjectId={}, memberProjectIds={}, mentorTasks={}, excelTasks={}, returned={}",
+                talent.getId(), projectId, visibleProjectIds, mentorTasks.size(), excelTasks.size(), result.size());
+        return result;
     }
 
     @Transactional
-    public TalentTaskSubmissionDTO submitTaskReport(Long userId, Long taskId, MultipartFile file) {
+    public TalentTaskSubmissionDTO submitTaskReport(Long userId, Long taskId, MultipartFile file, String source) {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("File is required");
         }
 
         Talent talent = getTalentByUserId(userId);
         User user = userService.getUserById(talent.getUserId());
-        MentorTask task = mentorTaskRepository.findById(taskId)
-                .orElseThrow(() -> new IllegalArgumentException("Task not found"));
+        boolean excelTaskRequest = "excel".equalsIgnoreCase(source);
+        if (source != null && !source.isBlank() && !excelTaskRequest && !"mentor".equalsIgnoreCase(source)) {
+            throw new IllegalArgumentException("Invalid task source");
+        }
+        MentorTask mentorTask = excelTaskRequest ? null : mentorTaskRepository.findById(taskId).orElse(null);
+        Task excelTask = excelTaskRequest ? taskRepository.findById(taskId).orElse(null) : null;
+        if (mentorTask == null && excelTask == null) {
+            throw new IllegalArgumentException("Task not found");
+        }
+        Long taskProjectId = excelTaskRequest ? excelTask.getProjectId() : mentorTask.getProjectId();
 
-        if (task.getProjectId() != null) {
+        if (taskProjectId != null) {
             ProjectMember membership = projectMemberRepository
-                    .findByProjectIdAndTalentId(task.getProjectId(), talent.getId())
+                    .findByProjectIdAndTalentId(taskProjectId, talent.getId())
                     .orElse(null);
-            if (membership == null || membership.getStatus() != MemberStatus.ACTIVE) {
+            if (membership == null || (membership.getStatus() != MemberStatus.ACTIVE
+                    && membership.getStatus() != MemberStatus.APPROVED)) {
                 throw new AccessDeniedException("You are not an active member of this project");
             }
         }
@@ -294,27 +342,42 @@ public class TalentService {
                 talent.getFullName(),
                 user.getEmail()
         );
-        if (!isAssignedToTalent(task, identifiers)) {
+        boolean assigned = excelTaskRequest
+                ? true
+                : isAssignedToTalent(mentorTask, identifiers);
+        if (!assigned) {
             throw new AccessDeniedException("You are not assigned to this task");
         }
 
-        StoredFileInfo stored = storeTaskSubmissionFile(talent.getId(), taskId, file);
-
-        MentorTaskSubmission submission = new MentorTaskSubmission();
-        submission.setTaskId(taskId);
-        submission.setTalentId(talent.getId());
-        submission.setFileName(stored.fileName());
-        submission.setFilePath(stored.filePath());
-        submission.setFileSize(stored.fileSize());
-        submission.setSubmittedAt(LocalDateTime.now());
-
-        MentorTaskSubmission saved = mentorTaskSubmissionRepository.save(submission);
+        StoredFileInfo stored = storeTaskSubmissionFile(talent.getId(), taskId, file, excelTaskRequest);
+        LocalDateTime submittedAt = LocalDateTime.now();
+        Long submissionId;
+        if (excelTaskRequest) {
+            ExcelTaskSubmission submission = new ExcelTaskSubmission();
+            submission.setTaskId(taskId);
+            submission.setTalentId(talent.getId());
+            submission.setFileName(stored.fileName());
+            submission.setFilePath(stored.filePath());
+            submission.setFileSize(stored.fileSize());
+            submission.setSubmittedAt(submittedAt);
+            submissionId = excelTaskSubmissionRepository.save(submission).getId();
+        } else {
+            MentorTaskSubmission submission = new MentorTaskSubmission();
+            submission.setTaskId(taskId);
+            submission.setTaskSource("mentor");
+            submission.setTalentId(talent.getId());
+            submission.setFileName(stored.fileName());
+            submission.setFilePath(stored.filePath());
+            submission.setFileSize(stored.fileSize());
+            submission.setSubmittedAt(submittedAt);
+            submissionId = mentorTaskSubmissionRepository.save(submission).getId();
+        }
         return TalentTaskSubmissionDTO.builder()
-                .id(saved.getId())
-                .taskId(saved.getTaskId())
-                .fileName(saved.getFileName())
-                .fileSize(saved.getFileSize())
-                .submittedAt(saved.getSubmittedAt() != null ? saved.getSubmittedAt().toString() : null)
+                .id(submissionId)
+                .taskId(taskId)
+                .fileName(stored.fileName())
+                .fileSize(stored.fileSize())
+                .submittedAt(submittedAt.toString())
                 .build();
     }
 
@@ -547,10 +610,51 @@ public class TalentService {
         return filename.substring(filename.lastIndexOf(".") + 1);
     }
 
-    private String storeTalentFile(Long userId, MultipartFile file, String category) {
+    private void validateTalentFile(MultipartFile file, String category) {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("File is required");
         }
+
+        String originalFilename = file.getOriginalFilename();
+        String extension = getFileExtension(originalFilename);
+        String rawContentType = file.getContentType();
+        String contentType = rawContentType != null ? rawContentType.split(";")[0].trim() : "";
+
+        if ("avatar".equalsIgnoreCase(category)) {
+            // Max 5MB
+            if (file.getSize() > 5 * 1024 * 1024) {
+                throw new IllegalArgumentException("Avatar file size must not exceed 5MB");
+            }
+            // Allowed MIME types: image/jpeg, image/png
+            if (!contentType.equalsIgnoreCase("image/jpeg") && !contentType.equalsIgnoreCase("image/png")) {
+                throw new IllegalArgumentException("Only JPEG and PNG image files are allowed for avatar");
+            }
+            // Allowed extensions: jpg, jpeg, png
+            if (!extension.matches("(?i)^(jpg|jpeg|png)$")) {
+                throw new IllegalArgumentException("Invalid avatar file extension. Only .jpg, .jpeg, and .png are allowed");
+            }
+        } else if ("cv".equalsIgnoreCase(category)) {
+            // Max 20MB
+            if (file.getSize() > 20 * 1024 * 1024) {
+                throw new IllegalArgumentException("CV file size must not exceed 20MB");
+            }
+            // Allowed MIME types: application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document
+            if (!contentType.equalsIgnoreCase("application/pdf") &&
+                    !contentType.equalsIgnoreCase("application/msword") &&
+                    !contentType.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
+                throw new IllegalArgumentException("Only PDF, DOC, and DOCX files are allowed for CV");
+            }
+            // Allowed extensions: pdf, doc, docx
+            if (!extension.matches("(?i)^(pdf|doc|docx)$")) {
+                throw new IllegalArgumentException("Invalid CV file extension. Only .pdf, .doc, and .docx are allowed");
+            }
+        } else {
+            throw new IllegalArgumentException("Invalid file category");
+        }
+    }
+
+    private String storeTalentFile(Long userId, MultipartFile file, String category) {
+        validateTalentFile(file, category);
         try {
             String base = System.getProperty("java.io.tmpdir");
             java.nio.file.Path baseDir = java.nio.file.Path.of(base, "labodc", "talent").toAbsolutePath().normalize();
@@ -566,6 +670,8 @@ public class TalentService {
             }
             java.nio.file.Files.copy(file.getInputStream(), target, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
             return target.toAbsolutePath().toString();
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Failed to store file: " + e.getMessage());
         }
@@ -720,14 +826,16 @@ public class TalentService {
         return value == null ? "" : value.trim().toLowerCase();
     }
 
-    private StoredFileInfo storeTaskSubmissionFile(Long talentId, Long taskId, MultipartFile file) {
+    private StoredFileInfo storeTaskSubmissionFile(Long talentId, Long taskId, MultipartFile file, boolean excelTask) {
         try {
             String base = System.getProperty("java.io.tmpdir");
-            java.nio.file.Path baseDir = java.nio.file.Path.of(base, "labodc", "task-submissions").toAbsolutePath().normalize();
+            String source = excelTask ? "excel" : "mentor";
+            java.nio.file.Path baseDir = java.nio.file.Path.of(base, "labodc", "task-submissions", source).toAbsolutePath().normalize();
             java.nio.file.Path dir = java.nio.file.Path.of(
                     base,
                     "labodc",
                     "task-submissions",
+                    source,
                     String.valueOf(taskId),
                     String.valueOf(talentId)).toAbsolutePath().normalize();
             if (!dir.startsWith(baseDir)) {
@@ -751,6 +859,7 @@ public class TalentService {
     private TalentTaskDTO toTalentTaskDTO(MentorTask task) {
         return TalentTaskDTO.builder()
                 .id(task.getId())
+                .source("mentor")
                 .projectId(task.getProjectId())
                 .title(task.getTitle())
                 .description(task.getDescription())
@@ -760,6 +869,28 @@ public class TalentService {
                 .priority(task.getPriority())
                 .projectName(task.getProjectName())
                 .assignedTo(parseAssignedTo(task.getAssignedTo()))
+                .build();
+    }
+
+    private TalentTaskDTO toTalentTaskDTO(Task task, String projectName) {
+        String status = task.getStatus() == null ? "pending" : switch (task.getStatus()) {
+            case TODO -> "pending";
+            case IN_PROGRESS, IN_REVIEW -> "in-progress";
+            case COMPLETED -> "completed";
+            case BLOCKED, CANCELLED -> "pending";
+        };
+        return TalentTaskDTO.builder()
+                .id(task.getId())
+                .source("excel")
+                .projectId(task.getProjectId())
+                .title(task.getTaskName())
+                .description(task.getDescription())
+                .status(status)
+                .progress(task.getProgressPercentage())
+                .dueDate(task.getDueDate())
+                .priority(task.getPriority() == null ? null : task.getPriority().name().toLowerCase())
+                .projectName(projectName)
+                .assignedTo(task.getAssignedTo() == null ? List.of() : List.of(String.valueOf(task.getAssignedTo())))
                 .build();
     }
 }

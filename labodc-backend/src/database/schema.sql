@@ -31,9 +31,9 @@ CREATE TYPE project_status_enum AS ENUM (
     'RECRUITING', 'IN_PROGRESS', 'ON_HOLD', 'COMPLETED', 'CANCELLED', 'ARCHIVED'
 );
 
-CREATE TYPE project_member_role_enum AS ENUM ('MEMBER', 'LEADER');
+CREATE TYPE project_member_role_enum AS ENUM ('MEMBER', 'LEADER', 'CO_LEADER');
 
-CREATE TYPE project_member_status_enum AS ENUM ('ACTIVE', 'LEFT', 'REMOVED');
+CREATE TYPE project_member_status_enum AS ENUM ('PENDING', 'APPROVED', 'REJECTED', 'ACTIVE', 'LEFT', 'REMOVED', 'INACTIVE');
 
 CREATE TYPE payment_status_enum AS ENUM (
     'PENDING', 'PROCESSING', 'COMPLETED', 'FAILED', 'CANCELLED', 'REFUNDED', 'EXPIRED'
@@ -480,12 +480,23 @@ CREATE INDEX idx_mentor_tasks_project ON mentor_tasks(project_id);
 
 CREATE TABLE mentor_task_submissions (
     id           BIGSERIAL PRIMARY KEY,
-    task_id      BIGINT NOT NULL REFERENCES mentor_tasks(id) ON DELETE CASCADE,
+    task_id      BIGINT NOT NULL,
+    task_source  VARCHAR(16) NOT NULL DEFAULT 'mentor',
     talent_id    BIGINT NOT NULL REFERENCES talents(id) ON DELETE CASCADE,
     file_name    VARCHAR(255) NOT NULL,
     file_path    VARCHAR(500) NOT NULL,
     file_size    BIGINT,
     submitted_at TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE excel_task_submissions (
+    id           BIGSERIAL PRIMARY KEY,
+    task_id      BIGINT NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+    talent_id    BIGINT NOT NULL REFERENCES talents(id) ON DELETE CASCADE,
+    file_name    VARCHAR(255) NOT NULL,
+    file_path    VARCHAR(500) NOT NULL,
+    file_size    BIGINT,
+    submitted_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 -- =====================================================

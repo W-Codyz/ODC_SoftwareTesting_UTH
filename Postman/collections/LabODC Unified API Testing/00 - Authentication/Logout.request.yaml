@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{base_url}}/api/auth/logout"
+method: POST
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Logout successful', function () {
+          pm.expect([200, 204]).to.include(pm.response.code);
+      });
+      pm.test('Response time is under 2000ms', function () {
+          pm.expect(pm.response.responseTime).to.be.below(2000);
+      });
+    language: text/javascript
+order: 7000

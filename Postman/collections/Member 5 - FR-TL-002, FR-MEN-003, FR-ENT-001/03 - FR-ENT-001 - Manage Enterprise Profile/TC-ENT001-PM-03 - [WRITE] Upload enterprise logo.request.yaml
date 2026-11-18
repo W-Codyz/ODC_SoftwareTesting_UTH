@@ -1,0 +1,19 @@
+$kind: http-request
+url: "{{base_url}}/api/enterprise/profile/logo"
+method: POST
+body:
+  type: formdata
+  content:
+    - type: file
+      key: file
+      src:
+        - ""
+auth:
+  type: bearer
+  credentials:
+    token: "{{enterprise_token}}"
+scripts:
+  - type: afterResponse
+    code: pm.test("SRS logo upload route is available (expected HTTP 200)", function () { pm.response.to.have.status(200); });
+    language: text/javascript
+order: 3000

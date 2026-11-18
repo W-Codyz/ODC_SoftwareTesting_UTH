@@ -1,0 +1,43 @@
+$kind: http-request
+url: "{{base_url}}/api/auth/login"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"email\": \"labadmin2@labodc.com\",\r
+
+    \  \"password\": \"123123\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "var res = pm.response.json();\r
+
+      \r
+
+      if (res.data && res.data.token) {\r
+
+      \    pm.environment.set(\"token\", res.data.token);\r
+
+      \    console.log(\"Token saved!\");\r
+
+      }\r
+
+      \r
+
+      pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response has token\", function () {\r
+
+      \    pm.expect(res.data).to.have.property(\"token\");\r
+
+      });"
+    language: text/javascript
+order: 1000

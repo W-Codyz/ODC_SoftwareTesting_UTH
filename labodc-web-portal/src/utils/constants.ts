@@ -53,6 +53,7 @@ export const ROUTES = {
   MENTOR_DASHBOARD: '/mentor/dashboard',
   MENTOR_INVITATIONS: '/mentor/invitations',
   MENTOR_TASKS: '/mentor/projects/:id/tasks',
+  MENTOR_TASK_TEMPLATE: '/mentor/projects/:id/task-template',
   MENTOR_EVALUATION: '/mentor/projects/:id/team',
   MENTOR_REPORT_NEW: '/mentor/reports/new',
   MENTOR_REPORTS: '/mentor/reports',

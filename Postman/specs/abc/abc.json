@@ -1,0 +1,1136 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "abc",
+    "version": "1.0.0",
+    "description": ""
+  },
+  "servers": [
+    {
+      "url": "{{base_url}}"
+    }
+  ],
+  "paths": {
+    "/api/auth/login": {
+      "post": {
+        "summary": "Login",
+        "responses": {},
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "color"
+                  }
+                }
+              },
+              "example": {
+                "email": "labadmin2@labodc.com",
+                "password": "123123"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "summary": "Register",
+        "responses": {},
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "confirmPassword": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "email": "{{test_email}}",
+                "password": "test123123",
+                "confirmPassword": "test123123",
+                "role": "TALENT"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "summary": "Logout",
+        "responses": {},
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/user/profile": {
+      "get": {
+        "summary": "Get Profile",
+        "responses": {},
+        "tags": [
+          "User"
+        ]
+      }
+    },
+    "/api/dashboard/stats": {
+      "get": {
+        "summary": "Get Dashboard Stats",
+        "responses": {},
+        "tags": [
+          "Dashboard"
+        ]
+      }
+    },
+    "/api/dashboard/activities": {
+      "get": {
+        "summary": "Get Recent Activities",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": 10
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "Dashboard"
+        ]
+      }
+    },
+    "/api/dashboard/approvals": {
+      "get": {
+        "summary": "Get Pending Approvals",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": 10
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "Dashboard"
+        ]
+      }
+    },
+    "/api/dashboard/revenue": {
+      "get": {
+        "summary": "Get Revenue Chart",
+        "parameters": [
+          {
+            "name": "months",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": 6
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "Dashboard"
+        ]
+      }
+    },
+    "/api/lab-admin/mentors": {
+      "get": {
+        "summary": "Get All Mentors",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": 0
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": 10
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "Mentor Admin"
+        ]
+      },
+      "post": {
+        "summary": "Create Mentor",
+        "responses": {},
+        "tags": [
+          "Mentor Admin"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fullName": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "currentPosition": {
+                    "type": "string"
+                  },
+                  "currentCompany": {
+                    "type": "string"
+                  },
+                  "yearsOfExperience": {
+                    "type": "integer"
+                  },
+                  "bio": {
+                    "type": "string"
+                  },
+                  "expertise": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "hourlyRate": {
+                    "type": "integer"
+                  },
+                  "currency": {
+                    "type": "string"
+                  },
+                  "maxConcurrentProjects": {
+                    "type": "integer"
+                  },
+                  "available": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "example": {
+                "fullName": "Test API Mentor",
+                "title": "Mr.",
+                "currentPosition": "Senior Developer",
+                "currentCompany": "Tech Corp",
+                "yearsOfExperience": 5,
+                "bio": "Experienced developer",
+                "expertise": [
+                  "Java",
+                  "Spring Boot"
+                ],
+                "hourlyRate": 50,
+                "currency": "USD",
+                "maxConcurrentProjects": 3,
+                "available": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/lab-admin/mentors/1": {
+      "get": {
+        "summary": "Get Mentor By ID",
+        "responses": {},
+        "tags": [
+          "Mentor Admin"
+        ]
+      }
+    },
+    "/api/lab-admin/mentors/expertise/all": {
+      "get": {
+        "summary": "Get All Expertise",
+        "responses": {},
+        "tags": [
+          "Mentor Admin"
+        ]
+      }
+    },
+    "/api/lab-admin/mentors/available": {
+      "get": {
+        "summary": "Get Available Mentors",
+        "parameters": [
+          {
+            "name": "technologies",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Java,Spring"
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "Mentor Admin"
+        ]
+      }
+    },
+    "/api/lab-admin/mentors/{mentor_id}": {
+      "put": {
+        "summary": "Update Mentor",
+        "responses": {},
+        "tags": [
+          "Mentor Admin"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fullName": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "currentPosition": {
+                    "type": "string"
+                  },
+                  "currentCompany": {
+                    "type": "string"
+                  },
+                  "yearsOfExperience": {
+                    "type": "integer"
+                  },
+                  "bio": {
+                    "type": "string"
+                  },
+                  "expertise": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "hourlyRate": {
+                    "type": "integer"
+                  },
+                  "currency": {
+                    "type": "string"
+                  },
+                  "maxConcurrentProjects": {
+                    "type": "integer"
+                  },
+                  "available": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "example": {
+                "fullName": "Test API Mentor",
+                "title": "Dr.",
+                "currentPosition": "Lead Developer",
+                "currentCompany": "Tech Corp",
+                "yearsOfExperience": 7,
+                "bio": "Updated bio",
+                "expertise": [
+                  "Java",
+                  "Spring Boot",
+                  "React"
+                ],
+                "hourlyRate": 75,
+                "currency": "USD",
+                "maxConcurrentProjects": 5,
+                "available": true
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "mentor_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "example": "{{mentor_id}}"
+        }
+      ],
+      "delete": {
+        "summary": "Delete Mentor",
+        "responses": {},
+        "tags": [
+          "Mentor Admin"
+        ]
+      }
+    },
+    "/api/lab-admin/talents": {
+      "get": {
+        "summary": "Get All Talents",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": 0
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": 10
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "Talent Admin"
+        ]
+      },
+      "post": {
+        "summary": "Create Talent",
+        "responses": {},
+        "tags": [
+          "Talent Admin"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fullName": {
+                    "type": "string"
+                  },
+                  "studentId": {
+                    "type": "string"
+                  },
+                  "university": {
+                    "type": "string"
+                  },
+                  "major": {
+                    "type": "string"
+                  },
+                  "yearOfStudy": {
+                    "type": "integer"
+                  },
+                  "bio": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "fullName": "Tran Test Talent",
+                "studentId": "TEST001",
+                "university": "UTH",
+                "major": "Information Technology",
+                "yearOfStudy": 3,
+                "bio": "Test talent student"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/lab-admin/talents/{talent_id}": {
+      "get": {
+        "summary": "Get Talent By ID",
+        "responses": {},
+        "tags": [
+          "Talent Admin"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "talent_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "example": "{{talent_id}}"
+        }
+      ],
+      "put": {
+        "summary": "Update Talent",
+        "responses": {},
+        "tags": [
+          "Talent Admin"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fullName": {
+                    "type": "string"
+                  },
+                  "studentId": {
+                    "type": "string"
+                  },
+                  "university": {
+                    "type": "string"
+                  },
+                  "major": {
+                    "type": "string"
+                  },
+                  "yearOfStudy": {
+                    "type": "integer"
+                  },
+                  "bio": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "fullName": "Tran Updated Talent",
+                "studentId": "TEST001",
+                "university": "UTH",
+                "major": "Software Engineering",
+                "yearOfStudy": 4,
+                "bio": "Updated bio"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Talent",
+        "responses": {},
+        "tags": [
+          "Talent Admin"
+        ]
+      }
+    },
+    "/api/talent/profile": {
+      "get": {
+        "summary": "Get Talent Profile",
+        "responses": {},
+        "tags": [
+          "Talent"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "TL05 Put Talent profile",
+        "responses": {},
+        "tags": [
+          "Talent"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fullName": {
+                    "type": "string"
+                  },
+                  "studentId": {
+                    "type": "string",
+                    "format": "utc-millisec"
+                  },
+                  "faculty": {
+                    "type": "string"
+                  },
+                  "major": {
+                    "type": "string"
+                  },
+                  "yearOfStudy": {
+                    "type": "integer"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "portfolioUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "githubUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "linkedinUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  }
+                }
+              },
+              "example": {
+                "fullName": "Nguyen Van A",
+                "studentId": "2020600001",
+                "faculty": "Computer Science",
+                "major": "Software Engineering",
+                "yearOfStudy": 3,
+                "email": "nguyenvana@student.uth.edu.vn",
+                "portfolioUrl": "https://nguyenvana.dev",
+                "githubUrl": "https://github.com/nguyenvana",
+                "linkedinUrl": "https://linkedin.com/in/nguyenvana"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/talent/dashboard": {
+      "get": {
+        "summary": "TL-02 Get Talent Dashboard",
+        "responses": {},
+        "tags": [
+          "Talent"
+        ]
+      }
+    },
+    "/api/talent/projects/available": {
+      "get": {
+        "summary": "TL-03 Get Available Projects",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": 0
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": 20
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "Talent"
+        ]
+      }
+    },
+    "/api/talent/projects/2": {
+      "get": {
+        "summary": "TL-04 Get Project Detail",
+        "responses": {},
+        "tags": [
+          "Talent"
+        ]
+      }
+    },
+    "/api/talent/skills": {
+      "post": {
+        "summary": "TL-06 Post Skills",
+        "responses": {},
+        "tags": [
+          "Talent"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "skillName": {
+                    "type": "string"
+                  },
+                  "skillCategory": {
+                    "type": "string"
+                  },
+                  "proficiencyLevel": {
+                    "type": "string"
+                  },
+                  "yearsOfExperience": {
+                    "type": "number"
+                  }
+                }
+              },
+              "example": {
+                "skillName": "{{test_skill_name}}",
+                "skillCategory": "Programming",
+                "proficiencyLevel": "INTERMEDIATE",
+                "yearsOfExperience": 1.5
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/talent/skills/{skill_id}": {
+      "delete": {
+        "summary": "TL-07 Delete Skill",
+        "responses": {},
+        "tags": [
+          "Talent"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "skill_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "example": "{{skill_id}}"
+        }
+      ]
+    },
+    "/api/talent/certifications": {
+      "post": {
+        "summary": "TL-08 Post Certifications",
+        "responses": {},
+        "tags": [
+          "Talent"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "issuer": {
+                    "type": "string"
+                  },
+                  "issueDate": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "expiryDate": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "credentialUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  }
+                }
+              },
+              "example": {
+                "name": "AWS Cloud Practitioner",
+                "issuer": "Amazon Web Services",
+                "issueDate": "2024-01-01",
+                "expiryDate": "2027-01-01",
+                "credentialUrl": "https://aws.amazon.com/certification"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/talent/profile/avatar": {
+      "post": {
+        "summary": "TL-09 Upload Avatar",
+        "responses": {},
+        "tags": [
+          "Talent"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/talent/profile/cv": {
+      "post": {
+        "summary": "TL-10 Upload CV",
+        "responses": {},
+        "tags": [
+          "Talent"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/talent/projects/{project_id}/join": {
+      "post": {
+        "summary": "TL-11 Join Project",
+        "responses": {},
+        "tags": [
+          "Talent"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "message": "I am interested in joining this project and have relevant skills."
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "project_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "example": 2
+        }
+      ]
+    },
+    "/api/talent/projects/my-projects": {
+      "get": {
+        "summary": "TL-12 Get My Projects",
+        "responses": {},
+        "tags": [
+          "Talent"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/talent/tasks": {
+      "get": {
+        "summary": "TL-13 Get Tasks",
+        "responses": {},
+        "tags": [
+          "Talent"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/talent/tasks/{task_id}/submit": {
+      "post": {
+        "summary": "TL-14 Submit Task",
+        "responses": {},
+        "tags": [
+          "Talent"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "submissionNote": {
+                    "type": "string"
+                  },
+                  "submissionUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  }
+                }
+              },
+              "example": {
+                "submissionNote": "Task completed as required. All acceptance criteria met.",
+                "submissionUrl": "https://github.com/nguyenvana/task-submission"
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "task_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "example": "{{task_id}}"
+        }
+      ]
+    },
+    "/api/lab-admin/transparency-reports": {
+      "get": {
+        "summary": "TR-01 Get All Transparency Reports",
+        "responses": {},
+        "tags": [
+          "Transparency Reports"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "TR-03 Create Transparency Report",
+        "responses": {},
+        "tags": [
+          "Transparency Reports"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reportType": {
+                    "type": "string"
+                  },
+                  "period": {
+                    "type": "string"
+                  },
+                  "autoGenerate": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "example": {
+                "reportType": "QUARTERLY",
+                "period": "{{report_period}}",
+                "autoGenerate": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/lab-admin/transparency-reports/{report_id}": {
+      "get": {
+        "summary": "TR-02 Get Transparency Report By ID",
+        "responses": {},
+        "tags": [
+          "Transparency Reports"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "report_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "example": "{{report_id}}"
+        }
+      ],
+      "delete": {
+        "summary": "TR-05 Delete Transparency Report",
+        "responses": {},
+        "tags": [
+          "Transparency Reports"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/lab-admin/transparency-reports/{report_id}/publish": {
+      "post": {
+        "summary": "TR-04 Publish Transparency Report",
+        "responses": {},
+        "tags": [
+          "Transparency Reports"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "publishNote": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "publishNote": "Published via automated test"
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "report_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "example": "{{report_id}}"
+        }
+      ]
+    },
+    "/api/lab-admin/transparency-reports/{report_id}/export/excel": {
+      "get": {
+        "summary": "TR-06 Export Report to Excel",
+        "responses": {},
+        "tags": [
+          "Transparency Reports"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "report_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "example": "{{report_id}}"
+        }
+      ]
+    },
+    "/api/lab-admin/transparency-reports/{report_id}/archive": {
+      "post": {
+        "summary": "TR-07 Archive Transparency Report",
+        "responses": {},
+        "tags": [
+          "Transparency Reports"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "report_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "example": "{{report_id}}"
+        }
+      ]
+    },
+    "/api/lab-admin/transparency-reports/{report_id}/download": {
+      "get": {
+        "summary": "TR-08 Download Transparency Report",
+        "responses": {},
+        "tags": [
+          "Transparency Reports"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "report_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "example": "{{report_id}}"
+        }
+      ]
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ]
+}

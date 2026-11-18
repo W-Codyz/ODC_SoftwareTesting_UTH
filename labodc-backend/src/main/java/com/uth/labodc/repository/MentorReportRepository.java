@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface MentorReportRepository extends JpaRepository<MentorReport, Long> {
     List<MentorReport> findByMentorIdOrderByDueDateDesc(Long mentorId);
+
+    List<MentorReport> findByMentorIdAndProjectIdOrderByDueDateDesc(Long mentorId, Long projectId);
 }

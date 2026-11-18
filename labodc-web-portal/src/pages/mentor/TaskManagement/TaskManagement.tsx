@@ -8,6 +8,7 @@ import {
   DeleteOutlined,
   ReloadOutlined,
   CalendarOutlined,
+  FileExcelOutlined,
 } from '@ant-design/icons';
 import {
   Alert,
@@ -30,6 +31,7 @@ import {
 } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import dayjs from 'dayjs';
+import { useNavigate, useParams } from 'react-router-dom';
 import { mentorService } from '@/services/mentor/mentorService';
 import { IMentorProjectOption, IMentorTask, IMentorTalentOption, IMentorTaskSubmission } from '@/types/mentor.types';
 import styles from './TaskManagement.module.css';
@@ -61,12 +63,14 @@ const getPriorityColor = (priority: IMentorTask['priority']) => {
 };
 
 const TaskManagement: React.FC = () => {
+  const navigate = useNavigate();
+  const { id: routeProjectId } = useParams<{ id: string }>();
   const [tasks, setTasks] = useState<IMentorTask[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>('all');
   const [projects, setProjects] = useState<IMentorProjectOption[]>([]);
-  const [projectId, setProjectId] = useState<string | undefined>(undefined);
+  const [projectId, setProjectId] = useState<string | undefined>(routeProjectId);
   const [projectsLoading, setProjectsLoading] = useState(false);
   const [projectProgress, setProjectProgress] = useState<number>(0);
   const [progressSaving, setProgressSaving] = useState(false);
@@ -83,7 +87,7 @@ const TaskManagement: React.FC = () => {
 
   useEffect(() => {
     void loadProjects();
-    void loadTasks();
+    void loadTasks(routeProjectId);
   }, []);
 
   useEffect(() => {
@@ -211,12 +215,17 @@ const TaskManagement: React.FC = () => {
   };
 
   const handleDeleteTask = async (task: IMentorTask) => {
-    if (!task.projectId) {
-      message.error('Không tìm thấy projectId');
+    if (!task.projectId || !task.id) {
+      message.error('Không tìm thấy thông tin công việc');
       return;
     }
     try {
-      await mentorService.deleteTask(task.projectId, task.id);
+      const isExcelTask = task.source === 'excel' || task.id.startsWith('excel-');
+      await mentorService.deleteTask(
+        task.projectId,
+        isExcelTask ? task.id.slice('excel-'.length) : task.id,
+        isExcelTask
+      );
       message.success('Đã xóa công việc');
       setTasks((prev) => prev.filter((t) => t.id !== task.id));
     } catch (err) {
@@ -230,7 +239,9 @@ const TaskManagement: React.FC = () => {
     setSubmissionModalVisible(true);
     setSubmissionsLoading(true);
     try {
-      const data = await mentorService.getTaskSubmissions(task.id);
+      const excelTask = task.source === 'excel' || task.id.startsWith('excel-');
+      const taskId = excelTask ? task.id.slice('excel-'.length) : task.id;
+      const data = await mentorService.getTaskSubmissions(taskId, excelTask);
       setTaskSubmissions(data);
     } catch (err) {
       console.error('Failed to load task submissions', err);
@@ -243,7 +254,9 @@ const TaskManagement: React.FC = () => {
 
   const handleDownloadSubmission = async (taskId: string, submission: IMentorTaskSubmission) => {
     try {
-      const response = await mentorService.downloadTaskSubmissionFile(taskId, submission.id);
+      const excelTask = submission.taskSource === 'excel';
+      const normalizedTaskId = taskId.startsWith('excel-') ? taskId.slice('excel-'.length) : taskId;
+      const response = await mentorService.downloadTaskSubmissionFile(normalizedTaskId, submission.id, excelTask);
       const url = window.URL.createObjectURL(response.data);
       const link = document.createElement('a');
       link.href = url;
@@ -263,7 +276,9 @@ const TaskManagement: React.FC = () => {
       const values = await form.validateFields();
       const taskData = {
         ...values,
-        dueDate: values.dueDate ? values.dueDate.toISOString() : null,
+        // This is a calendar date, not a timestamp. Sending UTC ISO here can
+        // shift it to the previous day in time zones east of UTC.
+        dueDate: values.dueDate ? values.dueDate.format('YYYY-MM-DD') : null,
       };
 
       if (editingTask) {
@@ -272,7 +287,11 @@ const TaskManagement: React.FC = () => {
           message.error('Không tìm thấy projectId');
           return;
         }
-        const updated = await mentorService.updateTask(editingTask.projectId, editingTask.id, {
+        const isExcelTask = editingTask.source === 'excel' || editingTask.id.startsWith('excel-');
+        const updated = await mentorService.updateTask(
+          editingTask.projectId,
+          isExcelTask ? editingTask.id.slice('excel-'.length) : editingTask.id,
+          {
           title: taskData.title,
           description: taskData.description,
           status: taskData.status,
@@ -280,7 +299,9 @@ const TaskManagement: React.FC = () => {
           progress: taskData.progress,
           dueDate: taskData.dueDate,
           assignedTo: taskData.assignedTo,
-        });
+          },
+          isExcelTask
+        );
         message.success('Đã cập nhật công việc');
         setTasks((prev) => prev.map((t) => (t.id === editingTask.id ? updated : t)));
       } else {
@@ -359,6 +380,18 @@ const TaskManagement: React.FC = () => {
             />
             <Button icon={<ReloadOutlined />} onClick={() => loadTasks(projectId)}>
               Làm mới
+            </Button>
+            <Button
+              icon={<FileExcelOutlined />}
+              onClick={() => {
+                if (!projectId) {
+                  message.info('Vui lòng chọn dự án để mở Excel công việc.');
+                  return;
+                }
+                navigate(`/mentor/projects/${projectId}/task-template`);
+              }}
+            >
+              Excel công việc
             </Button>
             <Button type="primary" icon={<PlusOutlined />} onClick={handleCreateTask}>
               Tạo công việc

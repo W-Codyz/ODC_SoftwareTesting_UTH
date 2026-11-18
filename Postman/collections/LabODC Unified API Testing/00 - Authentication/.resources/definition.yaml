@@ -1,0 +1,3 @@
+$kind: collection
+description: Login/Register/Logout for all roles. Run logins first to populate tokens.
+order: 1000

@@ -1,0 +1,3 @@
+$kind: collection
+description: Lab Admin manages talents. Requires LAB_ADMIN token.
+order: 5000
